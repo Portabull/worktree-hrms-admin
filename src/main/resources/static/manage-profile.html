@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/common-style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Profiles</title>
+    <style>
+
+    /* Loader Styles */
+.loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 6px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 6px solid #3498db;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    display: none; /* Hidden by default */
+    z-index: 9999;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .profile-container {
+            max-width: 450px;
+            width: 100%;
+            background-color: #fff;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 85vh;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-header img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-header h2 {
+            font-size: 20px;
+            margin-left: 15px;
+            color: #2c3e50;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 18px;
+            background-color: #ff5f57;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+            text-align: center;
+            line-height: 35px;
+            transition: background-color 0.3s ease;
+            z-index: 10;
+        }
+
+        .close-btn:hover {
+            background-color: #e74c3c;
+        }
+
+        .profile-list-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding-right: 10px;
+        }
+
+        .profile-list {
+            margin-top: 0;
+        }
+
+        .profile-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 15px;
+            background-color: #f9fafc;
+            border-radius: 12px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .profile-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            position: relative;
+        }
+
+        .profile-info img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            margin-right: 10px;
+        }
+
+        .profile-info div {
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: all 0.3s ease;
+        }
+
+        .profile-item:hover .profile-info div {
+            max-width: 100%;
+            white-space: normal;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .profile-info h4, .profile-info p {
+            cursor: pointer;
+            margin-bottom: 5px;
+        }
+
+        .profile-info h4 {
+            font-size: 16px;
+            font-weight: bold;
+            color: #34495e;
+        }
+
+        .profile-info p {
+            font-size: 12px;
+            color: #7f8c8d;
+            cursor: pointer;
+        }
+
+        .actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .actions button {
+            background-color: #ff5f57;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 6px 12px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .actions button:hover {
+            background-color: #e74c3c;
+        }
+
+        .add-account, .sign-out {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .add-account button, .sign-out button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .add-account button:hover, .sign-out button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 600px) {
+            .profile-container {
+                height: 90vh;
+                padding: 20px;
+            }
+
+            .profile-header h2 {
+                font-size: 18px;
+            }
+
+            .profile-item {
+                padding: 12px;
+            }
+
+            .profile-info h4 {
+                font-size: 14px;
+            }
+
+            .profile-info p {
+                font-size: 10px;
+            }
+
+            .profile-info img {
+                width: 35px;
+                height: 35px;
+            }
+
+            .actions button {
+                padding: 6px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Error Popup Modal -->
+<div id="uniqueErrorModal9875">
+    <div class="unique-modal-content9875" id="modalContent9875">
+        <h2 id="errorHeader9875">Error Occurred</h2>
+        <p id="errorFooter9875" class="message-container9875">An unexpected error has occurred. Please try again later.</p>
+        <span class="read-more9875" id="readMore9875">Read more</span>
+        <button id="uniqueOkayBtn9875">Okay</button>
+    </div>
+</div>
+
+<div class="loader" id="loader"></div>
+
+
+<div class="profile-container" id="profile-container">
+    <button class="close-btn" id="close-btn">X</button>
+    <div class="profile-header">
+        <div class="profile-info">
+            <img id="profile-img" src="https://via.placeholder.com/60" alt="Profile">
+            <h2 id="profile-name">Hi, User!</h2>
+        </div>
+    </div>
+
+    <div class="profile-list-container">
+        <div class="profile-list" id="profile-list">
+            <!-- Dynamic profiles will be injected here -->
+        </div>
+    </div>
+
+    <div class="add-account">
+        <button id="add-account-btn">Add another account</button>
+    </div>
+
+    <div class="sign-out">
+        <button id="sign-out-btn">Sign out of all accounts</button>
+    </div>
+</div>
+<script src="js/worktree.js"></script>
+<script>
+    // Array of profiles to dynamically populate
+
+var userNameTINFOJson = window.localStorage.getItem(userNameTINFO);
+
+  var storedUsers = JSON.parse(userNameTINFOJson);
+
+    var profiles = storedUsers.map(user => ({
+        name: user.userDisplayName,
+        email: user.userName,
+        avatar: `data:image/png;base64,${user.userProfileImage}`
+    }));
+
+    // Function to dynamically render profiles
+    function renderProfiles() {
+
+        if(profiles==undefined || profiles.length==0){
+             window.location.href = "login";
+        }
+
+        const profileList = document.getElementById('profile-list');
+        profileList.innerHTML = ''; // Clear existing profiles
+
+        profiles.forEach(profile => {
+            const profileItem = document.createElement('div');
+            profileItem.classList.add('profile-item');
+
+            profileItem.innerHTML = `
+                <div class="profile-info">
+                    <img src="${profile.avatar}" alt="Profile">
+                    <div>
+                        <h4>${profile.name}</h4>
+                        <p>${profile.email}</p>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button class="logout">Logout</button>
+                </div>
+            `;
+
+            // Add event listener to make the entire profile box clickable
+            profileItem.addEventListener('click', () => handleUserClick(profile.email));
+
+            // Add event listener to the logout button and stop event propagation
+            profileItem.querySelector('.logout').addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent the profile click event from firing
+
+                handleLogoutClick(profile.email);
+            });
+
+            profileList.appendChild(profileItem);
+        });
+    }
+
+    // Function to handle user profile click
+    function handleUserClick(email) {
+    startLoader();
+      setAsCurrentUser(email);
+        gotohome();
+    }
+
+    // Function to handle logout click
+    function handleLogoutClick(email) {
+        startLoader();
+         setAsCurrentUser(email);
+         logout(afterlogout);
+    }
+
+    function afterlogout() {
+         window.location.href = "manage-profile";
+    }
+
+    // Function to handle close button click
+    document.getElementById('close-btn').addEventListener('click', (event) => {
+        event.stopPropagation(); // Prevent any unintended closure
+        closeButtonAction(); // Trigger the function without closing the container
+    });
+
+    // The function that runs when the close button is clicked
+    function closeButtonAction() {
+        startLoader();
+       gotohome();
+    }
+
+    // Function to handle Add Another Account
+    document.getElementById('add-account-btn').addEventListener('click', () => {
+    startLoader();
+          window.location.href = "login?add-new-user=true";
+    });
+
+    // Function to handle Sign Out of All Accounts
+    document.getElementById('sign-out-btn').addEventListener('click', () => {
+    startLoader();
+       signoutallaccounts();
+    });
+
+renderCurrentUser();
+    // Call renderProfiles to populate profiles on page load
+    renderProfiles();
+
+    renderCurrentUser();
+    function renderCurrentUser(){
+      var profileImageUrl = getCurrentProfileImageWithoutRedirect();
+
+        profileImageUrl = `data:image/png;base64,${profileImageUrl}`; // Use the correct MIME type
+
+
+    const profileName = getCurrentDisplayNameImageWithoutRedirect();
+
+    if(profileName==undefined){
+         document.getElementById("profile-name").innerText = 'Hi, Please select one profile';
+    }else{
+    // Update the image and name dynamically
+    document.getElementById("profile-img").src = profileImageUrl;
+    document.getElementById("profile-name").innerText = `Hi, ${profileName}!`;
+    }
+
+    }
+
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        startLoader();
+        gotohome();
+    }
+});
+
+ function startLoader() {
+        document.getElementById('loader').style.display = 'block';
+    }
+
+    // Stop Loader Function
+    function stopLoader() {
+        document.getElementById('loader').style.display = 'none';
+    }
+
+ window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the cache
+        if (event.persisted) {
+            stopLoader();
+        }
+    });
+</script>
+
+</body>
+</html>

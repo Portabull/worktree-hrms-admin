@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/common-style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <!-- Add FontAwesome for Icons -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+  /* Style for the reload button */
+    .reload-button {
+      font-size: 24px; /* Size of the icon */
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: #999; /* Gray color */
+      padding: 10px;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    /* Hover effect to change the color slightly */
+    .reload-button:hover {
+      color: #666; /* Darker gray on hover */
+    }
+
+    /* Tooltip effect */
+    .reload-button::after {
+
+      position: absolute;
+      bottom: 125%; /* Adjust to place tooltip above the icon */
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s;
+    }
+
+    /* Show tooltip on hover */
+    .reload-button:hover::after {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Rotate animation for the loader */
+    .loading {
+      animation: rotate 1s linear infinite;
+    }
+
+    /* Keyframes for the rotating animation */
+    @keyframes rotate {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+
+
+
+
+
+
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            user-select: none; /* Disable text selection */
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar .menu-button {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .navbar .menu-button div {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar .company-name {
+            font-size: 24px;
+            font-weight: 600;
+            margin-left: 15px;
+            color: #ffcc00;
+            animation: fadeInSlide 2s ease-in-out;
+        }
+
+        @keyframes fadeInSlide {
+            0% {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .navbar .profile {
+            position: relative;
+        }
+
+        .navbar .profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 60px; /* Position dropdown below profile icon */
+            right: 0;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            padding: 10px;
+            width: 180px; /* Increased width to prevent text overflow */
+        }
+
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            text-decoration: none;
+            color: black;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .dropdown-menu a i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f4f4f4;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            width: 250px;
+            height: 100%;
+            background-color: #343a40;
+            padding: 20px;
+            color: white;
+            transition: all 0.5s ease;
+            z-index: 1001;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar button:hover {
+            background-color: #0056b3;
+        }
+
+        .sidebar .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* Layout */
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: repeat(2, 1fr);
+            gap: 20px;
+            padding: 100px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .box h2 {
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .popout-icon {
+            font-size: 18px;
+            color: #007bff;
+            cursor: pointer;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        .buttons button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+        }
+
+        .buttons button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .table-box table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-box th, .table-box td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table-box tbody tr:hover {
+            background-color: #f0f0f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+            }
+        }
+
+.selected {
+    background-color: #007bff; /* Maintain blue background */
+    color: white; /* White text */
+    border: 2px solid #0056b3; /* Thicker border for emphasis */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+}
+
+
+
+
+
+
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    visibility: hidden; /* Hide loader by default */
+}
+
+.loader {
+    border: 8px solid #f3f3f3; /* Light gray */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+    </style>
+</head>
+<body oncontextmenu="return false;"> <!-- Disable right click -->
+<!-- Error Popup Modal -->
+<div id="uniqueErrorModal9875">
+    <div class="unique-modal-content9875" id="modalContent9875">
+        <h2 id="errorHeader9875">Error Occurred</h2>
+        <p id="errorFooter9875" class="message-container9875">An unexpected error has occurred. Please try again later.</p>
+        <span class="read-more9875" id="readMore9875">Read more</span>
+        <button id="uniqueOkayBtn9875">Okay</button>
+    </div>
+</div>
+
+<div id="loader" class="loader-overlay">
+    <div class="loader"></div>
+</div>
+
+
+<!-- Navbar -->
+<div class="navbar">
+    <div class="menu-button" onclick="toggleSidebar()">
+        <div></div>
+        <span class="company-name">Worktree</span>
+    </div>
+
+    <div class="profile" id="profile-dropdown">
+        <img src="https://via.placeholder.com/50" alt="Profile" onclick="toggleProfileDropdown()">
+        <div class="dropdown-menu" id="dropdown-menu">
+            <a href="#" onclick="openProfileSettings()"><i class="fas fa-cog"></i>Settings</a>
+            <a href="#" onclick="manageUserProfiles(startLoader)"><i class="fas fa-user"></i>Manage Profiles</a>
+            <a href="#" onclick="logout(startLoader,redirectafterlogout)"><i class="fas fa-sign-out-alt"></i>Logout</a>
+        </div>
+    </div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <button class="close-btn" onclick="toggleSidebar()">× Close</button>
+
+    <button onclick="manageTenants(startLoader)">Manage Tenants</button>
+    <button onclick="showReports()">Reports</button>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+    <!-- Chart Section -->
+    <div class="box chart-box" id="chart-box">
+        <button class="reload-button" id="reloadButtonInstance" title="Reload" onclick="startReload('Instance')">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+        <h2>Instance Graph
+            <i class="fas fa-external-link-alt popout-icon" onclick="showPopup('Instance Graph Pop-out')"></i>
+        </h2>
+        <div id="chart"></div>
+        <div class="buttons">
+            <button onclick="updateChart('1D')">1 Day</button>
+            <button onclick="updateChart('1W')">Week</button>
+            <button onclick="updateChart('1M')">Month</button>
+            <button onclick="updateChart('6M')">6 Months</button>
+            <button onclick="updateChart('1Y')">1 Year</button>
+        </div>
+
+    </div>
+
+    <!-- Billing Table Section -->
+    <div class="box table-box">
+        <button class="reload-button" id="reloadButtonManageTenants" title="Reload" onclick="startReload('ManageTenants')">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+        <h2>Billing Expires in a Week
+            <i class="fas fa-external-link-alt popout-icon" onclick="manageTenants(startLoader)"></i>
+        </h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Tenant Name</th>
+                <th>Billing Expiry Date</th>
+            </tr>
+            </thead>
+            <tbody id="billing-tbody">
+            <!-- Dynamically populated -->
+            </tbody>
+        </table>
+        <p id="billing-message" style="color: red; display: none;">No bills are due in a week for tenants.</p>
+    </div>
+
+    <!-- Detailed Table Section -->
+    <div class="box table-box">
+        <button class="reload-button" id="reloadButtonRecentErrors" title="Reload" onclick="startReload('RecentErrors')">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+        <h2>Recent Errors
+            <i class="fas fa-external-link-alt popout-icon" onclick="goToRecentErrors()"></i>
+        </h2>
+        <table>
+            <thead>
+            <tr>
+                <th>RequestId</th>
+                <th>Display Message</th>
+            </tr>
+            </thead>
+            <tbody id="errors-tbody">
+            <!-- Dynamically populated -->
+            </tbody>
+        </table>
+        <p id="errors-message" style="color: red; display: none;">No recent errors detected.</p>
+    </div>
+
+    <!-- Log Details Section -->
+    <div class="box table-box">
+        <button class="reload-button" id="reloadButtonRecentRequests" title="Reload" onclick="startReload('RecentRequests')">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+        <h2>Recent Requests
+            <i class="fas fa-external-link-alt popout-icon" onclick="showPopup('Log Details Pop-out')"></i>
+        </h2>
+        <table>
+            <thead>
+            <tr>
+                <th>LogId</th>
+                <th>Details</th>
+                <th>Date</th>
+            </tr>
+            </thead>
+            <tbody id="log-details-tbody">
+            <!-- Dynamically populated -->
+            </tbody>
+        </table>
+        <p id="log-details-message" style="color: red; display: none;">There are no recent requests.</p>
+    </div>
+</div>
+<script src="js/chart.js"></script>
+<script src="js/worktree.js"></script>
+<script>
+
+
+      var apiResponse = {
+        "1D": { "instances": [[1698051600, 4], [1698055200, 5], [1698058800, 6]] },
+        "1W": { "instances": [[1697643600, 8], [1697730000, 6], [1697816400, 7]] },
+        "1M": { "instances": [[1695375600, 3], [1695967200, 5], [1696558800, 7]] },
+        "6M": { "instances": [[1677577200, 10], [1680265200, 12], [1682953200, 15]] },
+        "1Y": { "instances": [[1666626000, 8], [1671903600, 6], [1677181200, 9]] }
+    };
+
+    // Sample data
+    var billingData = [
+        { tenantName: "Tenant A", expiryDate: "2024-10-30" },
+        { tenantName: "Tenant B", expiryDate: "2024-10-28" },
+        { tenantName: "Tenant C", expiryDate: "2024-10-26" }
+    ];
+
+    var recentErrorsData = [
+        { requestId: "REQ001", message: "Message for Request 001" },
+        { requestId: "REQ002", message: "Message for Request 002" }
+    ];
+
+    var logDetailsData = [
+        { logId: "LOG001", details: "Error in process A", date: "2024-10-23" },
+        { logId: "LOG002", details: "Timeout in process B", date: "2024-10-22" }
+    ];
+
+    function populateTables() {
+        // Populate Billing Table
+        const billingTbody = document.getElementById('billing-tbody');
+         billingTbody.innerHTML = '';
+        const billingMessage = document.getElementById('billing-message');
+        if (billingData.length === 0) {
+            billingMessage.style.display = 'block';
+        } else {
+            billingData.forEach(item => {
+                const row = `<tr><td>${item.tenantName}</td><td>${item.expiryDate}</td></tr>`;
+                billingTbody.innerHTML += row;
+            });
+            billingMessage.style.display = 'none';
+        }
+
+        // Populate Recent Errors Table
+        const errorsTbody = document.getElementById('errors-tbody');
+        errorsTbody.innerHTML = '';
+        const errorsMessage = document.getElementById('errors-message');
+        if (recentErrorsData.length === 0) {
+            errorsMessage.style.display = 'block';
+        } else {
+            recentErrorsData.forEach(item => {
+                const row = `<tr><td>${item.requestId}</td><td>${item.message}</td></tr>`;
+                errorsTbody.innerHTML += row;
+            });
+            errorsMessage.style.display = 'none';
+        }
+
+        // Populate Log Details Table
+        const logDetailsTbody = document.getElementById('log-details-tbody');
+        logDetailsTbody.innerHTML = '';
+        const logDetailsMessage = document.getElementById('log-details-message');
+        if (logDetailsData.length === 0) {
+            logDetailsMessage.style.display = 'block';
+        } else {
+            logDetailsData.forEach(item => {
+                const row = `<tr><td>${item.logId}</td><td>${item.details}</td><td>${item.date}</td></tr>`;
+                logDetailsTbody.innerHTML += row;
+            });
+            logDetailsMessage.style.display = 'none';
+        }
+    }
+
+
+
+    // Disable right-click context menu
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    // Chart Data Setup
+
+    function processApiResponse(apiData) {
+        return apiData.map(entry => ({ x: entry[0] * 1000, y: entry[1] }));
+    }
+
+    const chartOptions = {
+        chart: {
+            type: 'line',
+            height: 300,
+            animations: { enabled: true, easing: 'easeinout', speed: 800 },
+            toolbar: { show: false }
+        },
+        series: [{
+            name: 'Instances Running',
+            data: processApiResponse(apiResponse['1D'].instances)
+        }],
+        xaxis: { type: 'datetime', labels: { format: 'dd MMM HH:mm' } },
+        tooltip: { x: { format: 'dd MMM HH:mm' } }
+    };
+
+    var chart;
+    
+    function renderChart() {
+        if (!chart) { // Only initialize if chart is not already created
+
+        chart = new ApexCharts(document.querySelector("#chart"), chartOptions);
+        chart.render();
+    } else {
+        chart.updateSeries([{ data: processApiResponse(apiResponse['1D'].instances) }]);
+    }
+    }
+
+// Update Chart
+function updateChart(period) {
+ // Remove 'selected' class from all buttons
+    const buttons = document.querySelectorAll('.buttons button');
+    buttons.forEach(button => button.classList.remove('selected'));
+
+    // Add 'selected' class to the clicked button
+    const selectedButton = Array.from(buttons).find(button => button.innerText.includes(period));
+    if (selectedButton) {
+        selectedButton.classList.add('selected');
+    }
+
+    // Update the chart with the new data
+    chart.updateSeries([{ data: processApiResponse(apiResponse[period].instances) }]);
+}
+
+
+
+    // Sidebar Toggle
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+    }
+
+    // Profile Dropdown
+    function toggleProfileDropdown() {
+        const dropdown = document.getElementById('dropdown-menu');
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Close dropdown when clicking outside
+    window.onclick = function(event) {
+        if (!event.target.matches('.profile img')) {
+            const dropdown = document.getElementById('dropdown-menu');
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            }
+        }
+    }
+
+    // Function stubs for the buttons
+    function openSettings() {
+        alert("Settings clicked");
+    }
+
+
+
+
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeProfileDropdown();
+        closeSidebar();
+    }
+});
+
+// Function to close the profile dropdown
+function closeProfileDropdown() {
+    const dropdown = document.getElementById('dropdown-menu');
+    if (dropdown.style.display === 'block') {
+        dropdown.style.display = 'none';
+    }
+}
+
+// Function to close the sidebar
+function closeSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.remove('active');
+}
+
+function goToRecentErrors(){
+    startLoader();
+	window.location.href="log";
+}
+
+function startLoader() {
+    document.getElementById('loader').style.visibility = 'visible';
+    document.body.style.pointerEvents = 'none'; // Disable interaction with the screen
+}
+
+function stopLoader() {
+    document.getElementById('loader').style.visibility = 'hidden';
+    document.body.style.pointerEvents = 'auto'; // Re-enable interaction with the screen
+}
+
+
+function init(xhr){
+     if (xhr.status == 200) {
+        var response = JSON.parse(xhr.responseText);
+        if(response.billing!=undefined){
+        billingData = response.billing;
+         stopReload("ManageTenants");
+        }
+
+        if(response.chart!=undefined)
+        {
+        apiResponse =  response.chart;
+         stopReload("Instance");
+        }
+
+        if(response.requests!=undefined)
+        {
+        recentErrorsData=response.requests;
+         stopReload("RecentErrors");
+        }
+
+        if(response.errors!=undefined)
+        {
+        logDetailsData=response.errors;
+         stopReload("RecentRequests");
+        }
+    }else{
+       removeCurrentUserCache();
+    }
+ populateTables();
+ renderChart(); // Render the chart when the page loads
+getCurrentToken();
+   const profilePicBase64 = getCurrentProfileImageWithoutRedirect();
+      const profileBtn = document.querySelector('.profile img');
+            profileBtn.src = `data:image/png;base64,${profilePicBase64}`;
+
+            stopLoader();
+}
+
+  // Function to start the reload (rotation) effect
+    function startReload(text) {
+       var params= "?type=";
+       if(text=="Instance") {
+            params = params+  "chart";
+       }else if(text=="ManageTenants"){
+        params =params+ "billing";
+       }
+       else if(text=="RecentErrors"){
+             params = params +"requests";
+       }else{
+            params = params +"errors";
+       }
+      document.getElementById("reloadButton" + text).classList.add("loading");
+
+      dynamicXhrApi('GET',BASE_URL + 'api/home' + params,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined, init);
+
+
+    }
+
+    // Function to stop the reload (rotation) effect
+    function stopReload(text) {
+      document.getElementById("reloadButton" + text).classList.remove("loading");
+    }
+
+
+startLoader()
+dynamicXhrApi('GET',BASE_URL + 'api/home',{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined, init);
+
+
+<!--      // Call populate function on page load-->
+<!--    window.onload = function() {-->
+<!--       -->
+<!--    }-->
+
+ window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the cache
+        if (event.persisted) {
+            stopLoader();
+        }
+    });
+</script>
+
+</body>
+</html>

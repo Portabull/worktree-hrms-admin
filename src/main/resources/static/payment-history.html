@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Payments</title>
+    <!-- Add FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background-color: #343a40;
+      color: white;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar .menu-button {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .navbar .menu-button div {
+      width: 25px;
+      height: 3px;
+      background-color: white;
+      margin: 5px 0;
+      transition: all 0.3s ease;
+    }
+
+    .navbar .company-name {
+      font-size: 24px;
+      font-weight: 600;
+      margin-left: 15px;
+      color: #ffcc00;
+    }
+
+    .navbar .profile {
+      position: relative;
+    }
+
+    .navbar .profile img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 60px;
+      right: 0;
+      background-color: white;
+      border-radius: 5px;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+      z-index: 1001;
+      padding: 10px;
+      width: 180px;
+    }
+
+    .dropdown-menu a {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      text-decoration: none;
+      color: black;
+      font-weight: 500;
+      transition: background-color 0.3s ease;
+    }
+
+    .dropdown-menu a i {
+      margin-right: 10px;
+    }
+
+    .dropdown-menu a:hover {
+      background-color: #f4f4f4;
+    }
+
+    .profile img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      left: -300px;
+      top: 0;
+      width: 250px;
+      height: 100%;
+      background-color: #343a40;
+      padding: 20px;
+      color: white;
+      transition: all 0.5s ease;
+      z-index: 1001;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .sidebar button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar button:hover {
+      background-color: #0056b3;
+    }
+
+    .sidebar .close-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    /* Main Content */
+    .container {
+      max-width: 1200px;
+      margin: 100px auto;
+      padding: 20px;
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .filter {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .filter input {
+      padding: 15px;
+      border-radius: 30px;
+      border: 1px solid #ddd;
+      width: 300px;
+      font-size: 16px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .filter .add-tenant-btn {
+      padding: 15px 30px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table thead {
+      background-color: #007bff;
+      color: white;
+    }
+
+    table th, table td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+      font-size: 16px;
+    }
+
+    /* Ensure the table row shows hand cursor on hover */
+  tr {
+    cursor: pointer; /* Show hand cursor when hovering over a row */
+  }
+
+  /* Ensure the file icon also shows the pointer cursor */
+  .fa-folder-open {
+    cursor: pointer; /* Show hand cursor for file icon */
+  }
+
+  /* Specific to rows that are clickable */
+  table tr:hover {
+    background-color: #f1f1f1; /* Optional: highlight row on hover */
+    cursor: pointer; /* Ensure hand symbol shows up when hovering on a row */
+  }
+
+
+    /* Action Column */
+    .action-column img {
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .pagination button {
+      padding: 10px 15px;
+      margin: 0 5px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .pagination button:disabled {
+      background-color: #ddd;
+      cursor: not-allowed;
+    }
+
+    /* Mobile layout */
+    @media (max-width: 600px) {
+      table thead {
+        display: none;
+      }
+
+      table, table tbody, table tr, table td {
+        display: block;
+        width: 100%;
+      }
+
+      table tr {
+        margin-bottom: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 10px;
+        background-color: #ffffff;
+      }
+
+      table td {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        font-size: 14px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      table td:last-child {
+        border-bottom: none;
+      }
+
+      table td:before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #007bff;
+      }
+    }
+
+    /* Popup Styles */
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .popup-content {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      width: 95%;
+      max-width: 1200px;
+      height: 85%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .popup-content img {
+      width: 100%;
+      height: auto;
+      max-height: calc(100% - 80px);
+    }
+
+    /* Scrollable Image Popup */
+    .popup-content {
+      overflow-y: auto;
+      padding: 20px;
+      max-height: 85vh; /* Ensures the popup fits in the viewport */
+    }
+
+    .popup-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      color: #333;
+      font-size: 25px;
+      cursor: pointer;
+    }
+
+    /* Image Gallery Popup */
+    .image-gallery {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 1001;
+    }
+
+    .image-gallery-content {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      width: 95%;
+      max-width: 800px;
+      position: relative;
+      max-height: 90vh; /* Limit height to ensure it fits the screen */
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .image-gallery img {
+      width: 100%;
+      height: auto;
+      max-height: 70vh; /* Allow image to take most of the space */
+      object-fit: contain; /* Ensures image fits within the box */
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .image-gallery-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      color: #333;
+      font-size: 25px;
+      cursor: pointer;
+    }
+
+    .download-btn {
+      margin-top: auto; /* Push the download button to the bottom */
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .download-btn:hover {
+      background-color: #0056b3;
+    }
+
+    /* Navigation arrows */
+    .image-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      padding: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 1001;
+    }
+
+    .image-nav.left {
+      left: 10px;
+    }
+
+    .image-nav.right {
+      right: 10px;
+    }
+
+
+
+ /* Loader Styles */
+        .loader-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader-overlay.active {
+            display: flex;
+        }
+
+
+          .spinner {
+            border: 8px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 8px solid #3498db;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Disabled Screen */
+        .disabled-screen {
+            pointer-events: none;
+            user-select: none;
+        }
+
+
+
+        .clickableRedirects {
+    color: #007bff; /* Color to indicate clickable text */
+    cursor: pointer; /* Show hand symbol */
+    transition: color 0.3s, font-weight 0.3s; /* Smooth transition for hover effects */
+}
+
+.clickableRedirects:hover {
+    color: #0056b3; /* Darker shade on hover */
+    font-weight: bold; /* Highlight by making it bold */
+    text-decoration: underline; /* Add underline for emphasis */
+}
+
+.active-page-redirect {
+    color: #6c757d; /* Grey color to indicate current page */
+    font-weight: bold; /* Bold to emphasize the active page */
+    cursor: default; /* No hand symbol to show it's not clickable */
+    text-decoration: none; /* No underline */
+}
+
+  </style>
+</head>
+<body>
+
+<!-- Error Popup Modal -->
+<div id="uniqueErrorModal9875">
+    <div class="unique-modal-content9875" id="modalContent9875">
+        <h2 id="errorHeader9875">Error Occurred</h2>
+        <p id="errorFooter9875" class="message-container9875">An unexpected error has occurred. Please try again later.</p>
+        <span class="read-more9875" id="readMore9875">Read more</span>
+        <button id="uniqueOkayBtn9875">Okay</button>
+    </div>
+</div>
+
+<!-- Navbar -->
+<div class="navbar">
+    <div class="menu-button" onclick="toggleSidebar()">
+        <div></div>
+        <span class="company-name">Worktree</span>
+    </div>
+
+    <div class="profile" id="profile-dropdown">
+        <img src="https://via.placeholder.com/50" alt="Profile" onclick="toggleProfileDropdown()">
+        <div class="dropdown-menu" id="dropdown-menu">
+            <a href="#" onclick="openProfileSettings"><i class="fas fa-cog"></i>Settings</a>
+            <a href="#" onclick="manageUserProfiles()"><i class="fas fa-user"></i>Manage Profiles</a>
+            <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</a>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Loader Overlay -->
+<div class="loader-overlay" id="loader">
+    <div class="spinner"></div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <button class="close-btn" onclick="toggleSidebar()">× Close</button>
+    <button onclick="gotohome()">Home</button>
+    <button onclick="showReports()">Reports</button>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+<!--    <h5>Home / Manage Tenants / Payment History</h5>-->
+    <h5>
+        <span class="clickableRedirects" onclick="navigateToHome()">Home</span> /
+        <span class="clickableRedirects" onclick="manageTenants(startLoader)">Manage Tenants</span> /
+        <span class="active-page-redirect">Payment History</span>
+    </h5>
+
+    <div class="filter">
+        <input type="text" id="requestIdInput" placeholder="Filter by Tenant Name" onkeyup="filterTenants()">
+        <button class="add-tenant-btn" onclick="addTenant()">Add Tenant</button>
+    </div>
+
+
+
+    <div class="table-container">
+        <table id="logTable">
+            <thead>
+            <tr>
+                <th>Payment Id</th>
+                <th>Payment Amount</th>
+                <th>Bill Start Date</th>
+                <th>Bill End Date</th>
+                <th>Users Count</th>
+                <th>Licence Type</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody id="logTableBody">
+            <!-- Dynamic content will be loaded here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        <button id="prevBtn" onclick="prevPage()">Previous</button>
+        <span id="pageInfo">Page 1</span>
+        <button id="nextBtn" onclick="nextPage()">Next</button>
+    </div>
+</div>
+
+<!-- Row Details Popup -->
+<div class="popup" id="rowDetailsPopup">
+    <div class="popup-close" onclick="closePopup()">×</div>
+    <div class="popup-content">
+        <pre id="logDetails">Row details will be shown here...</pre>
+    </div>
+</div>
+
+<!-- Image Gallery Popup -->
+<div class="image-gallery" id="imageGallery">
+    <div class="image-gallery-content">
+        <span class="image-gallery-close" onclick="closeImageGallery()">×</span>
+
+        <span class="image-nav left" onclick="prevImage()">&#10094;</span>
+        <img id="galleryImage" src="a.webp" alt="Gallery Image">
+        <span class="image-nav right" onclick="nextImage()">&#10095;</span>
+
+        <a href="" download="">
+            <button class="download-btn">Download</button>
+        </a>
+
+    </div>
+</div>
+<script src="js/worktree.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mime-types/index.min.js"></script>
+
+<script>
+
+// Function to determine if a string is a Base64 encoded image
+  function isBase64(str) {
+    return str.startsWith("data:image");
+  }
+
+
+  // JSON data
+  var paymentsData;
+
+  let currentImageIndex = 0;
+  let currentScreenshots = []; // Store the screenshots of the clicked row
+
+
+
+
+
+
+
+function loadGalleryFile(index) {
+    const screenshot = currentScreenshots[index];
+    const imgElement = document.getElementById('galleryImage');
+    const downloadLink = document.querySelector('.download-btn').parentElement; // Get the parent <a> element
+    const downloadBtnText = document.querySelector('.download-btn'); // Get the download button text
+
+    const fileName = screenshot.fileName;
+    const fileContent = screenshot.fileContent;
+   const isPDF = fileContent.startsWith('data:application/pdf;');
+    const isImage = fileContent.startsWith('data:image/');
+
+    const popupContent = document.querySelector('.image-gallery-content'); // Define the content container
+    const popupTitle = document.createElement('p'); // Create a new element for file name display
+
+    // Remove the previous file name if any
+    const existingTitle = document.getElementById('popupFileName');
+    if (existingTitle) {
+        existingTitle.remove();
+    }
+
+    // Add the new file name for non-image files
+    popupTitle.innerText = fileName;
+    popupTitle.id = 'popupFileName'; // Add an ID to identify it for future removal
+    popupTitle.style.marginBottom = '10px'; // Add some spacing below the file name
+
+
+    if (isImage) {
+        // For images, show the image and provide a download link
+        imgElement.style.display = 'block';
+        imgElement.src = fileContent;
+
+        downloadLink.href = fileContent;
+        downloadBtnText.textContent = "Download Image";
+        downloadLink.download = fileName;  // Use the file name from the response
+        downloadLink.removeAttribute('target');  // No need for a new tab
+
+        // Set appropriate size for the image popup
+        popupContent.style.maxWidth = '800px';  // Set width for images
+        popupContent.style.height = 'auto';  // Let height adjust to the image size
+    }
+    else if (isPDF) {
+        // For PDFs, hide the image, show the file name, and allow downloading
+        imgElement.style.display = 'none';
+
+        downloadLink.href = fileContent;
+        downloadBtnText.textContent = "Download PDF";
+        downloadLink.download = fileName;  // Use the file name from the response
+        downloadLink.setAttribute('target', '_blank');  // Open in a new tab
+
+        // Add file name to the popup for PDFs
+        popupContent.insertBefore(popupTitle, popupContent.firstChild);
+
+        // Set appropriate size for PDF popup
+        popupContent.style.maxWidth = '500px';  // Set smaller width for PDFs
+        popupContent.style.height = 'auto';  // Adjust height
+    }
+    else {
+        // For any other file types
+        imgElement.style.display = 'none';
+
+        downloadLink.href = fileContent;
+        downloadBtnText.textContent = "Download File";
+        downloadLink.download = fileName;  // Use the file name from the response
+        downloadLink.removeAttribute('target');  // No need for a new tab for file downloads
+
+        // Add file name to the popup for other file types
+        popupContent.insertBefore(popupTitle, popupContent.firstChild);
+
+        // Set appropriate size for other files
+        popupContent.style.maxWidth = '500px';  // Set smaller width for non-image files
+        popupContent.style.height = 'auto';  // Adjust height
+    }
+
+    // Ensure the gallery content scrolls back to the top when navigating between files
+    const galleryContent = document.querySelector('.image-gallery-content');
+    galleryContent.scrollTop = 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Updated method to populate the table
+function populateTable() {
+    const logTableBody = document.getElementById("logTableBody");
+    logTableBody.innerHTML = ""; // Clear the table body before populating
+
+    paymentsData.forEach((payment, index) => {
+        const row = document.createElement("tr");
+        row.setAttribute("data-index", index); // Add data-index attribute
+
+        // Check if there is a screenshot available
+        const firstScreenshot = payment.paymentScreenshots && payment.paymentScreenshots[0] ? payment.paymentScreenshots[0] : null;
+
+        row.innerHTML = `
+            <td data-label="Payment Id">${payment.paymentId}</td>
+            <td data-label="Payment Amount">${payment.paymentAmount}</td>
+            <td data-label="Bill Start Date">${payment.billStartDate}</td>
+            <td data-label="Bill End Date">${payment.billEndDate}</td>
+            <td data-label="Users Count">${payment.usersCount}</td>
+            <td data-label="Licence Type">${payment.licenceType}</td>
+            <td class="action-column" data-label="Action">
+                ${firstScreenshot ?
+            `<i class="fas fa-folder-open" style="color: blue; cursor: pointer;" onclick="openFileGallery(event, ${index})"></i>` :
+            `<i class="fas fa-ban" style="color: gray; cursor: not-allowed;"></i>`}
+            </td>
+        `;
+
+        // Add click event listener to the row to show popup
+        row.addEventListener("click", function (event) {
+            // Ensure the action column click doesn't interfere with row click
+            if (!event.target.classList.contains("fa-folder-open")) {
+                showRowDetails(index);
+            }
+        });
+
+        logTableBody.appendChild(row);
+    });
+}
+
+// Open file gallery to handle all files (image or not)
+function openFileGallery(event, paymentIndex) {
+    event.stopPropagation();  // Stop triggering row click event
+    currentScreenshots = paymentsData[paymentIndex].paymentScreenshots; // Load screenshots/files for this payment
+
+    if (currentScreenshots && currentScreenshots.length > 0) {
+        currentImageIndex = 0; // Reset the index
+        document.getElementById('imageGallery').style.display = 'flex';
+        loadGalleryFile(currentImageIndex); // Handle both image and non-image files
+    }
+}
+
+function nextImage() {
+    currentImageIndex = (currentImageIndex + 1) % currentScreenshots.length;
+    loadGalleryFile(currentImageIndex);
+}
+
+function prevImage() {
+    currentImageIndex = (currentImageIndex - 1 + currentScreenshots.length) % currentScreenshots.length;
+    loadGalleryFile(currentImageIndex);
+}
+
+function closeImageGallery() {
+    document.getElementById('imageGallery').style.display = 'none';
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function getFileNameFromBase64(base64String) {
+    // You can define the file name based on your application logic
+    const defaultFileName = "downloaded_file.xlsx"; // Change the extension as necessary
+
+    // Check if the Base64 string starts with "data:"
+    if (base64String.startsWith("data:")) {
+        // Extract the part before the comma
+        const parts = base64String.split(",");
+        const metadata = parts[0];
+
+        // Extract MIME type and other information
+        const mimeType = metadata.match(/:(.*?);/);
+        if (mimeType && mimeType[1]) {
+            // Use the MIME type to determine the file extension if needed
+            const fileExtension = mimeType[1].split("/")[1]; // e.g., 'vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            return `${defaultFileName}.${fileExtension}`;
+        }
+    }
+
+    return defaultFileName; // Fallback if no valid data
+}
+
+
+
+
+
+
+
+
+
+  // Close Row Details Popup
+  function closePopup() {
+    document.getElementById('rowDetailsPopup').style.display = 'none';
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // Toggle Sidebar
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
+  }
+
+  // Toggle Profile Dropdown
+  function toggleProfileDropdown() {
+    const dropdown = document.getElementById('dropdown-menu');
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+  }
+
+
+  // Show details in popup when clicking on a row (excluding action column clicks)
+  function showRowDetails(index) {
+    const payment = paymentsData[index];
+    const details = `
+      Payment Id: ${payment.paymentId}
+      Payment Amount: ${payment.paymentAmount}
+      Bill Start Date: ${payment.billStartDate}
+      Bill End Date: ${payment.billEndDate}
+      Users Count: ${payment.usersCount}
+      Licence Type: ${payment.licenceType}
+    `;
+    document.getElementById('logDetails').textContent = details; // Display details in popup
+    document.getElementById('rowDetailsPopup').style.display = 'flex'; // Show the popup
+  }
+
+
+  // Close Popup
+  function closePopup() {
+    document.getElementById('rowDetailsPopup').style.display = 'none';
+  }
+
+  // Close Image Gallery
+  function closeImageGallery() {
+    document.getElementById('imageGallery').style.display = 'none';
+  }
+
+  // Close dropdown when clicking outside
+  window.onclick = function(event) {
+    if (!event.target.matches('.profile img')) {
+      const dropdown = document.getElementById('dropdown-menu');
+      if (dropdown.style.display === 'block') {
+        dropdown.style.display = 'none';
+      }
+    }
+  }
+
+
+ document.addEventListener('keydown', function(event) {
+    if (event.key === "Escape") {
+        closePopup();
+closeImageGallery();
+    }else if (event.key === "ArrowRight"){
+nextImage();
+	}else if(event.key === "ArrowLeft"){
+prevImage();
+	}
+});
+
+
+
+
+function init() {
+    const tenantId = new URLSearchParams(window.location.search).get('tenant');
+    startLoader();
+      dynamicXhrApi('GET',BASE_URL + 'api/payment-history?tenantId=' + tenantId  ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined,afterPaymentPageLoad);
+}
+
+function afterPaymentPageLoad(xhr) {
+    var response = JSON.parse(xhr.responseText);
+    paymentsData = response.payments;
+    populateTable();
+    stopLoader();
+}
+
+
+  // Initialize table on page load
+  document.addEventListener('DOMContentLoaded', init);
+
+
+ // Start Loader
+    function startLoader() {
+        document.getElementById('loader').classList.add('active');
+        document.body.classList.add('disabled-screen');  // Disable entire screen
+    }
+
+    // Stop Loader
+    function stopLoader() {
+        document.getElementById('loader').classList.remove('active');
+        document.body.classList.remove('disabled-screen');  // Re-enable the screen
+    }
+
+   function downloadBase64File(base64Data, fileName, mimeType) {
+    try {
+        // Validate base64Data format (it should contain "base64," indicating a data URL)
+        if (!base64Data.includes('base64,')) {
+            console.error("Invalid base64 data");
+            return;
+        }
+
+        // Strip the data URL prefix (e.g., "data:image/png;base64,")
+        const base64String = base64Data.split(',')[1];
+
+        // Decode base64 data into binary string
+        const byteCharacters = atob(base64String);  // Decode base64
+
+        // Convert binary string to byte array
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+
+        // Create a Blob from the byte array
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: mimeType });
+
+        // Create a download link
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName;
+
+        // Append link to the body and trigger the download
+        document.body.appendChild(link);
+        link.click();
+
+        // Clean up after the download is triggered
+        document.body.removeChild(link);
+    } catch (error) {
+        console.error("Error downloading the file:", error);
+    }
+}
+
+
+
+
+
+</script>
+
+</body>
+</html>

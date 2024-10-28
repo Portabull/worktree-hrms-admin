@@ -1,0 +1,94 @@
+
+    /* Modal container */
+    #uniqueErrorModal9875 {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Modal content */
+    .unique-modal-content9875 {
+      background-color: white;
+      padding: 25px;
+      border-radius: 15px;
+      width: 380px;
+      text-align: center;
+      box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    /* Message container with max height */
+    .message-container9875 {
+      max-height: 60px; /* Truncate if message is too long */
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 10px;
+      transition: max-height 0.5s ease;
+    }
+
+    /* Expandable scrollable content */
+    .message-container-expanded9875 {
+      max-height: 200px; /* Limit height when expanded */
+      overflow-y: auto; /* Scroll when expanded */
+    }
+
+    /* "Read more" link */
+    .read-more9875 {
+      color: #007bff;
+      cursor: pointer;
+      display: none; /* Initially hidden, shown when text is long */
+      margin-top: 10px;
+    }
+
+    /* Shake animation for 2 shakes */
+    .shake9875 {
+      animation: shakeAnimation9875 0.4s ease;
+    }
+
+    /* Button styling */
+    #uniqueOkayBtn9875 {
+      padding: 12px 25px;
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.2s ease;
+    }
+
+    #uniqueOkayBtn9875 {
+      background-color: #28a745;
+    }
+
+     #uniqueOkayBtn9875:hover {
+      background-color: darkred;
+    }
+
+    #uniqueOkayBtn9875:hover {
+      background-color: #218838;
+    }
+
+    /* Shake keyframes for 2-time shake */
+    @keyframes shakeAnimation9875 {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-10px); }
+      40%, 80% { transform: translateX(10px); }
+    }
+
+    /* Enhanced button hover effects */
+    #uniqueOkayBtn9875 {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    #uniqueOkayBtn9875:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
