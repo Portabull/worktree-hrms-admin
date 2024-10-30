@@ -1,5 +1,6 @@
 package com.worktree.hrms.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -8,20 +9,21 @@ import org.springframework.web.servlet.resource.PathResourceResolver;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
 
 import java.io.IOException;
-import java.util.UUID;
 
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
+    @Value("${ui.version}")
+    private String uiVersion;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        String version = UUID.randomUUID().toString();
-        System.out.println("Version : " + version);
+        System.out.println("Version : " + uiVersion);
         registry.addResourceHandler("/**")
                 .addResourceLocations("classpath:/static/")
                 .resourceChain(true)
-                .addResolver(new VersionResourceResolver().addFixedVersionStrategy(version, "/**"))
+                .addResolver(new VersionResourceResolver().addFixedVersionStrategy(uiVersion, "/**"))
                 .addResolver(new PathResourceResolver() {
                     @Override
                     protected Resource getResource(String resourcePath, Resource location) throws IOException {
