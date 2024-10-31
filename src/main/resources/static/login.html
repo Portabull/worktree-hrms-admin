@@ -176,6 +176,20 @@
                 font-size: 14px;
             }
         }
+
+         .forgot-password {
+            display: block;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #5477f5;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .forgot-password:hover {
+            color: #365fcd;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -205,6 +219,7 @@
         <input type="password" id="password" placeholder="Password">
     </div>
     <button class="login-button" onclick="login()">Login</button>
+    <a href="#" onclick="check" class="forgot-password">Forgot Password?</a>
     <div class="error-message" id="error-message"></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/platform/1.3.6/platform.min.js"></script>

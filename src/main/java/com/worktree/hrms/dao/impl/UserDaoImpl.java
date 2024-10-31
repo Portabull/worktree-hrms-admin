@@ -217,11 +217,15 @@ public class UserDaoImpl implements UserDao {
 
 
         Transaction transaction = null;
+        List<UserTokenEntity> userTokens;
         try (Session session = hibernateUtils.getSession()) {
             transaction = session.beginTransaction();
 
             session.createQuery("DELETE FROM UserEntity WHERE userID = :userID AND userName != 'admin'")
                     .setParameter("userID", userId).executeUpdate();
+
+            userTokens = session.createQuery(" FROM UserTokenEntity WHERE userID = :userID")
+                    .setParameter("userID", userId).list();
 
             // Commit transaction
             transaction.commit();
@@ -233,6 +237,12 @@ public class UserDaoImpl implements UserDao {
             response.put("status", "error");
             response.put("message", e.getMessage());
             return response;
+        }
+
+        if (!CollectionUtils.isEmpty(userTokens)) {
+            userTokens.forEach(userToken -> {
+                logout(userToken.getJwt());
+            });
         }
 
         return CommonConstants.SUCCESS_RESPONSE;
