@@ -587,6 +587,27 @@
     text-decoration: none; /* No underline */
 }
 
+
+
+
+  /* Loader Styles */
+        .loader-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader-overlay.active {
+            display: flex;
+        }
+
     </style>
 </head>
 <body oncontextmenu="return false;"> <!-- Disable right click -->
@@ -614,7 +635,7 @@
   </div>
 
   <div class="profile" id="profile-dropdown">
-    <img src="https://via.placeholder.com/50" alt="Profile" onclick="toggleProfileDropdown()">
+    <img src="image/user-profile.jpeg" alt="Profile" onclick="toggleProfileDropdown()">
     <div class="dropdown-menu" id="dropdown-menu">
       <a href="#" onclick="openProfileSettings()"><i class="fas fa-cog"></i>Settings</a>
       <a href="#" onclick="manageUserProfiles(startLoader)"><i class="fas fa-user"></i>Manage Profiles</a>
@@ -907,7 +928,7 @@
 
             // Display profile picture
             const profileBtn = document.querySelector('.profile img');
-            profileBtn.src = `data:image/png;base64,${profilePicBase64}`;
+            profileBtn.src = profilePicBase64;
         } catch (error) {
             console.error('Error fetching tenant data:', error);
         }

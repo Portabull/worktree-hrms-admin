@@ -9,7 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
+import java.io.IOException;
+import java.util.Base64;
 import java.util.Map;
 
 @RestController
@@ -59,9 +60,15 @@ public class UserProfileSettingsController {
     }
 
     @PostMapping("upload/profile")
-    public ResponseEntity<?> uploadProfilePhoto(@RequestPart MultipartFile file) {
-        Map<String, Object> response = new HashMap<>();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<?> uploadProfilePhoto(@RequestPart MultipartFile file) throws IOException {
+
+        byte[] fileContent = file.getBytes();
+
+        String contentType = file.getContentType();
+
+        String base64String = Base64.getEncoder().encodeToString(fileContent);
+
+        return new ResponseEntity<>(userProfileSettingsService.uploadProfiePic("data:" + contentType + ";base64," + base64String), HttpStatus.OK);
     }
 
     @PostMapping("profile/logout")
@@ -73,4 +80,20 @@ public class UserProfileSettingsController {
     public ResponseEntity<?> saveProfile(@RequestBody Map<String, Object> payload) {
         return new ResponseEntity<>(userProfileSettingsService.saveProfile(payload), HttpStatus.OK);
     }
+
+    @GetMapping("users")
+    public ResponseEntity<?> getUsers() {
+        return new ResponseEntity<>(userProfileSettingsService.getUsers(), HttpStatus.OK);
+    }
+
+    @PostMapping("user")
+    public ResponseEntity<?> saveUser(@RequestBody Map<String, Object> payload) {
+        return new ResponseEntity<>(userProfileSettingsService.saveUser(payload), HttpStatus.OK);
+    }
+
+    @PostMapping("delete/user")
+    public ResponseEntity<?> deleteUser(@RequestParam Long userId) {
+        return new ResponseEntity<>(userProfileSettingsService.deleteUser(userId), HttpStatus.OK);
+    }
+
 }

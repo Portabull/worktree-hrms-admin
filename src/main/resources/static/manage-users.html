@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Users</title>
+  <link rel="stylesheet" href="css/common-style.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+
+/* General styles */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+
+/* Loader Styles */
+.loader-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.loader-overlay.active {
+    display: flex;
+}
+
+.spinner {
+    border: 8px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 8px solid #3498db;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #343a40;
+    color: white;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .menu-button {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.navbar .menu-button div {
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    margin: 5px 0;
+    transition: all 0.3s ease;
+}
+
+.navbar .company-name {
+    font-size: 24px;
+    font-weight: 600;
+    margin-left: 15px;
+    color: #ffcc00;
+}
+
+.navbar .profile {
+    position: relative;
+}
+
+.navbar .profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+    padding: 10px;
+    width: 180px;
+}
+
+.dropdown-menu a {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    text-decoration: none;
+    color: black;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+}
+
+.dropdown-menu a i {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.dropdown-menu a:hover {
+    background-color: #f4f4f4;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    left: -300px;
+    top: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #343a40;
+    padding: 20px;
+    color: white;
+    transition: all 0.5s ease;
+    z-index: 1001;
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.sidebar button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.sidebar button:hover {
+    background-color: #0056b3;
+}
+
+.sidebar .close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* Breadcrumbs */
+h5 {
+    margin: 80px 0 20px 20px;
+    font-size: 16px;
+    color: #6c757d;
+}
+
+h5 .clickableRedirects {
+    color: #007bff;
+    cursor: pointer;
+    transition: color 0.3s, font-weight 0.3s;
+}
+
+h5 .clickableRedirects:hover {
+    color: #0056b3;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+h5 .active-page-redirect {
+    color: #6c757d;
+    font-weight: bold;
+}
+
+/* Container styles */
+.container {
+    max-width: 1200px;
+    margin: 100px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.filter {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.filter input {
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    width: 300px;
+    font-size: 16px;
+    transition: box-shadow 0.3s ease;
+}
+
+.filter input:focus {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    outline: none;
+}
+
+.filter .add-tenant-btn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.filter .add-tenant-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Table Styles */
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table thead {
+    background-color: #007bff;
+    color: white;
+}
+
+table th, table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    font-size: 16px;
+}
+
+table th .sort-icon {
+    margin-left: 5px;
+    color: #f4f4f4;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Hand cursor on table rows */
+table tr {
+    cursor: pointer;
+}
+
+/* Action Button */
+table td button {
+    padding: 8px 15px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+table td button:hover {
+    background-color: #d32f2f;
+}
+
+/* Popup Form */
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup.active {
+    display: flex;
+}
+
+.popup-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.popup-content h3 {
+    margin-top: 0;
+    text-align: center;
+}
+
+.popup-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.popup-content label {
+    font-weight: bold;
+}
+
+.popup-content input[type="text"],
+.popup-content input[type="email"],
+.popup-content input[type="tel"],
+.popup-content input[type="password"] {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.popup-content input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.popup-content button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.popup-content button:hover {
+    background-color: #0056b3;
+}
+
+.popup-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #333;
+    font-size: 25px;
+    cursor: pointer;
+    background-color: white;
+    padding: 5px 10px;
+    border-radius: 50%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.popup-close:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Toggle switch styling */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #007bff;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Responsive Table for Mobile Devices */
+@media (max-width: 600px) {
+    .table-container {
+        overflow: hidden;
+    }
+
+    table, thead, tbody, th, td, tr {
+        display: block;
+        width: 100%;
+    }
+
+    table thead {
+        display: none; /* Hide the table header on small screens */
+    }
+
+    table tr {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        background-color: #fff;
+    }
+
+    table td {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        font-size: 14px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    table td:last-child {
+        border-bottom: none;
+    }
+
+    /* Label each cell with the column name */
+    table td:before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #007bff;
+    }
+}
+.loader-overlay {
+    visibility: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.loader-overlay.active {
+    visibility: visible;
+}
+
+
+
+
+
+
+/* Styling for delete button */
+.delete-button {
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+    background-color: #d32f2f;
+}
+
+/* Styling for disabled delete button */
+.delete-button[disabled] {
+    background-color: #ddd;
+    color: #666;
+    cursor: not-allowed;
+    position: relative;
+}
+
+/* Tooltip styling using the data-tooltip attribute */
+.delete-button[disabled][data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%; /* Position tooltip above the button */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: black;
+    color: white;
+    padding: 5px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 1;
+    z-index: 1;
+}
+
+
+
+  </style>
+</head>
+<body oncontextmenu="return false;">
+
+
+<!-- Error Popup Modal -->
+<div id="uniqueErrorModal9875">
+  <div class="unique-modal-content9875" id="modalContent9875">
+    <h2 id="errorHeader9875">Error Occurred</h2>
+    <br>
+    <p id="errorFooter9875" class="message-container9875">An unexpected error has occurred. Please try again later.</p>
+    <span class="read-more9875" id="readMore9875">Read more</span>
+    <br>
+    <button id="uniqueOkayBtn9875">Okay</button>
+  </div>
+</div>
+
+<!-- Loader -->
+<div class="loader-overlay" id="loader">
+  <div class="spinner"></div>
+</div>
+
+<!-- Navbar -->
+<div class="navbar">
+  <div class="menu-button" onclick="toggleSidebar()">
+    <div></div>
+    <span class="company-name">Worktree</span>
+  </div>
+  <div class="profile">
+    <img src="image/user-profile.jpeg" alt="Profile" onclick="toggleProfileDropdown()">
+    <div class="dropdown-menu" id="profile-dropdown">
+      <a href="#"  onclick="openProfileSettings()"><i class="fas fa-cog"></i> Settings</a>
+      <a href="#"  onclick="manageUserProfiles(startLoader)"><i class="fas fa-user"></i> Manage Profiles</a>
+      <a href="#"  onclick="logout(startLoader,redirectafterlogout)"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+  </div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <button class="close-btn" onclick="toggleSidebar()">× Close</button>
+  <button>Home</button>
+  <button>Reports</button>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+  <h5><span class="clickableRedirects" onclick="navigateToHome()">Home</span> / <span class="clickableRedirects" onclick="openProfileSettings()">Settings</span> / <span class="active-page-redirect">Users</span></h5>
+  <div class="filter">
+    <input type="text" id="searchInput" placeholder="Filter by User Name" onkeyup="filterUsers()">
+    <button class="add-tenant-btn" onclick="openUserForm()">Add User</button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    <table id="userTable">
+      <thead>
+      <tr>
+        <th>SNO</th>
+        <th>User Name</th>
+        <th>Display Name</th>
+        <th>Email</th>
+        <th>Mobile Number</th>
+        <th>Is Admin</th>
+        <th>Action</th>
+      </tr>
+      </thead>
+      <tbody id="userTableBody">
+      <!-- Dynamic content will populate here -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add User Popup -->
+<div class="popup" id="userFormPopup">
+  <div class="popup-close" onclick="closePopup()">×</div>
+  <div class="popup-content">
+    <h3>Add User</h3>
+    <form id="userForm">
+      <label for="userName">User Name:</label>
+      <input type="text" id="userName" name="userName" required>
+      <label for="displayName">Display Name:</label>
+      <input type="text" id="displayName" name="displayName" required>
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+      <label for="mobile">Mobile Number:</label>
+      <input type="tel" id="mobile" name="mobile" required>
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
+
+
+      <label for="isAdmin">Is Admin:</label>
+      <label class="toggle-switch">
+        <input type="checkbox" id="isAdmin" name="isAdmin">
+        <span class="slider"></span>
+      </label>
+
+
+      <button type="button" onclick="createNewUser()">Save</button>
+    </form>
+  </div>
+</div>
+
+<script src="js/worktree.js"></script>
+<script>
+var tempUserId;
+var tempDeleteUserId;
+    var users = [
+        { sNo: 1, userName: 'jdoe', displayName: 'John Doe', email: 'jdoe@example.com', mobile: '1234567890', isAdmin: true,userId:1 },
+        { sNo: 2, userName: 'asmith', displayName: 'Alice Smith', email: 'asmith@example.com', mobile: '0987654321', isAdmin: false ,userId:2}
+    ];
+
+function populateTable() {
+    const tableBody = document.getElementById('userTableBody');
+    tableBody.innerHTML = '';
+    const currentUserName = window.localStorage.getItem(userNameLS); // Assuming 'userNameLS' is the key for the current user's username
+
+    users.forEach(user => {
+        const isDeleteDisabled = user.userName === currentUserName;
+
+        // Create delete button HTML with tooltip and disabled icon if needed
+        const deleteButtonHTML = `
+            <button class="delete-button" ${isDeleteDisabled ? 'disabled' : ''}
+                ${isDeleteDisabled ? 'data-tooltip="This is your account"' : ''}
+                onclick="${!isDeleteDisabled ? `deleteUser(${user.userId})` : ''}; event.stopPropagation();">
+                ${isDeleteDisabled ? '<i class="fas fa-ban"></i>' : ''} Delete
+            </button>`;
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td data-label="SNO">${user.sNo}</td>
+            <td data-label="User Name">${user.userName}</td>
+            <td data-label="Display Name">${user.displayName}</td>
+            <td data-label="Email">${user.email}</td>
+            <td data-label="Mobile Number">${user.mobile}</td>
+            <td data-label="Is Admin">${user.isAdmin ? 'Yes' : 'No'}</td>
+            <td data-label="Action">${deleteButtonHTML}</td>
+        `;
+
+        row.onclick = () => openUserForm(user); // Set click event for row to open popup
+        tableBody.appendChild(row);
+    });
+}
+
+
+
+
+
+
+   function openUserForm(user = {}) {
+
+   tempUserId = user.userId;
+
+    document.getElementById('userFormPopup').classList.add('active');
+
+    // Populate form fields with user data or set to empty if no user data provided
+    document.getElementById('userName').value = user.userName || '';
+    document.getElementById('displayName').value = user.displayName || '';
+    document.getElementById('email').value = user.email || '';
+    document.getElementById('mobile').value = user.mobile || '';
+       document.getElementById('password').value = '';
+    document.getElementById('isAdmin').checked = user.isAdmin || false;
+}
+
+
+    function closePopup() {
+    tempUserId = null;
+        document.getElementById('userFormPopup').classList.remove('active');
+    }
+
+    function createNewUser() {
+        const newUser = {
+            userId: tempUserId,
+            userName: document.getElementById('userName').value,
+            displayName: document.getElementById('displayName').value,
+            email: document.getElementById('email').value,
+            mobile: document.getElementById('mobile').value,
+            isAdmin: document.getElementById('isAdmin').checked,
+            password: document.getElementById('password').value
+        };
+
+
+          startLoader();
+          dynamicXhrApi('POST',BASE_URL + 'api/user',{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },newUser, afterUserSave);
+
+    }
+
+    function afterUserSave(xhr){
+      if(xhr.status==403){
+      gotohome();
+      }
+
+      if(xhr.status==400){
+      var response = JSON.parse(xhr.responseText);
+      closePopup();
+      stopLoader();
+      showErrorMessage("Bad Request",response.message,true);
+      return;
+      }
+
+       window.location.href = 'manage-users';
+    }
+
+    function deleteUser(userId) {
+
+        startLoader();
+        tempDeleteUserId = userId;
+        dynamicXhrApi('POST',BASE_URL + 'api/delete/user?userId=' + userId,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined, afterDeleteRecord);
+
+    }
+
+    function afterDeleteRecord(xhr){
+    stopLoader();
+    if(xhr.status==403){
+      gotohome();
+      }
+
+      if(xhr.status==400){
+      var response = JSON.parse(xhr.responseText);
+      stopLoader();
+      showErrorMessage("Bad Request",response.message,true);
+      return;
+      }
+
+
+        const index = users.findIndex(user => user.userId === tempDeleteUserId);
+        if (index > -1) {
+            users.splice(index, 1);
+        }
+        populateTable();
+    }
+
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+    }
+
+    function toggleProfileDropdown() {
+        const dropdown = document.getElementById('profile-dropdown');
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+
+
+    function init(){
+    loadProfilePhoto();
+    startLoader();
+        dynamicXhrApi('GET',BASE_URL + 'api/users',{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined, afterPageLoad);
+    }
+
+    function afterPageLoad(xhr) {
+
+    if(xhr.status==403){
+        gotohome();
+    }
+
+    var response = JSON.parse(xhr.responseText);
+    users = response;
+    populateTable();
+     stopLoader();
+    }
+
+function startLoader() {
+    document.getElementById('loader').classList.add('active');
+    document.body.style.pointerEvents = 'none';
+}
+
+function stopLoader() {
+    document.getElementById('loader').classList.remove('active');
+    document.body.style.pointerEvents = 'auto';
+}
+
+
+
+    document.addEventListener('DOMContentLoaded', init);
+
+
+
+
+    function filterUsers() {
+        const filterValue = document.getElementById('searchInput').value.toLowerCase();
+        const filteredUsers = users.filter(user => user.userName.toLowerCase().includes(filterValue));
+        const tableBody = document.getElementById('userTableBody');
+        tableBody.innerHTML = '';
+        filteredUsers.forEach(user => {
+
+            var isDeleteDisabled = user.userName == window.localStorage.getItem(userNameLS) ? "disabled" : "";
+
+           const row = document.createElement('tr');
+        row.innerHTML = `
+            <td data-label="SNO">${user.sNo}</td>
+            <td data-label="User Name">${user.userName}</td>
+            <td data-label="Display Name">${user.displayName}</td>
+            <td data-label="Email">${user.email}</td>
+            <td data-label="Mobile Number">${user.mobile}</td>
+            <td data-label="Is Admin">${user.isAdmin ? 'Yes' : 'No'}</td>
+            <td data-label="Action"><button ${isDeleteDisabled} onclick="deleteUser(${user.userId}); event.stopPropagation();">Delete</button></td>
+        `;
+        row.onclick = () => openUserForm(user); // Set click event for row to open popup
+        tableBody.appendChild(row);
+
+        });
+    }
+
+
+
+ window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the cache
+        if (event.persisted) {
+            stopLoader();
+        }
+    });
+</script>
+</body>
+</html>

@@ -486,7 +486,7 @@
     </div>
 
     <div class="profile" id="profile-dropdown">
-        <img src="https://via.placeholder.com/50" alt="Profile" onclick="toggleProfileDropdown()">
+        <img src="image/user-profile.jpeg" alt="Profile" onclick="toggleProfileDropdown()">
         <div class="dropdown-menu" id="dropdown-menu">
             <a href="#" onclick="openProfileSettings()"><i class="fas fa-cog"></i>Settings</a>
             <a href="#" onclick="manageUserProfiles(startLoader)"><i class="fas fa-user"></i>Manage Profiles</a>
@@ -730,7 +730,7 @@ function init(){
 getCurrentToken();
    const profilePicBase64 = getCurrentProfileImageWithoutRedirect();
       const profileBtn = document.querySelector('.profile img');
-            profileBtn.src = `data:image/png;base64,${profilePicBase64}`;
+            profileBtn.src = profilePicBase64;
 }
 
  window.addEventListener('pageshow', function(event) {

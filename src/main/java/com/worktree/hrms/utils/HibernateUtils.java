@@ -6,6 +6,8 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
+
 @Component
 public class HibernateUtils {
 
@@ -33,6 +35,12 @@ public class HibernateUtils {
                 }
                 throw e;
             }
+        }
+    }
+
+    public <T> T findEntity(Class<?> entityClass, Serializable primaryId) {
+        try (Session session = this.getSession()) {
+            return (T) session.get(entityClass, primaryId);
         }
     }
 

@@ -4,15 +4,15 @@ const BASE_URL = new URL(window.location.href).protocol + "//" + new URL(window.
 const userNameLS = "userName";
 const userNameTINFO = "userNameTINFO";
 
-function dynamicXhrApi(method, url, headers, requestBody, callback) {
+function dynamicXhrApi(method, url, headers, requestBody, callback, isFileUpload = false) {
     // Create a new XMLHttpRequest object
     const xhr = new XMLHttpRequest();
+   xhr.timeout = 45000;
 
-xhr.timeout = 5000;
     // Open the request with the provided method and URL
     xhr.open(method, url, true);
 
-    // Set the provided headers
+    // Set the provided headers, unless it's a file upload (headers are handled differently for FormData)
     if (headers) {
         Object.keys(headers).forEach(key => {
             xhr.setRequestHeader(key, headers[key]);
@@ -28,7 +28,7 @@ xhr.timeout = 5000;
                 return;
             }
 
-            if(xhr.status == 401 && !url.endsWith("/api/login")){
+            if(xhr.status == 401 && !url.endsWith("/api/login")) {
                removeCurrentUserCache();
                gotohome();
             }
@@ -45,14 +45,19 @@ xhr.timeout = 5000;
 
     // Handle network errors
     xhr.onerror = function () {
-                stopLoader();
-                showErrorMessage('Unreachable','Please check your internet connection and try again',true);
+        stopLoader();
+        showErrorMessage('Unreachable', 'Please check your internet connection and try again', true);
     };
 
-    // Send the request with the request body (if applicable)
-    if (requestBody) {
+    // Prepare and send the request
+    if (isFileUpload && requestBody instanceof FormData) {
+        // Send FormData directly for file uploads
+        xhr.send(requestBody);
+    } else if (requestBody) {
+        // For JSON requests, send as JSON string
         xhr.send(JSON.stringify(requestBody));
     } else {
+        // Send request without body if no data is provided
         xhr.send();
     }
 }
@@ -381,3 +386,11 @@ function openProfileSettings(){
    startLoader();
  window.location.href = "settings";
 }
+
+
+function loadProfilePhoto(){
+
+ const profilePicBase64 = getCurrentProfileImageWithoutRedirect();
+      const profileBtn = document.querySelector('.profile img');
+            profileBtn.src = profilePicBase64;
+            }

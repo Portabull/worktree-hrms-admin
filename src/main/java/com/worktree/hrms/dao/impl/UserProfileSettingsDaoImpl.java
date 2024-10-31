@@ -8,6 +8,7 @@ import com.worktree.hrms.entity.UserTokenEntity;
 import com.worktree.hrms.utils.HibernateUtils;
 import com.worktree.hrms.utils.RequestHelper;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
@@ -114,4 +115,40 @@ public class UserProfileSettingsDaoImpl implements UserProfileSettingsDao {
 
         return response;
     }
+
+
+    @Override
+    public Map<String, Object> uploadProfiePic(String profilePic) {
+        Map<String, Object> response = new HashMap<>();
+        String currentToken = RequestHelper.getAuthorizationToken();
+
+        Transaction transaction = null;
+        try (Session session = hibernateUtils.getSession()) {
+            // Begin transaction
+            transaction = session.beginTransaction();
+
+            // Update query
+            int updatedRows = session.createQuery(
+                            "UPDATE UserEntity SET profilePic = :profilePic WHERE userID = (SELECT userID FROM UserTokenEntity WHERE jwt = :token)")
+                    .setParameter("token", currentToken)
+                    .setParameter("profilePic", profilePic)
+                    .executeUpdate();
+
+            // Commit transaction
+            transaction.commit();
+
+            // Return a response
+            response.put("status", "success");
+            response.put("updatedRows", updatedRows);
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback(); // Roll back on error
+            }
+            response.put("status", "error");
+            response.put("message", e.getMessage());
+            e.printStackTrace();
+        }
+        return response;
+    }
+
 }

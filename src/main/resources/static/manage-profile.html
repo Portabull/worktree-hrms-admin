@@ -267,7 +267,7 @@
     <button class="close-btn" id="close-btn">X</button>
     <div class="profile-header">
         <div class="profile-info">
-            <img id="profile-img" src="https://via.placeholder.com/60" alt="Profile">
+            <img id="profile-img" src="image/user-profile.jpeg" alt="Profile">
             <h2 id="profile-name">Hi, User!</h2>
         </div>
     </div>
@@ -297,7 +297,7 @@ var userNameTINFOJson = window.localStorage.getItem(userNameTINFO);
     var profiles = storedUsers.map(user => ({
         name: user.userDisplayName,
         email: user.userName,
-        avatar: `data:image/png;base64,${user.userProfileImage}`
+        avatar: user.userProfileImage
     }));
 
     // Function to dynamically render profiles
@@ -391,7 +391,7 @@ renderCurrentUser();
     function renderCurrentUser(){
       var profileImageUrl = getCurrentProfileImageWithoutRedirect();
 
-        profileImageUrl = `data:image/png;base64,${profileImageUrl}`; // Use the correct MIME type
+        profileImageUrl = profileImageUrl; // Use the correct MIME type
 
 
     const profileName = getCurrentDisplayNameImageWithoutRedirect();

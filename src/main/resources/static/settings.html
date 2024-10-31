@@ -637,7 +637,7 @@
     </div>
 
     <div class="profile" id="profile-dropdown">
-        <img src="https://via.placeholder.com/50" alt="Profile" onclick="toggleProfileDropdown()">
+        <img src="image/user-profile.jpeg" alt="Profile" onclick="toggleProfileDropdown()">
         <div class="dropdown-menu" id="dropdown-menu">
             <a href="#" onclick="openProfileSettings()"><i class="fas fa-cog"></i>Settings</a>
             <a href="#" onclick="manageUserProfiles(startLoader)"><i class="fas fa-user"></i>Manage Profiles</a>
@@ -657,7 +657,7 @@
 <!-- Profile Page Content -->
 <div class="profile-container">
     <div class="profile-header">
-        <img id="profile-img" src="https://via.placeholder.com/100" alt="Profile Image" onclick="openModal()">
+        <img id="profile-img" src="image/user-profile.jpeg" alt="Profile Image" onclick="openModal()">
         <div>
             <p><strong>Name:</strong> <span id="profile-name"></span></p>
             <p><strong>Mobile:</strong> <span id="profile-mobile"></span></p>
@@ -715,7 +715,7 @@
 
     <!-- Accounts Tab Content -->
     <div id="accounts" class="tab-content">
-        <button class="edit-btn">Add/View Accounts</button>
+        <button class="edit-btn"onclick="redirectToAddViewUsers()">Add/View Accounts</button>
     </div>
 </div>
 
@@ -871,16 +871,40 @@ function closeModal() {
 function uploadImage() {
     const fileInput = document.getElementById('file-input');
     if (fileInput.files.length > 0) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('profile-img').src = e.target.result;
-        };
-        reader.readAsDataURL(fileInput.files[0]);
+        // Create FormData and append the file
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+
+        // Call dynamicXhrApi to upload the file
+        dynamicXhrApi(
+            "POST", // HTTP method
+            BASE_URL + 'api/upload/profile', // Replace with your upload endpoint
+            { 'Authorization':getCurrentToken() }, // Headers, if needed
+            formData, // FormData with the file
+            function(response) {
+                if (response.status >= 200 && response.status < 300) {
+                    // On successful upload, display the image
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('profile-img').src = e.target.result;
+                    };
+                    reader.readAsDataURL(fileInput.files[0]);
+
+                    console.log("File uploaded successfully:", response.responseText);
+                } else {
+                    console.error("File upload failed:", response.responseText);
+                    alert("Failed to upload the image. Please try again.");
+                }
+            },
+            true // Indicate that this is a file upload
+        );
+
         closeModal();
     } else {
         alert("Please select a file to upload.");
     }
 }
+
 
 // Manage viewAccounts flag to show/hide Accounts tab
 function manageAccountsTab() {
@@ -947,8 +971,8 @@ loadSecurityData();
 
 const profilePicBase64 = getCurrentProfileImageWithoutRedirect();
       const profileBtn = document.querySelector('.profile img');
-            profileBtn.src = `data:image/png;base64,${profilePicBase64}`;
-             document.getElementById('profile-img').src =`data:image/png;base64,${profilePicBase64}`;
+            profileBtn.src = profilePicBase64;
+             document.getElementById('profile-img').src =profilePicBase64;
             startLoader();
 dynamicXhrApi('GET',BASE_URL + 'api/settings',{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined, init);
 
@@ -971,6 +995,11 @@ function stopLoader() {
             stopLoader();
         }
     });
+
+    function redirectToAddViewUsers(){
+            window.location.href = "manage-users";
+    }
+
 </script>
 
 

@@ -23,7 +23,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/**")
                 .addResourceLocations("classpath:/static/")
                 .resourceChain(true)
-                .addResolver(new VersionResourceResolver().addFixedVersionStrategy(uiVersion, "/**"))
+//                .addResolver(new VersionResourceResolver().addFixedVersionStrategy(uiVersion, "/**"))
                 .addResolver(new PathResourceResolver() {
                     @Override
                     protected Resource getResource(String resourcePath, Resource location) throws IOException {
