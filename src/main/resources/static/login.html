@@ -207,8 +207,11 @@
     <button class="login-button" onclick="login()">Login</button>
     <div class="error-message" id="error-message"></div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/platform/1.3.6/platform.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 <script src="js/worktree.js"></script>
 <script>
+var locationDetails;
     document.addEventListener("DOMContentLoaded", function () {
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
@@ -250,7 +253,10 @@
         if (username && password) {
             errorMessage.style.display = 'none';
             startLoader();
-            dynamicXhrApi('POST', BASE_URL + 'api/login', { 'Content-Type': 'application/json' }, { "userName": username, "password": password }, afterLogin);
+            if(locationDetails==undefined){
+                showErrorMessage("Location ERROR","Hey, we didn't receive your location yet please wait few seconds and try again. Please be make sure location permission should allow from your side",true);
+            }
+            dynamicXhrApi('POST', BASE_URL + 'api/login', { 'Content-Type': 'application/json','latlong': locationDetails,'dd':getDeviceDetails()}, { "userName": username, "password": _0x1a2b3c(password, 'NWIYRFIYF%@&#$)ABCDEFGHIJKLMNOP') }, afterLogin);
         } else {
             errorMessage.textContent = 'Please enter both username and password.';
             errorMessage.style.display = 'block';
@@ -310,6 +316,60 @@ if (userNameTINFOJson !== null) {
             stopLoader();
         }
     });
+
+
+
+    getLocation();
+
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition, showError, {
+      enableHighAccuracy: false,  // Set to true for precise location
+      timeout: 15000,  // Timeout after 5 seconds
+      maximumAge: 0   // No cached position
+    });
+  } else {
+    console.log("Geolocation is not supported by this browser.");
+  }
+}
+
+function showPosition(position) {
+  const latitude = position.coords.latitude;
+  const longitude = position.coords.longitude;
+   locationDetails = latitude + ":" + longitude;
+   }
+
+function showError(error) {
+  switch(error.code) {
+    case error.PERMISSION_DENIED:
+      showErrorMessage("Location Access Disabled","Please allow location details by enabling them in Browser. You can view site information and enable location access, then refresh the page.",true);
+      break;
+    case error.POSITION_UNAVAILABLE:
+     showErrorMessage("Location Access","Location information is unavailable.",true);
+      break;
+    case error.TIMEOUT:
+     showErrorMessage("Location Access","The request to get your location timed out.Please try after sometime",true);
+      break;
+    case error.UNKNOWN_ERROR:
+     showErrorMessage("Location Access","Internal Errors please check your GPS signals and try again",true);
+      break;
+  }
+}
+
+
+function getDeviceDetails() {
+    const deviceDetails = {
+        os: platform.os.toString(), // Operating System
+        browser: platform.name + " " + platform.version, // Browser and version
+        manufacturer: platform.manufacturer || 'Unknown', // Manufacturer (if available)
+        product: platform.product || 'Unknown' // Device product (if available)
+    };
+     // Convert the device details to a JSON string
+    return JSON.stringify(deviceDetails);
+}
+
+console.log(getDeviceDetails());
+
 </script>
 
 </body>

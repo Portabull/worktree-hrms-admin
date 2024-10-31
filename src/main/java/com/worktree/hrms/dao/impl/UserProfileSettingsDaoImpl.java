@@ -1,5 +1,6 @@
 package com.worktree.hrms.dao.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worktree.hrms.constants.CommonConstants;
 import com.worktree.hrms.dao.UserDao;
 import com.worktree.hrms.dao.UserProfileSettingsDao;
@@ -12,11 +13,9 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class UserProfileSettingsDaoImpl implements UserProfileSettingsDao {
@@ -26,6 +25,9 @@ public class UserProfileSettingsDaoImpl implements UserProfileSettingsDao {
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Override
     public Map<String, Object> settings() {
@@ -56,9 +58,21 @@ public class UserProfileSettingsDaoImpl implements UserProfileSettingsDao {
         if (!CollectionUtils.isEmpty(userTokens)) {
             userTokens.forEach(userToken -> {
                 Map<String, Object> settings = new HashMap<>();
-                settings.put("loggedInTime", "");
-                settings.put("loggedInDevice", "");
-                settings.put("loginLocation", "https://google.com");
+                settings.put("loggedInTime", userToken.getDate());
+                Map<String, String> deviceDetails = getDeviceDetails(userToken.getDeviceDetails());
+
+                settings.put("loggedInDevice", CollectionUtils.isEmpty(deviceDetails) ? "" :
+                                 " [OS : [" + deviceDetails.get("os") +
+                                "] Browser : [" + deviceDetails.get("browser") +
+                                "] Manufacturer : [" + deviceDetails.get("manufacturer") +
+                                "] Product : [" + deviceDetails.get("product") + "]]");
+                String latitude = "";
+                String longitude = "";
+                if (!StringUtils.isEmpty(userToken.getLocation()) && userToken.getLocation().contains(":")) {
+                    latitude = userToken.getLocation().split(":")[0];
+                    longitude = userToken.getLocation().split(":")[1];
+                }
+                settings.put("loginLocation", "https://www.google.com/maps/search/" + latitude + "," + longitude);
                 settings.put("tokenId", userToken.getTokenId());
                 settings.put("currentUser", userToken.getJwt().equalsIgnoreCase(currentToken));
                 userSettings.add(settings);
@@ -67,6 +81,14 @@ public class UserProfileSettingsDaoImpl implements UserProfileSettingsDao {
 
         response.put("security", userSettings);
         return response;
+    }
+
+    private Map<String, String> getDeviceDetails(String deviceDetails) {
+        try {
+            return objectMapper.readValue(deviceDetails, Map.class);
+        } catch (Exception e) {
+            return Collections.emptyMap();
+        }
     }
 
     @Override
@@ -107,7 +129,7 @@ public class UserProfileSettingsDaoImpl implements UserProfileSettingsDao {
             if (userEntity != null) {
                 userTokenEntity = (UserTokenEntity) session.createQuery("FROM UserTokenEntity WHERE tokenId = :tokenId").
                         setParameter("tokenId", tokenId).uniqueResult();
-                if (userTokenEntity != null && userTokenEntity.getUserID() == userEntity.getUserID()) {
+                if (userTokenEntity != null && userTokenEntity.getUserID().equals(userEntity.getUserID())) {
                     return userDao.logout(userTokenEntity.getJwt());
                 }
             }

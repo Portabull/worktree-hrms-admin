@@ -394,3 +394,22 @@ function loadProfilePhoto(){
       const profileBtn = document.querySelector('.profile img');
             profileBtn.src = profilePicBase64;
             }
+
+function _0x1a2b3c(_0x4d5e6f, _0x7f8e9d) {
+    // Ensure the key length is exactly 32 bytes for AES-256
+    if (_0x7f8e9d.length < 32) {
+        _0x7f8e9d = _0x7f8e9d.padEnd(32, '0'); // Pad with '0' if less than 32 chars
+    } else if (_0x7f8e9d.length > 32) {
+        _0x7f8e9d = _0x7f8e9d.slice(0, 32); // Truncate if more than 32 chars
+    }
+
+    const _0x9b8c7a = CryptoJS.enc.Utf8.parse(_0x7f8e9d);
+    const _0x8d7a6e = CryptoJS.lib.WordArray.random(16);
+    const _0x6c5d4b = CryptoJS.AES.encrypt(_0x4d5e6f, _0x9b8c7a, {
+        iv: _0x8d7a6e,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+    });
+
+    return _0x8d7a6e.toString(CryptoJS.enc.Hex) + "::" + _0x6c5d4b.ciphertext.toString(CryptoJS.enc.Hex);
+}

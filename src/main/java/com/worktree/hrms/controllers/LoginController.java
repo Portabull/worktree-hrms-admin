@@ -1,9 +1,12 @@
 package com.worktree.hrms.controllers;
 
+import com.worktree.hrms.exceptions.BadRequestException;
 import com.worktree.hrms.service.LoginService;
+import com.worktree.hrms.utils.RequestHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +24,9 @@ public class LoginController {
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> payload) {
 
+        if (StringUtils.isEmpty(RequestHelper.getHeader("latlong")) || !RequestHelper.getHeader("latlong").contains(":")) {
+            throw new BadRequestException("Invalid Request");
+        }
 
         Map<String, Object> response = loginService.login(payload);
 

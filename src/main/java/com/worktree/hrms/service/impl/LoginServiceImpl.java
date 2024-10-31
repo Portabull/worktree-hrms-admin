@@ -2,6 +2,7 @@ package com.worktree.hrms.service.impl;
 
 import com.worktree.hrms.dao.UserDao;
 import com.worktree.hrms.service.LoginService;
+import com.worktree.hrms.utils.EncyptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +17,16 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private EncyptionUtils encyptionUtils;
+
     @Override
     public Map<String, Object> login(Map<String, String> payload) {
         Map<String, Object> response = new HashMap<>();
         String userName = payload.get("userName");
         String password = payload.get("password");
+        String pass[] = password.split("::");
+        password = encyptionUtils.decrypt(pass[1], pass[0], "NWIYRFIYF%@&#$)ABCDEFGHIJKLMNOP");
         Long userId = userDao.existsUserNamePassword(userName, password);
         if (userId != null) {
             response.put("status", "SUCCESS");

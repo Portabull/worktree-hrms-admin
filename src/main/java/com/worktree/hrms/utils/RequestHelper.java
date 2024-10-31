@@ -22,4 +22,8 @@ public class RequestHelper {
         }
         return authorization;
     }
+
+    public static String getHeader(String headerKey) {
+        return RequestHelper.getCurrentRequest().getHeader(headerKey);
+    }
 }

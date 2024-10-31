@@ -6,6 +6,7 @@ import com.worktree.hrms.entity.UserEntity;
 import com.worktree.hrms.entity.UserTokenEntity;
 import com.worktree.hrms.exceptions.BadRequestException;
 import com.worktree.hrms.exceptions.ForbiddenException;
+import com.worktree.hrms.utils.DateUtils;
 import com.worktree.hrms.utils.HibernateUtils;
 import com.worktree.hrms.utils.RequestHelper;
 import com.worktree.hrms.utils.TokenFileUtils;
@@ -32,6 +33,9 @@ public class UserDaoImpl implements UserDao {
     @Autowired
     private TokenFileUtils tokenFileUtils;
 
+    @Autowired
+    private DateUtils dateUtils;
+
     @Override
     public Long existsUserNamePassword(String userName, String password) {
         try (Session session = hibernateUtils.getSession()) {
@@ -45,6 +49,9 @@ public class UserDaoImpl implements UserDao {
         UserTokenEntity entity = new UserTokenEntity();
         entity.setJwt(jwt);
         entity.setUserID(userId);
+        entity.setDate(dateUtils.getCurrentDate());
+        entity.setLocation(RequestHelper.getHeader("latlong"));
+        entity.setDeviceDetails(RequestHelper.getHeader("dd"));
         hibernateUtils.saveOrUpdateEntity(entity);
         tokenFileUtils.addTokenToFileCache(jwt);
     }
@@ -207,8 +214,6 @@ public class UserDaoImpl implements UserDao {
         if ("admin".equalsIgnoreCase(userEntity.getUserName())) {
             throw new BadRequestException("You cannot delete admin user");
         }
-
-
 
 
         Transaction transaction = null;
