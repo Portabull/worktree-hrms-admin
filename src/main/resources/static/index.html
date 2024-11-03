@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worktree Admin Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+       /* Global Reset and Fonts */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+body {
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+    background-color: #f9f9f9;
+    overflow-x: hidden;
+}
+
+/* Loader Styles */
+#loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    flex-direction: column;
+    overflow: hidden;
+}
+.loader-ball {
+    width: 50px;
+    height: 50px;
+    background-color: #4a90e2;
+    border-radius: 50%;
+    animation: loaderBounce 0.6s ease infinite alternate;
+}
+.loader-shadow {
+    width: 50px;
+    height: 10px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    position: relative;
+    top: -10px;
+    animation: loaderShadowScale 0.6s ease infinite alternate;
+}
+.loader-text {
+    margin-top: 20px;
+    font-size: 1.5em;
+    color: #4a90e2;
+    font-weight: 500;
+    animation: loaderFadeText 1s ease-in-out infinite;
+}
+
+/* Keyframes for Loader Animations */
+@keyframes loaderBounce { 0% { transform: translateY(0); } 100% { transform: translateY(-30px); }}
+@keyframes loaderShadowScale { 0% { transform: scale(1); opacity: 0.7; } 100% { transform: scale(0.5); opacity: 0.4; }}
+@keyframes loaderFadeText { 0% { opacity: 0.5; } 100% { opacity: 1; }}
+/* Hide loader by default */
+#loader.hidden { display: none; }
+
+/* Container Setup */
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 20px;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    z-index: 1000;
+    animation: fadeInDown 1s ease forwards;
+}
+
+/* Company Name Glow */
+.navbar .company-name {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #4a90e2;
+    animation: textGlow 2s ease infinite alternate;
+}
+
+.navbar nav a {
+    color: #333;
+    text-decoration: none;
+    margin: 0 15px;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+.navbar nav a:hover {
+    color: #4a90e2;
+    transform: scale(1.1);
+    animation: rubberBand 0.6s ease;
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(45deg, #4a90e2, #73c8f4);
+    background-size: 200% 200%;
+    color: #fff;
+    padding: 100px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    animation: gradientShift 8s ease infinite alternate;
+}
+.hero h1 {
+    font-size: 3em;
+    margin-bottom: 10px;
+    font-weight: 700;
+    animation: bounceIn 2s ease forwards;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+.hero p {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+    max-width: 600px;
+    margin: 0 auto;
+    animation: fadeInUp 2.2s ease forwards;
+}
+.hero .cta-btn {
+    display: inline-block;
+    padding: 15px 35px;
+    font-size: 1em;
+    color: #fff;
+    background: linear-gradient(to right, #333, #555);
+    border-radius: 30px;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    font-weight: 500;
+    animation: pulse 1.5s ease infinite alternate;
+}
+.hero .cta-btn:hover {
+    background: linear-gradient(to right, #555, #333);
+    transform: scale(1.1);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+}
+.scroll-indicator {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.5em;
+    color: #fff;
+    animation: bounce 1.5s ease infinite;
+}
+
+/* Features Section */
+.features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 60px 0;
+    text-align: center;
+}
+.feature-card {
+    flex: 1 1 300px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    animation: float 3s ease-in-out infinite alternate;
+}
+.feature-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    animation: shake 0.7s ease;
+}
+
+/* Feature Card Headers - No Glow */
+.feature-card h3 {
+    color: #4a90e2;
+    margin-bottom: 10px;
+    font-size: 1.5em;
+    font-weight: 600;
+    animation: none; /* Removed the textGlow animation */
+}
+
+.feature-card p {
+    color: #666;
+    font-size: 0.9em;
+    line-height: 1.6;
+}
+
+/* Contact Section */
+.contact {
+    background: #f1f7fb;
+    padding: 60px 20px;
+    text-align: center;
+    animation: fadeInUp 1.5s ease;
+}
+
+/* Contact Section Header - No Glow */
+.contact h2 {
+    color: #4a90e2;
+    margin-bottom: 20px;
+    font-size: 2em;
+    animation: none; /* Removed the textGlow animation */
+}
+
+.contact p {
+    color: #555;
+    font-size: 1em;
+    margin-bottom: 15px;
+    animation: fadeInUp 1s ease;
+}
+
+/* Footer */
+footer {
+    background: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    animation: fadeIn 1.5s ease;
+}
+footer p {
+    font-size: 0.9em;
+}
+.social-icons a {
+    color: #fff;
+    margin: 0 10px;
+    font-size: 1.2em;
+    transition: transform 0.3s;
+}
+.social-icons a:hover {
+    color: #4a90e2;
+    transform: rotate(10deg) scale(1.2);
+}
+
+/* Keyframes for Animations */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+@keyframes float {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-10px); }
+}
+@keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInDown {
+    0% { opacity: 0; transform: translateY(-30px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@keyframes bounceIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    60% { transform: scale(1.2); opacity: 1; }
+    80% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
+
+/* Glow Animation Keyframes - Retained for the Company Name */
+@keyframes textGlow {
+    0% { text-shadow: 0 0 5px rgba(74, 144, 226, 0.8); }
+    100% { text-shadow: 0 0 15px rgba(74, 144, 226, 1); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+    </style>
+</head>
+<body>
+
+<!-- Loader HTML -->
+<div id="loader" class="hidden">
+    <div class="loader-ball"></div>
+    <div class="loader-shadow"></div>
+    <div class="loader-text">Please wait...</div>
+</div>
+
+<!-- Navbar -->
+<header class="container navbar">
+    <span class="company-name"> Worktree</span>
+    <nav>
+        <a href="#features">Features</a>
+        <a href="#contact">Contact</a>
+        <a href="#" onclick="redirectToLoginPage()" class="cta-btn">Login</a>
+    </nav>
+</header>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <h1>Welcome to Worktree Admin</h1>
+        <p>The ultimate platform for managing and monitoring your HRMS ecosystem effortlessly. Designed for administrators who need efficiency and control.</p>
+        <br>
+        <a href="#" class="cta-btn" onclick="redirectToLoginPage()">Get Started</a>
+        <div class="scroll-indicator">↓</div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="container features" id="features">
+    <div class="feature-card">
+        <h3>Tenant Management</h3>
+        <p>Streamlined onboarding and management of tenants, all in one place.</p>
+    </div>
+    <div class="feature-card">
+        <h3>Real-Time Monitoring</h3>
+        <p>Instant insights into system health and performance for proactive management.</p>
+    </div>
+    <div class="feature-card">
+        <h3>Access Control</h3>
+        <p>Manage user roles and permissions securely, ensuring data integrity.</p>
+    </div>
+    <div class="feature-card">
+        <h3>Analytics & Reporting</h3>
+        <p>Detailed metrics for usage, performance, and operational insights.</p>
+    </div>
+    <div class="feature-card">
+        <h3>Alerts & Notifications</h3>
+        <p>Stay informed with alerts for billing, errors, and critical updates.</p>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="contact" id="contact">
+    <div class="container">
+        <h2>Get in Touch</h2>
+        <p>We're here to help you 24/7. Reach out with any questions.</p>
+        <p>Email: <a href="mailto:support@worktree-hrms.shop" style="color: #4a90e2;">support@worktree-hrms.shop</a></p>
+        <p>Phone: +123 456 7890</p>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2024 Worktree. All rights reserved.</p>
+    <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+    </div>
+</footer>
+
+<script>
+    function startLoader() {
+        const loader = document.getElementById('loader');
+        loader.classList.remove('hidden');
+    }
+
+    function stopLoader() {
+        const loader = document.getElementById('loader');
+        loader.classList.add('hidden');
+    }
+
+    function redirectToLoginPage(){
+        startLoader();
+        window.location.href = "login";
+    }
+
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted) {
+            stopLoader();
+        }
+    });
+</script>
+
+</body>
+</html>
