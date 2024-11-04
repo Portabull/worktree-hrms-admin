@@ -6,7 +6,6 @@ import com.worktree.hrms.service.UserProfileSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -40,7 +39,7 @@ public class UserProfileSettingsServiceImpl implements UserProfileSettingsServic
     }
 
     @Override
-    public List<Map<String, Object>> getUsers() {
+    public Map<String, Object> getUsers() {
         return userDao.getUsers();
     }
 

@@ -1,6 +1,5 @@
 package com.worktree.hrms.dao;
 
-import java.util.List;
 import java.util.Map;
 
 public interface UserDao {
@@ -15,7 +14,7 @@ public interface UserDao {
 
     Map<String, Object> logout(String token);
 
-    List<Map<String, Object>> getUsers();
+    Map<String, Object> getUsers();
 
     Map<String, Object> saveUser(Map<String, Object> payload);
 

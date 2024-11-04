@@ -317,10 +317,13 @@ table td button:hover {
     background: white;
     padding: 20px;
     border-radius: 10px;
-    width: 90%;
+    width: 95%; /* Wider width on smaller screens */
     max-width: 500px;
+    height: 90vh; /* Use 90% of viewport height */
+    overflow-y: auto; /* Enable vertical scrolling if content overflows */
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
 }
+
 
 .popup-content h3 {
     margin-top: 0;
@@ -535,7 +538,49 @@ input:checked + .slider:before {
 }
 
 
+ /* Multi-select dropdown styles */
+  .multi-select-dropdown {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff;
+  }
 
+  .multi-select-dropdown .dropdown-options {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    max-height: 150px;
+    overflow-y: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+
+  .multi-select-dropdown.active .dropdown-options {
+    display: block;
+  }
+
+  .dropdown-options label {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    cursor: pointer;
+  }
+
+  .dropdown-options input[type="checkbox"] {
+    margin-right: 10px;
+  }
+
+  .dropdown-options label:hover {
+    background-color: #f1f1f1;
+  }
   </style>
 </head>
 <body oncontextmenu="return false;">
@@ -577,8 +622,9 @@ input:checked + .slider:before {
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
   <button class="close-btn" onclick="toggleSidebar()">× Close</button>
-  <button>Home</button>
-  <button>Reports</button>
+  <button onclick="gotohome()">Home</button>
+  <button onclick="manageTenants(startLoader)">Manage Tenants</button>
+  <button onclick="showReports()">Reports</button>
 </div>
 
 <!-- Main Content -->
@@ -610,7 +656,9 @@ input:checked + .slider:before {
   </div>
 </div>
 
-<!-- Add User Popup -->
+
+
+<!-- Add User Popup with Features Dropdown -->
 <div class="popup" id="userFormPopup">
   <div class="popup-close" onclick="closePopup()">×</div>
   <div class="popup-content">
@@ -624,22 +672,36 @@ input:checked + .slider:before {
       <input type="email" id="email" name="email" required>
       <label for="mobile">Mobile Number:</label>
       <input type="tel" id="mobile" name="mobile" required>
-
       <label for="password">Password:</label>
       <input type="password" id="password" name="password" required>
 
-
+      <!-- Is Admin Checkbox -->
       <label for="isAdmin">Is Admin:</label>
       <label class="toggle-switch">
         <input type="checkbox" id="isAdmin" name="isAdmin">
         <span class="slider"></span>
       </label>
 
+      <!-- Multi-Select Features Dropdown -->
+      <label for="features">Features:</label>
+      <div class="multi-select-dropdown" onclick="toggleDropdown()">
+        <span id="selectedFeaturesText">Select Features</span>
+        <div class="dropdown-options" id="featuresOptions">
+          <!-- Options will be populated dynamically -->
+        </div>
+      </div>
 
       <button type="button" onclick="createNewUser()">Save</button>
     </form>
   </div>
 </div>
+
+
+
+
+
+
+
 
 <script src="js/worktree.js"></script>
 <script>
@@ -650,80 +712,87 @@ var tempDeleteUserId;
         { sNo: 2, userName: 'asmith', displayName: 'Alice Smith', email: 'asmith@example.com', mobile: '0987654321', isAdmin: false ,userId:2}
     ];
 
+
+
 function populateTable() {
-    const tableBody = document.getElementById('userTableBody');
-    tableBody.innerHTML = '';
-    const currentUserName = window.localStorage.getItem(userNameLS); // Assuming 'userNameLS' is the key for the current user's username
+  const tableBody = document.getElementById('userTableBody');
+  tableBody.innerHTML = '';
+  const currentUserName = window.localStorage.getItem(userNameLS);
 
-    users.forEach(user => {
-        const isDeleteDisabled = user.userName === currentUserName;
+  users.forEach(user => {
+    const isDeleteDisabled = user.userName === currentUserName;
+    const deleteButtonHTML = `<button class="delete-button" ${isDeleteDisabled ? 'disabled' : ''} ${isDeleteDisabled ? 'data-tooltip="This is your account"' : ''} onclick="${!isDeleteDisabled ? `deleteUser(${user.userId})` : ''}; event.stopPropagation();">${isDeleteDisabled ? '<i class="fas fa-ban"></i>' : ''} Delete</button>`;
 
-        // Create delete button HTML with tooltip and disabled icon if needed
-        const deleteButtonHTML = `
-            <button class="delete-button" ${isDeleteDisabled ? 'disabled' : ''}
-                ${isDeleteDisabled ? 'data-tooltip="This is your account"' : ''}
-                onclick="${!isDeleteDisabled ? `deleteUser(${user.userId})` : ''}; event.stopPropagation();">
-                ${isDeleteDisabled ? '<i class="fas fa-ban"></i>' : ''} Delete
-            </button>`;
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td data-label="SNO">${user.sNo}</td>
+      <td data-label="User Name">${user.userName}</td>
+      <td data-label="Display Name">${user.displayName}</td>
+      <td data-label="Email">${user.email}</td>
+      <td data-label="Mobile Number">${user.mobile}</td>
+      <td data-label="Is Admin">${user.isAdmin ? 'Yes' : 'No'}</td>
+      <td data-label="Action">${deleteButtonHTML}</td>
+    `;
 
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td data-label="SNO">${user.sNo}</td>
-            <td data-label="User Name">${user.userName}</td>
-            <td data-label="Display Name">${user.displayName}</td>
-            <td data-label="Email">${user.email}</td>
-            <td data-label="Mobile Number">${user.mobile}</td>
-            <td data-label="Is Admin">${user.isAdmin ? 'Yes' : 'No'}</td>
-            <td data-label="Action">${deleteButtonHTML}</td>
-        `;
-
-        row.onclick = () => openUserForm(user); // Set click event for row to open popup
-        tableBody.appendChild(row);
-    });
+    row.onclick = () => openUserForm(user);
+    tableBody.appendChild(row);
+  });
 }
 
 
 
 
+function openUserForm(user = {}) {
+  tempUserId = user.userId;
+  document.getElementById('userFormPopup').classList.add('active');
+  document.getElementById('userName').value = user.userName || '';
+  document.getElementById('displayName').value = user.displayName || '';
+  document.getElementById('email').value = user.email || '';
+  document.getElementById('mobile').value = user.mobile || '';
+  document.getElementById('password').value = '';
+  document.getElementById('isAdmin').checked = user.isAdmin || false;
 
-
-   function openUserForm(user = {}) {
-
-   tempUserId = user.userId;
-
-    document.getElementById('userFormPopup').classList.add('active');
-
-    // Populate form fields with user data or set to empty if no user data provided
-    document.getElementById('userName').value = user.userName || '';
-    document.getElementById('displayName').value = user.displayName || '';
-    document.getElementById('email').value = user.email || '';
-    document.getElementById('mobile').value = user.mobile || '';
-       document.getElementById('password').value = '';
-    document.getElementById('isAdmin').checked = user.isAdmin || false;
+  populateFeaturesDropdown(user.userFeatures || []);
 }
-
 
     function closePopup() {
     tempUserId = null;
         document.getElementById('userFormPopup').classList.remove('active');
     }
 
-    function createNewUser() {
-        const newUser = {
-            userId: tempUserId,
-            userName: document.getElementById('userName').value,
-            displayName: document.getElementById('displayName').value,
-            email: document.getElementById('email').value,
-            mobile: document.getElementById('mobile').value,
-            isAdmin: document.getElementById('isAdmin').checked,
-            password: document.getElementById('password').value
-        };
 
 
-          startLoader();
-          dynamicXhrApi('POST',BASE_URL + 'api/user',{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },newUser, afterUserSave);
+function createNewUser() {
+  const selectedFeatures = Array.from(document.querySelectorAll('#featuresOptions input:checked')).map(option => option.value);
 
+  const newUser = {
+    userId: tempUserId,
+    userName: document.getElementById('userName').value,
+    displayName: document.getElementById('displayName').value,
+    email: document.getElementById('email').value,
+    mobile: document.getElementById('mobile').value,
+    isAdmin: document.getElementById('isAdmin').checked,
+    password: document.getElementById('password').value,
+    userFeatures: selectedFeatures
+  };
+
+  startLoader();
+  dynamicXhrApi('POST', BASE_URL + 'api/user', { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': getCurrentToken() }, newUser, afterUserSave);
+}
+
+    function populateFeaturesDropdown(userFeatures) {
+      const dropdown = document.getElementById('featuresDropdown');
+      dropdown.innerHTML = '';
+
+      features.forEach(feature => {
+        const option = document.createElement('option');
+        option.value = feature;
+        option.textContent = feature;
+        option.selected = userFeatures.includes(feature); // Preselect based on user's features
+        dropdown.appendChild(option);
+      });
     }
+
 
     function afterUserSave(xhr){
       if(xhr.status==403){
@@ -788,17 +857,20 @@ function populateTable() {
         dynamicXhrApi('GET',BASE_URL + 'api/users',{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined, afterPageLoad);
     }
 
-    function afterPageLoad(xhr) {
 
-    if(xhr.status==403){
-        gotohome();
-    }
+function afterPageLoad(xhr) {
+  if (xhr.status === 403) {
+    gotohome();
+  }
 
-    var response = JSON.parse(xhr.responseText);
-    users = response;
-    populateTable();
-     stopLoader();
-    }
+  var response = JSON.parse(xhr.responseText);
+  users = response.users;
+  features = response.features;
+  populateTable();
+  stopLoader();
+}
+
+
 
 function startLoader() {
     document.getElementById('loader').classList.add('active');
@@ -842,6 +914,32 @@ function stopLoader() {
         });
     }
 
+    function updateSelectedFeaturesText() {
+  const selectedOptions = Array.from(document.querySelectorAll('#featuresOptions input:checked'));
+  const selectedValues = selectedOptions.map(option => option.value);
+  document.getElementById('selectedFeaturesText').textContent = selectedValues.length > 0 ? selectedValues.join(', ') : 'Select Features';
+}
+
+function populateFeaturesDropdown(userFeatures) {
+  const dropdownOptions = document.getElementById('featuresOptions');
+  dropdownOptions.innerHTML = '';
+
+  features.forEach(feature => {
+    const isSelected = userFeatures.includes(feature);
+    const option = document.createElement('label');
+    option.innerHTML = `
+      <input type="checkbox" value="${feature}" ${isSelected ? 'checked' : ''} onclick="updateSelectedFeaturesText()">
+      ${feature}
+    `;
+    dropdownOptions.appendChild(option);
+  });
+
+  updateSelectedFeaturesText();
+}
+
+function toggleDropdown() {
+  document.querySelector('.multi-select-dropdown').classList.toggle('active');
+}
 
 
  window.addEventListener('pageshow', function(event) {
@@ -850,6 +948,8 @@ function stopLoader() {
             stopLoader();
         }
     });
+
+
 </script>
 </body>
 </html>

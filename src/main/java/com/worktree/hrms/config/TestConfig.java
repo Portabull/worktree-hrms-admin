@@ -1,6 +1,8 @@
 package com.worktree.hrms.config;
 
+import com.worktree.hrms.entity.FeatureEntity;
 import com.worktree.hrms.entity.UserEntity;
+import com.worktree.hrms.utils.DateUtils;
 import com.worktree.hrms.utils.HibernateUtils;
 import jakarta.annotation.PostConstruct;
 import org.hibernate.Session;
@@ -9,6 +11,9 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class TestConfig {
+
+    @Autowired
+    private DateUtils dateUtils;
 
     @Autowired
     private HibernateUtils hibernateUtils;
@@ -25,6 +30,19 @@ public class TestConfig {
         admin.setDisplayName("Administrator");
         admin.setAdmin(true);
         hibernateUtils.saveOrUpdateEntity(admin);
+
+        if (getFeature("Email Settings") == null)
+            hibernateUtils.saveOrUpdateEntity(new FeatureEntity("Email Settings", dateUtils.getCurrentDate()));
+        if (getFeature("Mobile Settings") == null)
+            hibernateUtils.saveOrUpdateEntity(new FeatureEntity("Mobile Settings", dateUtils.getCurrentDate()));
+        if (getFeature("AI Settings") == null)
+            hibernateUtils.saveOrUpdateEntity(new FeatureEntity("AI Settings", dateUtils.getCurrentDate()));
+    }
+
+    private FeatureEntity getFeature(String featureName) {
+        try (Session session = hibernateUtils.getSession()) {
+            return (FeatureEntity) session.createQuery("FROM FeatureEntity WHERE featureName=:featureName").setParameter("featureName", featureName).uniqueResult();
+        }
     }
 
     private UserEntity getUserEntity(String userName) {

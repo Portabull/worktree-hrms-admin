@@ -2,7 +2,9 @@ package com.worktree.hrms.dao.impl;
 
 import com.worktree.hrms.constants.CommonConstants;
 import com.worktree.hrms.dao.UserDao;
+import com.worktree.hrms.entity.FeatureEntity;
 import com.worktree.hrms.entity.UserEntity;
+import com.worktree.hrms.entity.UserFeatures;
 import com.worktree.hrms.entity.UserTokenEntity;
 import com.worktree.hrms.exceptions.BadRequestException;
 import com.worktree.hrms.exceptions.ForbiddenException;
@@ -108,8 +110,11 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public List<Map<String, Object>> getUsers() {
+    public Map<String, Object> getUsers() {
+        Map<String, Object> usersResponse = new HashMap<>();
+
         List<UserEntity> users;
+        List<FeatureEntity> features;
         List<Map<String, Object>> response = new ArrayList<>();
         if (!isAdminUser()) {
             throw new ForbiddenException(CommonConstants.ACCESS_DENIED);
@@ -117,6 +122,8 @@ public class UserDaoImpl implements UserDao {
 
         try (Session session = hibernateUtils.getSession()) {
             users = session.createQuery("FROM UserEntity")
+                    .list();
+            features = session.createQuery("FROM FeatureEntity")
                     .list();
         }
 
@@ -131,11 +138,21 @@ public class UserDaoImpl implements UserDao {
                 userResponse.put("mobile", user.getMobileNumber());
                 userResponse.put("isAdmin", user.isAdmin() != null && user.isAdmin());
                 userResponse.put("userId", user.getUserID());
+                try (Session session = hibernateUtils.getSession()) {
+                    userResponse.put("userFeatures",
+                            session.createQuery("SELECT fe.featureName FROM UserFeatures uf JOIN FeatureEntity fe on (uf.featureId=fe.featureId) WHERE uf.userID =:userID")
+                                    .setParameter("userID", user.getUserID()).list());
+                }
                 response.add(userResponse);
             });
         }
 
-        return response;
+
+        usersResponse.put("users", response);
+        usersResponse.put("features", features.stream().map(FeatureEntity::getFeatureName).collect(Collectors.toList()));
+
+
+        return usersResponse;
     }
 
     @Override
@@ -164,7 +181,45 @@ public class UserDaoImpl implements UserDao {
             if (payload.get("password") != null && payload.get("password").toString().trim().length() != 0) {
                 userEntity.setPassword(payload.get("password").toString());
             }
+
             hibernateUtils.saveOrUpdateEntity(userEntity);
+
+            List<FeatureEntity> features = null;
+
+            Transaction transaction = null;
+            try (Session session = hibernateUtils.getSession()) {
+
+                if (payload.get("userId") != null) {
+
+                    transaction = session.beginTransaction();
+
+                    session.createQuery("DELETE FROM UserFeatures WHERE userID = :userID")
+                            .setParameter("userID", Long.valueOf(String.valueOf(payload.get("userId"))))
+                            .executeUpdate();
+
+                    transaction.commit();
+
+                }
+
+                if (!CollectionUtils.isEmpty((List) payload.get("userFeatures"))) {
+                    features = (List<FeatureEntity>) session.createQuery("FROM FeatureEntity WHERE featureName IN (:featureNames)")
+                            .setParameter("featureNames", payload.get("userFeatures")).list();
+                }
+
+            } catch (Exception e) {
+                if (transaction != null) {
+                    transaction.rollback();
+                }
+            }
+
+            if (!CollectionUtils.isEmpty(features)) {
+                for (FeatureEntity feature : features) {
+                    UserFeatures userFeature = new UserFeatures();
+                    userFeature.setUserID(payload.get("userId") != null ? Long.valueOf(String.valueOf(payload.get("userId"))) : userEntity.getUserID());
+                    userFeature.setFeatureId(feature.getFeatureId());
+                    hibernateUtils.saveOrUpdateEntity(userFeature);
+                }
+            }
         } catch (RollbackException e) {
             if (e.getCause() instanceof ConstraintViolationException) {
                 throw new BadRequestException("Already username exists please try with different username");
