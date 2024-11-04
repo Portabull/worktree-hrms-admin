@@ -303,4 +303,12 @@ public class UserDaoImpl implements UserDao {
         return CommonConstants.SUCCESS_RESPONSE;
     }
 
+    @Override
+    public List<String> getFeatures(String userName) {
+        try (Session session = hibernateUtils.getSession()) {
+            return session.createQuery("SELECT fe.featureName FROM UserFeatures uf JOIN FeatureEntity fe on (uf.featureId=fe.featureId) WHERE uf.userID = (SELECT userID FROM UserEntity WHERE userName=:userName)")
+                    .setParameter("userName", userName).list();
+        }
+    }
+
 }

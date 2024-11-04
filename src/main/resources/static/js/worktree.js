@@ -127,6 +127,34 @@ var existingUser = userNameList.find(user => user.userName === currentUserName);
 }
 
 
+function getCurrentUserFeatures(){
+     var currentUserName = window.localStorage.getItem(userNameLS);
+
+
+
+var userNameTINFOJson = window.localStorage.getItem(userNameTINFO);
+
+
+
+// Initialize an empty array to hold the data
+var userNameList = [];
+
+// Check if there is already data in localStorage
+if (userNameTINFOJson !== null) {
+    // Parse the existing data if it exists
+    userNameList = JSON.parse(userNameTINFOJson);
+}
+
+// Check if the userName already exists in the array
+var existingUser = userNameList.find(user => user.userName === currentUserName);
+
+    if(existingUser==null || existingUser==undefined)
+          return undefined;
+
+     return existingUser.userFeatures;
+}
+
+
 function getCurrentDisplayNameImageWithoutRedirect(){
      var currentUserName = window.localStorage.getItem(userNameLS);
 
@@ -233,7 +261,7 @@ if (existingUser) {
     existingUser.jwt = response.jwt;
 } else {
     // If user doesn't exist, add a new entry with jwt and userName
-    userNameList.push({ "jwt": response.jwt, "userName": userNameCache ,"userProfileImage" : response.userProfileImage,"userDisplayName":response.userDisplayName});
+    userNameList.push({ "jwt": response.jwt, "userName": userNameCache ,"userProfileImage" : response.userProfileImage,"userDisplayName":response.userDisplayName,"userFeatures":response.userFeatures});
 }
 
 // Update localStorage with the modified array
@@ -412,4 +440,9 @@ function _0x1a2b3c(_0x4d5e6f, _0x7f8e9d) {
     });
 
     return _0x8d7a6e.toString(CryptoJS.enc.Hex) + "::" + _0x6c5d4b.ciphertext.toString(CryptoJS.enc.Hex);
+}
+
+
+function gotoconfiguration(){
+  window.location.href = "configuration";
 }

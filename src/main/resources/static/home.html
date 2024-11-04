@@ -369,7 +369,9 @@
     <button class="close-btn" onclick="toggleSidebar()">× Close</button>
 
     <button onclick="manageTenants(startLoader)">Manage Tenants</button>
+
     <button onclick="showReports()">Reports</button>
+    <button id="configurationButton" onclick="gotoconfiguration()" style="display: none;">Configuration</button>
 </div>
 
 <!-- Main Content -->
@@ -659,6 +661,19 @@ function stopLoader() {
 
 function init(xhr){
      if (xhr.status == 200) {
+
+    var userFeatures = getCurrentUserFeatures();
+        if(userFeatures != undefined && userFeatures.length!=0){
+ const button = document.getElementById('configurationButton');
+  if (button.style.display === 'none') {
+        button.style.display = 'block'; // Show the button
+        this.textContent = 'Hide Button'; // Change toggle button text
+    } else {
+        button.style.display = 'none'; // Hide the button
+        this.textContent = 'Show Button'; // Change toggle button text back
+    }
+        }
+
         var response = JSON.parse(xhr.responseText);
         if(response.billing!=undefined){
         billingData = response.billing;

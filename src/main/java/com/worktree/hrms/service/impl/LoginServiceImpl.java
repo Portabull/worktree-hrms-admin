@@ -36,6 +36,7 @@ public class LoginServiceImpl implements LoginService {
             Map<String, String> userProfileInfo = userDao.getUserProfileInfo(userName);
             response.put("userDisplayName", userProfileInfo.get("displayName"));
             response.put("userProfileImage", userProfileInfo.get("profilePic"));
+            response.put("userFeatures", userDao.getFeatures(userName));
         } else {
             response.put("status", "FAILED");
             response.put("message", "Invalid Credentials");

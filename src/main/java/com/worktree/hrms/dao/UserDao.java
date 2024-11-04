@@ -1,5 +1,6 @@
 package com.worktree.hrms.dao;
 
+import java.util.List;
 import java.util.Map;
 
 public interface UserDao {
@@ -21,4 +22,6 @@ public interface UserDao {
     boolean isAdminUser();
 
     Map<String, Object> deleteUser(Long userId);
+
+    List<String> getFeatures(String userName);
 }
