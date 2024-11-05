@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings List</title>
+    <title>Configuration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Reset and basic styling */
         * {
@@ -12,23 +13,144 @@
             padding: 0;
         }
         body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: #f4f5f7;
-            padding: 20px;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f5f7;
+            padding-top: 60px;
+            user-select: none;
         }
 
-        /* Container styling for full screen usage */
+        /* Navbar styling */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: #343a40;
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .navbar .menu-button {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .navbar .menu-button div {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 4px 0;
+        }
+
+        .navbar .company-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffcc00;
+            margin-left: 10px;
+        }
+
+        .navbar .profile {
+            margin-left: auto;
+            position: relative;
+        }
+
+        .navbar .profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            padding: 10px;
+            width: 180px;
+        }
+
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            text-decoration: none;
+            color: black;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-menu a i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f4f4f4;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            width: 250px;
+            height: 100%;
+            background-color: #343a40;
+            padding: 20px;
+            color: white;
+            transition: all 0.5s ease;
+            z-index: 1001;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar button:hover {
+            background-color: #0056b3;
+        }
+
+        .sidebar .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* Settings container styling */
         .settings-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 20px;
             padding: 20px;
-            max-width: 800px;
+            max-width: 1000px;
             width: 100%;
+            margin: 80px auto;
             background: #ffffff;
             border-radius: 15px;
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
@@ -40,10 +162,6 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
 
         /* Settings option styling */
         .settings-option {
@@ -53,126 +171,268 @@
             justify-content: center;
             text-align: center;
             padding: 20px;
-            width: 100%;
-            aspect-ratio: 1;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             background-color: #ffffff;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-            transition: transform 0.3s, box-shadow 0.3s;
             cursor: pointer;
-            animation: pulse 2s infinite;
-            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s, color 0.3s;
         }
 
-        /* Hover and active states */
+        /* Hover effect */
         .settings-option:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transform: rotate(5deg) scale(1.1);
+            background-color: #e0f7fa;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            color: #00796b;
         }
-        .settings-option:active {
-            transform: scale(0.95);
-            background-color: #e0e0e0;
+
+        .settings-option:hover i {
+            color: #00796b;
         }
+
+        /* Icon and label styling */
         .settings-option i {
             font-size: 32px;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             color: #4CAF50;
+            transition: color 0.3s;
         }
+
         .settings-label {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             color: #333;
         }
+
         .settings-option.active {
             background-color: #4CAF50;
             color: #fff;
             box-shadow: 0 6px 12px rgba(0, 128, 0, 0.3);
         }
+
         .settings-option.active i {
             color: #fff;
-        }
-
-        /* Tooltip styling */
-        .settings-option:hover::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: -30px;
-            background: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 12px;
-            white-space: nowrap;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-        .settings-option:hover::after {
-            opacity: 1;
-            transform: translateY(0);
         }
 
         /* Mobile responsive adjustments */
         @media (max-width: 600px) {
             .settings-container {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
-                padding: 15px;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                padding: 10px;
             }
             .settings-option {
+                width: 80px;
+                height: 80px;
                 padding: 15px;
-                animation: none;
             }
-            .settings-option:hover {
-                transform: scale(1.05); /* Slightly smaller scaling on mobile */
+            .settings-option i {
+                font-size: 24px;
+            }
+            .settings-label {
+                font-size: 12px;
             }
         }
+
+
+
+
+
+
+
+         /* loader css starts */
+
+
+ /* Rotate animation for the loader */
+    .loading {
+      animation: rotate 1s linear infinite;
+    }
+
+    /* Keyframes for the rotating animation */
+    @keyframes rotate {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+
+
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    visibility: hidden; /* Hide loader by default */
+}
+
+.loader {
+    border: 8px solid #f3f3f3; /* Light gray */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* loader css ends */
     </style>
-    <!-- Include Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
-<body>
-<div class="settings-container">
-    <div class="settings-option" data-tooltip="Manage your email settings" onclick="window.location.href='email-settings.html'">
+<body oncontextmenu="return false;">
+
+
+<div id="loader" class="loader-overlay">
+    <div class="loader"></div>
+</div>
+
+
+<!-- Navbar -->
+<div class="navbar">
+    <div class="menu-button" onclick="toggleSidebar()">
+        <div></div>
+        <span class="company-name">Worktree</span>
+    </div>
+
+    <div class="profile" id="profile-dropdown">
+        <img src="https://via.placeholder.com/50" alt="Profile" onclick="toggleProfileDropdown()">
+        <div class="dropdown-menu" id="dropdown-menu">
+            <a href="#" onclick="openProfileSettings()"><i class="fas fa-cog"></i>Settings</a>
+            <a href="#" onclick="manageUserProfiles(startLoader)"><i class="fas fa-user"></i>Manage Profiles</a>
+            <a href="#" onclick="logout(startLoader,redirectafterlogout)"><i class="fas fa-sign-out-alt"></i>Logout</a>
+        </div>
+    </div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <button class="close-btn" onclick="toggleSidebar()">× Close</button>
+    <button onclick="gotohome()">Home</button>
+    <button onclick="manageTenants(startLoader)">Manage Tenants</button>
+    <button onclick="showReports()">Reports</button>
+</div>
+
+<!-- Settings Options -->
+<div class="settings-container" id="settingsContainer">
+    <div class="settings-option" data-alias="Email Settings" data-tooltip="Manage your email settings">
         <i class="fas fa-envelope"></i>
         <div class="settings-label">Email</div>
     </div>
-    <div class="settings-option active" data-tooltip="Currently active setting">
+    <div class="settings-option active" data-alias="Activated Settings" data-tooltip="Currently active setting">
         <i class="fas fa-check-circle"></i>
         <div class="settings-label">Activated</div>
     </div>
-    <div class="settings-option" data-tooltip="Manage your mobile settings">
+    <div class="settings-option" data-alias="Mobile Settings" data-tooltip="Manage your mobile settings">
         <i class="fas fa-mobile-alt"></i>
         <div class="settings-label">Mobile</div>
     </div>
-    <div class="settings-option" data-tooltip="Configure AI settings">
+    <div class="settings-option" data-alias="AI Settings" data-tooltip="Configure AI settings">
         <i class="fas fa-robot"></i>
         <div class="settings-label">AI</div>
     </div>
-    <div class="settings-option" data-tooltip="Notification settings">
+    <div class="settings-option" data-alias="Notification Settings" data-tooltip="Notification settings">
         <i class="fas fa-bell"></i>
         <div class="settings-label">Notifications</div>
     </div>
-    <div class="settings-option" data-tooltip="Privacy controls">
+    <div class="settings-option" data-alias="Privacy Settings" data-tooltip="Privacy controls">
         <i class="fas fa-user-shield"></i>
         <div class="settings-label">Privacy</div>
     </div>
-    <div class="settings-option" data-tooltip="Security settings">
+    <div class="settings-option" data-alias="Security Settings" data-tooltip="Security settings">
         <i class="fas fa-shield-alt"></i>
         <div class="settings-label">Security</div>
     </div>
-    <div class="settings-option" data-tooltip="Language preferences">
+    <div class="settings-option" data-alias="Language Settings" data-tooltip="Language preferences">
         <i class="fas fa-globe"></i>
         <div class="settings-label">Language</div>
     </div>
-    <div class="settings-option" data-tooltip="System configurations">
+    <div class="settings-option" data-alias="System Settings" data-tooltip="System configurations">
         <i class="fas fa-cogs"></i>
         <div class="settings-label">System</div>
     </div>
-    <div class="settings-option" data-tooltip="Network settings">
+    <div class="settings-option" data-alias="Network Settings" data-tooltip="Network settings">
         <i class="fas fa-wifi"></i>
         <div class="settings-label">Network</div>
     </div>
 </div>
+
+<script src="js/worktree.js"></script>
+<script>
+    // Sidebar toggle function
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+    }
+
+    // Profile dropdown toggle function
+    function toggleProfileDropdown() {
+        const dropdown = document.getElementById('dropdown-menu');
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Hide dropdown when clicking outside
+    window.onclick = function(event) {
+        if (!event.target.matches('.profile img')) {
+            const dropdown = document.getElementById('dropdown-menu');
+            if (dropdown && dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            }
+        }
+    };
+
+    // JavaScript list with aliases for settings options
+    var requiredSettingsAliases =  getCurrentUserFeatures();
+
+    // Function to check settings based on aliases and hide if not present
+    function checkSettings() {
+
+       if(requiredSettingsAliases==undefined || requiredSettingsAliases.length==0){
+             gotohome();
+        }
+
+
+        const container = document.getElementById('settingsContainer');
+        const settingsOptions = container.getElementsByClassName('settings-option');
+
+        Array.from(settingsOptions).forEach(option => {
+            const alias = option.getAttribute('data-alias');
+            option.style.display = requiredSettingsAliases.includes(alias) ? 'flex' : 'none';
+        });
+    }
+
+    // Run the check on page load
+    checkSettings();
+
+
+function startLoader() {
+    document.getElementById('loader').style.visibility = 'visible';
+    document.body.style.pointerEvents = 'none'; // Disable interaction with the screen
+}
+
+window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the cache
+        if (event.persisted) {
+            stopLoader();
+        }
+    });
+
+function stopLoader() {
+    document.getElementById('loader').style.visibility = 'hidden';
+    document.body.style.pointerEvents = 'auto'; // Re-enable interaction with the screen
+}
+
+loadProfilePhoto();
+</script>
+
 </body>
 </html>
