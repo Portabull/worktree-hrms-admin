@@ -3,6 +3,7 @@ const BASE_URL = new URL(window.location.href).protocol + "//" + new URL(window.
 
 const userNameLS = "userName";
 const userNameTINFO = "userNameTINFO";
+const sec_key_mech = 'NWIYRFIYF%@&#$)ABCDEFGHIJKLMNOP';
 
 function dynamicXhrApi(method, url, headers, requestBody, callback, isFileUpload = false) {
     // Create a new XMLHttpRequest object
@@ -36,7 +37,7 @@ function dynamicXhrApi(method, url, headers, requestBody, callback, isFileUpload
 
 
 
-            var decryptedResponse = _0x3c2b1a(xhr.responseText,'NWIYRFIYF%@&#$)ABCDEFGHIJKLMNOP');
+            var decryptedResponse = _0x3c2b1a(xhr.responseText,sec_key_mech);
 
             if(decryptedResponse!=undefined){
          decryptedResponse=   JSON.parse(decryptedResponse);
@@ -64,11 +65,10 @@ function dynamicXhrApi(method, url, headers, requestBody, callback, isFileUpload
     // Prepare and send the request
     if (isFileUpload && requestBody instanceof FormData) {
         // Send FormData directly for file uploads
-//        xhr.send(_0x1a2b3c(requestBody, 'NWIYRFIYF%@&#$)ABCDEFGHIJKLMNOP'));
         xhr.send(requestBody);
     } else if (requestBody) {
         // For JSON requests, send as JSON string
-        xhr.send(_0x1a2b3c(JSON.stringify(requestBody), 'NWIYRFIYF%@&#$)ABCDEFGHIJKLMNOP'));
+        xhr.send(_0x1a2b3c(JSON.stringify(requestBody), sec_key_mech));
     } else {
         // Send request without body if no data is provided
         xhr.send();

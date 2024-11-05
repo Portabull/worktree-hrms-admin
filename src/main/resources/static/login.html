@@ -271,7 +271,7 @@ var locationDetails;
             if(locationDetails==undefined){
                 showErrorMessage("Location ERROR","Hey, we didn't receive your location yet please wait few seconds and try again. Please be make sure location permission should allow from your side",true);
             }
-            dynamicXhrApi('POST', BASE_URL + 'api/login', { 'Content-Type': 'application/json','latlong': locationDetails,'dd':getDeviceDetails()}, { "userName": username, "password": _0x1a2b3c(password, 'NWIYRFIYF%@&#$)ABCDEFGHIJKLMNOP') }, afterLogin);
+            dynamicXhrApi('POST', BASE_URL + 'api/login', { 'Content-Type': 'application/json','latlong': locationDetails,'dd':getDeviceDetails()}, { "userName": username, "password": _0x1a2b3c(password, sec_key_mech) }, afterLogin);
         } else {
             errorMessage.textContent = 'Please enter both username and password.';
             errorMessage.style.display = 'block';
