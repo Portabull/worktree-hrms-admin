@@ -591,6 +591,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/mime-types/index.min.js"></script>
+<script src="js/security.js"></script>
 <script src="js/worktree.js"></script>
 <script>
 
@@ -931,8 +932,8 @@ function init() {
       dynamicXhrApi('GET',BASE_URL + 'api/payment-history?tenantId=' + tenantId  ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined,afterPaymentPageLoad);
 }
 
-function afterPaymentPageLoad(xhr) {
-    var response = JSON.parse(xhr.responseText);
+function afterPaymentPageLoad(xhr,decryptedResponseObj) {
+    var response = decryptedResponseObj;
     paymentsData = response.payments;
     populateTable();
     stopLoader();

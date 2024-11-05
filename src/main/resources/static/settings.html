@@ -729,7 +729,7 @@
         <button class="close-btn" onclick="closeModal()">Close</button>
     </div>
 </div>
-
+<script src="js/security.js"></script>
 <script src="js/worktree.js"></script>
 <script>
   // Sample JSON data with multiple security entries
@@ -881,7 +881,7 @@ function uploadImage() {
             BASE_URL + 'api/upload/profile', // Replace with your upload endpoint
             { 'Authorization':getCurrentToken() }, // Headers, if needed
             formData, // FormData with the file
-            function(response) {
+            function(response,decryptedResponseObj) {
                 if (response.status >= 200 && response.status < 300) {
                     // On successful upload, display the image
                     const reader = new FileReader();
@@ -890,9 +890,9 @@ function uploadImage() {
                     };
                     reader.readAsDataURL(fileInput.files[0]);
 
-                    console.log("File uploaded successfully:", response.responseText);
+                    console.log("File uploaded successfully:", decryptedResponseObj);
                 } else {
-                    console.error("File upload failed:", response.responseText);
+                    console.error("File upload failed:", decryptedResponseObj);
                     alert("Failed to upload the image. Please try again.");
                 }
             },
@@ -950,10 +950,10 @@ function logoutselectedlogin(tokenId) {
 
 
 
-function init(xhr){
+function init(xhr,decryptedResponseObj){
 
    if (xhr.status == 200) {
-        var response = JSON.parse(xhr.responseText);
+        var response = decryptedResponseObj;
         profileData = response;
 }else{
   removeCurrentUserCache();

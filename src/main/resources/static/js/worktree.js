@@ -33,12 +33,22 @@ function dynamicXhrApi(method, url, headers, requestBody, callback, isFileUpload
                gotohome();
             }
 
+
+
+
+            var decryptedResponse = _0x3c2b1a(xhr.responseText,'NWIYRFIYF%@&#$)ABCDEFGHIJKLMNOP');
+
+            if(decryptedResponse!=undefined){
+         decryptedResponse=   JSON.parse(decryptedResponse);
+            }
+
+
             if (xhr.status >= 200 && xhr.status < 300) {
                 // Call the callback function with the response text
-                callback(xhr);
+                callback(xhr,decryptedResponse);
             } else {
                 // Call the callback with an error if the request was not successful
-                callback(xhr);
+                callback(xhr,decryptedResponse);
             }
         }
     };
@@ -49,13 +59,16 @@ function dynamicXhrApi(method, url, headers, requestBody, callback, isFileUpload
         showErrorMessage('Unreachable', 'Please check your internet connection and try again', true);
     };
 
+
+
     // Prepare and send the request
     if (isFileUpload && requestBody instanceof FormData) {
         // Send FormData directly for file uploads
+//        xhr.send(_0x1a2b3c(requestBody, 'NWIYRFIYF%@&#$)ABCDEFGHIJKLMNOP'));
         xhr.send(requestBody);
     } else if (requestBody) {
         // For JSON requests, send as JSON string
-        xhr.send(JSON.stringify(requestBody));
+        xhr.send(_0x1a2b3c(JSON.stringify(requestBody), 'NWIYRFIYF%@&#$)ABCDEFGHIJKLMNOP'));
     } else {
         // Send request without body if no data is provided
         xhr.send();
@@ -239,9 +252,9 @@ var existingUser = userNameList.find(user => user.userName === currentUserName);
 
 
 
-    function loginCacheTokenInfo(xhr){
+    function loginCacheTokenInfo(xhr,decryptedResponseObj){
 
-var response = JSON.parse(xhr.responseText);
+var response = decryptedResponseObj;
 var userNameTINFOJson = window.localStorage.getItem(userNameTINFO);
 
 // Initialize an empty array to hold the data
@@ -441,6 +454,42 @@ function _0x1a2b3c(_0x4d5e6f, _0x7f8e9d) {
 
     return _0x8d7a6e.toString(CryptoJS.enc.Hex) + "::" + _0x6c5d4b.ciphertext.toString(CryptoJS.enc.Hex);
 }
+
+
+
+//decryption code
+function _0x3c2b1a(encryptedData, _0x7f8e9d) {
+    // Ensure the key length is exactly 32 bytes for AES-256
+    if (_0x7f8e9d.length < 32) {
+        _0x7f8e9d = _0x7f8e9d.padEnd(32, '0'); // Pad with '0' if less than 32 chars
+    } else if (_0x7f8e9d.length > 32) {
+        _0x7f8e9d = _0x7f8e9d.slice(0, 32); // Truncate if more than 32 chars
+    }
+
+    const _0x9b8c7a = CryptoJS.enc.Utf8.parse(_0x7f8e9d);
+
+    // Split the encrypted data to retrieve IV and ciphertext
+    const [ivHex, ciphertextHex] = encryptedData.split("::");
+
+    const _0x8d7a6e = CryptoJS.enc.Hex.parse(ivHex); // Parse IV from hex
+    const _0x6c5d4b = CryptoJS.enc.Hex.parse(ciphertextHex); // Parse ciphertext from hex
+
+    // Decrypt the ciphertext
+    const decrypted = CryptoJS.AES.decrypt(
+        {
+            ciphertext: _0x6c5d4b
+        },
+        _0x9b8c7a,
+        {
+            iv: _0x8d7a6e,
+            mode: CryptoJS.mode.CBC,
+            padding: CryptoJS.pad.Pkcs7
+        }
+    );
+
+    return decrypted.toString(CryptoJS.enc.Utf8);
+}
+
 
 
 function gotoconfiguration(){

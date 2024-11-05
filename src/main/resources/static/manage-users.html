@@ -702,7 +702,7 @@ input:checked + .slider:before {
 
 
 
-
+<script src="js/security.js"></script>
 <script src="js/worktree.js"></script>
 <script>
 var tempUserId;
@@ -794,13 +794,13 @@ function createNewUser() {
     }
 
 
-    function afterUserSave(xhr){
+    function afterUserSave(xhr,decryptedResponseObj){
       if(xhr.status==403){
       gotohome();
       }
 
       if(xhr.status==400){
-      var response = JSON.parse(xhr.responseText);
+      var response = decryptedResponseObj;
       closePopup();
       stopLoader();
       showErrorMessage("Bad Request",response.message,true);
@@ -818,14 +818,14 @@ function createNewUser() {
 
     }
 
-    function afterDeleteRecord(xhr){
+    function afterDeleteRecord(xhr,decryptedResponseObj){
     stopLoader();
     if(xhr.status==403){
       gotohome();
       }
 
       if(xhr.status==400){
-      var response = JSON.parse(xhr.responseText);
+      var response = decryptedResponseObj;
       stopLoader();
       showErrorMessage("Bad Request",response.message,true);
       return;
@@ -858,12 +858,12 @@ function createNewUser() {
     }
 
 
-function afterPageLoad(xhr) {
+function afterPageLoad(xhr,decryptedResponseObj) {
   if (xhr.status === 403) {
     gotohome();
   }
 
-  var response = JSON.parse(xhr.responseText);
+  var response = decryptedResponseObj;
   users = response.users;
   features = response.features;
   populateTable();

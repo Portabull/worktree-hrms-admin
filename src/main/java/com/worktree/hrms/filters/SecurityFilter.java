@@ -72,6 +72,8 @@ package com.worktree.hrms.filters;
 //}
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.worktree.hrms.filters.wrapper.EncryptedHttpRequestWrapper;
+import com.worktree.hrms.filters.wrapper.EncryptedHttpResponseWrapper;
 import com.worktree.hrms.utils.HibernateUtils;
 import com.worktree.hrms.utils.TokenFileUtils;
 import jakarta.servlet.FilterChain;
@@ -149,7 +151,14 @@ public class SecurityFilter extends OncePerRequestFilter {
                 new ObjectMapper().writeValue(response.getWriter(), errorDetails);
                 return;
             }
+
+            EncryptedHttpRequestWrapper encryptedRequest = new EncryptedHttpRequestWrapper(request);
+            EncryptedHttpResponseWrapper encryptedResponse = new EncryptedHttpResponseWrapper(response);
+            filterChain.doFilter(encryptedRequest, encryptedResponse);
+            encryptedResponse.encryptResponse();
+            return;
         }
+
 
         filterChain.doFilter(request, response);
     }

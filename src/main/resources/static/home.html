@@ -462,6 +462,7 @@
         <p id="log-details-message" style="color: red; display: none;">There are no recent requests.</p>
     </div>
 </div>
+<script src="js/security.js"></script>
 <script src="js/chart.js"></script>
 <script src="js/worktree.js"></script>
 <script>
@@ -659,7 +660,7 @@ function stopLoader() {
 }
 
 
-function init(xhr){
+function init(xhr,decryptedResponseObj){
      if (xhr.status == 200) {
 
     var userFeatures = getCurrentUserFeatures();
@@ -674,7 +675,7 @@ function init(xhr){
     }
         }
 
-        var response = JSON.parse(xhr.responseText);
+        var response = decryptedResponseObj;
         if(response.billing!=undefined){
         billingData = response.billing;
          stopReload("ManageTenants");

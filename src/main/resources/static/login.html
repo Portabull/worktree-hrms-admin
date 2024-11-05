@@ -223,7 +223,7 @@
     <div class="error-message" id="error-message"></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/platform/1.3.6/platform.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<script src="js/security.js"></script>
 <script src="js/worktree.js"></script>
 <script>
 var locationDetails;
@@ -278,15 +278,15 @@ var locationDetails;
         }
     }
 
-    function afterLogin(xhr) {
+    function afterLogin(xhr,decryptedResponseObj) {
         const errorMessage = document.getElementById('error-message');
         if (xhr.status == 200) {
         setAsCurrentUser(userNameCache);
-                        loginCacheTokenInfo(xhr);
+                        loginCacheTokenInfo(xhr,decryptedResponseObj);
 
             window.location.href = "home";
         } else {
-            const response = JSON.parse(xhr.responseText);
+            const response = decryptedResponseObj;
             errorMessage.textContent = response.message;
             errorMessage.style.display = 'block';
             stopLoader();
