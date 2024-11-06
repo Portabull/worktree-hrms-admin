@@ -515,3 +515,8 @@ function getISTTimestamp() {
 
     return ISTTime.getTime(); // Return in milliseconds
 }
+
+
+function gotoemailsettings(){
+window.location.href = "email-configuration";
+}
