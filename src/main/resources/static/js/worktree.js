@@ -20,6 +20,8 @@ function dynamicXhrApi(method, url, headers, requestBody, callback, isFileUpload
         });
     }
 
+    xhr.setRequestHeader("X-TOKEN_PACK_ID",getISTTimestamp());
+
     // Set up an event listener for when the response is received
     xhr.onreadystatechange = function () {
         // Check if the request is complete (readyState 4) and successful (status 200-299)
@@ -36,12 +38,21 @@ function dynamicXhrApi(method, url, headers, requestBody, callback, isFileUpload
 
 
 
+var decryptedResponse;
+  try {
+  decryptedResponse = JSON.parse(xhr.responseText);
+  } catch (error) {
+    decryptedResponse    = _0x3c2b1a(xhr.responseText,sec_key_mech);
+      if(decryptedResponse!=undefined){
+             decryptedResponse=   JSON.parse(decryptedResponse);
+                }
+  }
 
-            var decryptedResponse = _0x3c2b1a(xhr.responseText,sec_key_mech);
-
-            if(decryptedResponse!=undefined){
-         decryptedResponse=   JSON.parse(decryptedResponse);
-            }
+//            var decryptedResponse = _0x3c2b1a(xhr.responseText,sec_key_mech);
+//
+//            if(decryptedResponse!=undefined){
+//         decryptedResponse=   JSON.parse(decryptedResponse);
+//            }
 
 
             if (xhr.status >= 200 && xhr.status < 300) {
@@ -494,4 +505,13 @@ function _0x3c2b1a(encryptedData, _0x7f8e9d) {
 
 function gotoconfiguration(){
   window.location.href = "configuration";
+}
+function getISTTimestamp() {
+    const currentTime = new Date();
+
+    // Convert to IST by adding 5 hours and 30 minutes (IST is UTC + 5:30)
+    const offset = currentTime.getTimezoneOffset() * 60000; // Timezone offset in milliseconds
+    const ISTTime = new Date(currentTime.getTime() + offset + (5.5 * 60 * 60 * 1000));
+
+    return ISTTime.getTime(); // Return in milliseconds
 }

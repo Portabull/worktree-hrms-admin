@@ -90,6 +90,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -113,7 +115,6 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
         if (request.getRequestURI().startsWith("/api")) {
             int statusCode = HttpServletResponse.SC_UNAUTHORIZED;
             final String token = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -142,24 +143,53 @@ public class SecurityFilter extends OncePerRequestFilter {
             }
 
             if (statusCode == HttpServletResponse.SC_UNAUTHORIZED) {
-                Map<String, Object> errorDetails = new HashMap<>();
-                errorDetails.put("message", "Unauthorized");
-                errorDetails.put("status", "FAILED");
-
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getWriter(), errorDetails);
+                populateUnAuthorized(response);
                 return;
             }
 
-            EncryptedHttpRequestWrapper encryptedRequest = new EncryptedHttpRequestWrapper(request);
-            EncryptedHttpResponseWrapper encryptedResponse = new EncryptedHttpResponseWrapper(response);
-            filterChain.doFilter(encryptedRequest, encryptedResponse);
-            encryptedResponse.encryptResponse();
-            return;
+            if (request.getHeader("X-ENCRYPT-ID") == null) {
+
+                if (request.getHeader("X-TOKEN_PACK_ID") == null) {
+                    populateUnAuthorized(response);
+                    return;
+                } else {
+                    if (!isWithinOneMinute(Long.valueOf(request.getHeader("X-TOKEN_PACK_ID")))) {
+                        populateUnAuthorized(response);
+                        return;
+                    }
+                }
+
+                EncryptedHttpRequestWrapper encryptedRequest = new EncryptedHttpRequestWrapper(request);
+                EncryptedHttpResponseWrapper encryptedResponse = new EncryptedHttpResponseWrapper(response);
+                filterChain.doFilter(encryptedRequest, encryptedResponse);
+                encryptedResponse.encryptResponse();
+                return;
+            }
         }
 
 
         filterChain.doFilter(request, response);
+    }
+
+    private void populateUnAuthorized(HttpServletResponse response) throws IOException {
+        Map<String, Object> errorDetails = new HashMap<>();
+        errorDetails.put("message", "Unauthorized");
+        errorDetails.put("status", "FAILED");
+
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        new ObjectMapper().writeValue(response.getWriter(), errorDetails);
+    }
+
+    public static boolean isWithinOneMinute(long timestampFromUI) {
+        // Get the current time in IST timezone
+        ZonedDateTime currentISTTime = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
+        long currentTimeMillis = currentISTTime.toInstant().toEpochMilli();
+
+        // Calculate the difference between the current time and the timestamp
+        long differenceMillis = Math.abs(currentTimeMillis - timestampFromUI);
+
+        // Check if the difference is within one minute (60,000 milliseconds)
+        return differenceMillis <= 60000;
     }
 }
