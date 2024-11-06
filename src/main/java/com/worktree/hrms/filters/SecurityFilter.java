@@ -106,7 +106,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     private List<String> skipEndPoints;
 
-    @Value("${skip.filters.endpoint}")
+    @Value("${skip.filters.endpoints}")
     public void setSkipEndpoints(String skipEndpoint) {
         skipEndPoints = Arrays.asList(skipEndpoint.split(","));
     }
