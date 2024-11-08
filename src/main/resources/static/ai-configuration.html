@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Provider Configuration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e9edf5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            position: relative;
+            background: #ffffff;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background-color: #5a6268;
+        }
+
+        h2 {
+            text-align: center;
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+            color: #555;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .submit-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .separator {
+            height: 4px;
+            background-color: #d6d6d6;
+            width: 100%;
+            margin-bottom: 10px;
+            border-radius: 2px;
+        }
+
+        .submit-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .submit-btn:hover {
+            background-color: #0056b3;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .btn, .submit-btn {
+                font-size: 14px;
+                padding: 8px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <button class="back-btn">Back</button>
+    <h2>AI Provider Configuration</h2>
+    <form id="aiProviderForm">
+        <label for="provider">AI Provider</label>
+        <select id="provider" name="provider" required>
+            <option value="" disabled selected>Select Provider</option>
+            <option value="openai">Open AI</option>
+            <option value="azureai">Azure AI</option>
+        </select>
+
+        <div id="openai-fields" class="hidden">
+            <label for="openai-key">AI Key</label>
+            <input type="text" id="openai-key" placeholder="Enter AI Key">
+
+            <label for="openai-model">Model</label>
+            <input type="text" id="openai-model" placeholder="Enter Model">
+
+            <label for="openai-version">Version</label>
+            <input type="text" id="openai-version" placeholder="Enter Version">
+        </div>
+
+        <div id="azureai-fields" class="hidden">
+            <label for="azure-endpoint">Endpoint</label>
+            <input type="text" id="azure-endpoint" placeholder="Enter Endpoint">
+
+            <label for="azure-model">Model</label>
+            <input type="text" id="azure-model" placeholder="Enter Model">
+
+            <label for="azure-version">Version</label>
+            <input type="text" id="azure-version" placeholder="Enter Version">
+
+            <label for="azure-deployment">Deployment Name</label>
+            <input type="text" id="azure-deployment" placeholder="Enter Deployment Name">
+
+            <label for="azure-key">AI Key</label>
+            <input type="text" id="azure-key" placeholder="Enter AI Key">
+        </div>
+
+        <div class="actions">
+            <button type="button" class="btn" onclick="exportData()">Export <i class="fas fa-download"></i></button>
+            <button type="button" class="btn" onclick="document.getElementById('importFile').click()">Import <i class="fas fa-upload"></i></button>
+            <input type="file" id="importFile" style="display: none;" onchange="importData(event)">
+        </div>
+
+        <div class="submit-section">
+            <div class="separator"></div>
+            <button type="submit" class="submit-btn">Submit <i class="fas fa-paper-plane"></i></button>
+        </div>
+    </form>
+</div>
+
+<script>
+        const providerSelect = document.getElementById('provider');
+        const openAiFields = document.getElementById('openai-fields');
+        const azureAiFields = document.getElementById('azureai-fields');
+
+        providerSelect.addEventListener('change', (e) => {
+            if (e.target.value === 'openai') {
+                openAiFields.classList.remove('hidden');
+                azureAiFields.classList.add('hidden');
+            } else if (e.target.value === 'azureai') {
+                azureAiFields.classList.remove('hidden');
+                openAiFields.classList.add('hidden');
+            }
+        });
+
+        function exportData() {
+            alert("Exporting Data!");
+        }
+
+        function importData(event) {
+            alert("Importing Data!");
+        }
+
+        document.getElementById('aiProviderForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Form submitted!');
+        });
+    </script>
+</body>
+</html>

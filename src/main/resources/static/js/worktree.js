@@ -520,3 +520,8 @@ function getISTTimestamp() {
 function gotoemailsettings(){
 window.location.href = "email-configuration";
 }
+
+
+function gotoaisettings(){
+window.location.href = "ai-configuration";
+}
