@@ -666,13 +666,8 @@ function init(xhr,decryptedResponseObj){
     var userFeatures = getCurrentUserFeatures();
         if(userFeatures != undefined && userFeatures.length!=0){
  const button = document.getElementById('configurationButton');
-  if (button.style.display === 'none') {
         button.style.display = 'block'; // Show the button
         this.textContent = 'Hide Button'; // Change toggle button text
-    } else {
-        button.style.display = 'none'; // Hide the button
-        this.textContent = 'Show Button'; // Change toggle button text back
-    }
         }
 
         var response = decryptedResponseObj;
