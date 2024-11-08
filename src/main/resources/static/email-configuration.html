@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Configuration</title>
+    <link rel="stylesheet" href="css/common-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
@@ -147,21 +148,93 @@
             background-color: #a71d2a;
         }
 
-        #submit {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 14px;
-            margin-top: 20px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-        }
 
-        #submit:hover {
-            background-color: #0056b3;
-        }
+
+
+
+
+
+
+
+
+
+
+
+.submit-section {
+    text-align: center;
+    margin-top: 20px;
+    position: relative;
+}
+
+.separator {
+    height: 4px; /* Thickness of the line */
+    background-color: #d6d6d6; /* Cement color */
+    width: 100%; /* Full width */
+    margin-bottom: 10px; /* Space between line and button */
+    border-radius: 2px; /* Rounded ends */
+}
+
+#submit {
+    background-color: #007bff; /* Same blue as Import/Export buttons */
+    color: white;
+    border: none;
+    padding: 10px 20px; /* Consistent padding */
+    border-radius: 50px; /* Fully rounded button */
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+#submit:hover {
+    background-color: #0056b3; /* Darker blue for hover effect */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+}
+
+
+
+
+
+
+
+
+
+
+#export, #import {
+    background-color: #007bff; /* Brighter blue color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 50px; /* Rounded buttons */
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Smooth transitions */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+#export:hover, #import:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow on hover */
+}
+
+#export i, #import i {
+    font-size: 18px;
+}
+
+
+
+
+
+
+
 
 
 
@@ -207,6 +280,17 @@
 </head>
 <body>
 
+<!-- Error Popup Modal -->
+<div id="uniqueErrorModal9875">
+    <div class="unique-modal-content9875" id="modalContent9875">
+        <h2 id="errorHeader9875">Error Occurred</h2>
+        <p id="errorFooter9875" class="message-container9875">An unexpected error has occurred. Please try again later.</p>
+        <span class="read-more9875" id="readMore9875">Read more</span>
+        <button id="uniqueOkayBtn9875">Okay</button>
+    </div>
+</div>
+
+
 
 <!-- Loader Overlay -->
 <div class="loader-overlay" id="loader">
@@ -251,7 +335,20 @@
         </div>
     </div>
 
-    <button id="submit">Submit</button>
+    <!-- New Import and Export Buttons -->
+    <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+        <button id="export" onclick="exportData()">Export</button>
+        <input type="file" id="importFile" style="display: none;" onchange="importData(event)">
+        <button id="import" onclick="document.getElementById('importFile').click()">Import</button>
+    </div>
+
+    <!-- Cement Line Separator and Submit Button Section -->
+    <div class="submit-section">
+        <div class="separator"></div>
+        <button id="submit">Submit</button>
+    </div>
+
+
 </div>
 <script src="js/security.js"></script>
 <script src="js/worktree.js"></script>
@@ -311,7 +408,8 @@ startLoader();
         });
 
         function afterSave(xhr,decryptedResponse){
-     stopLoader();
+         stopLoader();
+        showErrorMessage("OK",'Configuration saved successfully',false);
         }
 
         function gatherFormData() {
@@ -399,6 +497,73 @@ startLoader();
             stopLoader();
         }
     });
+
+
+    function exportData() {
+    const formData = gatherFormData();
+    const blob = new Blob([JSON.stringify(formData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'email-config.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+     showErrorMessage("OK",'Data exported successfully!',false);
+}
+
+function importData(event) {
+    startLoader();
+    const file = event.target.files[0];
+    if (!file){
+      stopLoader();
+         return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+
+            const importedData = JSON.parse(e.target.result);
+            populateForm(importedData);
+              stopLoader();
+             showErrorMessage("OK",'Data imported successfully!',false);
+        } catch (error) {
+          stopLoader();
+            console.error('Invalid JSON file:', error);
+            resetFileInput();
+            showErrorMessage("Bad Request",'Failed to import data. Please upload a valid JSON file.',true);
+        }
+    };
+    reader.readAsText(file);
+}
+
+
+function resetFileInput() {
+    const importFileInput = document.getElementById('importFile');
+    importFileInput.value = ''; // Reset the input value to allow re-upload
+}
+
+
+document.addEventListener('keydown', function(event) {
+
+    var a = uniqueModal9875.style.display;
+
+   if(event.key === 'Enter' && uniqueModal9875.style.display == 'none'){
+          event.preventDefault(); // Prevent default form submission behavior
+        document.getElementById('submit').click(); // Trigger the Submit button
+    }
+
+       if(event.key == 'Enter'){
+            uniqueModal9875.style.display = "none";
+            return;
+    }
+
+});
+
+
     </script>
 </body>
 </html>
