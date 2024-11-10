@@ -419,6 +419,7 @@ window.location.href="log";
  document.addEventListener('keydown', function(event) {
     if (event.key === "Escape") {
          uniqueModal9875.style.display = "none";
+         stopLoader();
     }
 });
 

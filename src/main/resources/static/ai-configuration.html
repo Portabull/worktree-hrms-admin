@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Provider Configuration</title>
+    <title>AI Configuration</title>
+    <link rel="stylesheet" href="css/common-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
@@ -142,12 +143,78 @@
                 padding: 8px 15px;
             }
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ /* Loader Styles */
+        .loader-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader-overlay.active {
+            display: flex;
+        }
+
+
+          .spinner {
+            border: 8px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 8px solid #3498db;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+
+
+<!-- Error Popup Modal -->
+<div id="uniqueErrorModal9875">
+    <div class="unique-modal-content9875" id="modalContent9875">
+        <h2 id="errorHeader9875">Error Occurred</h2>
+        <p id="errorFooter9875" class="message-container9875">An unexpected error has occurred. Please try again later.</p>
+        <span class="read-more9875" id="readMore9875">Read more</span>
+        <button id="uniqueOkayBtn9875">Okay</button>
+    </div>
+</div>
+
+
+
+<!-- Loader Overlay -->
+<div class="loader-overlay" id="loader">
+    <div class="spinner"></div>
+</div>
+
+
 <div class="container">
-    <button class="back-btn">Back</button>
-    <h2>AI Provider Configuration</h2>
+    <button class="back-btn" onclick="goBack()">Back</button>
+    <h2>AI Configuration</h2>
     <form id="aiProviderForm">
         <label for="provider">AI Provider</label>
         <select id="provider" name="provider" required>
@@ -192,38 +259,153 @@
 
         <div class="submit-section">
             <div class="separator"></div>
-            <button type="submit" class="submit-btn">Submit <i class="fas fa-paper-plane"></i></button>
+            <button id="submit" type="submit" class="submit-btn">Submit <i class="fas fa-paper-plane"></i></button>
         </div>
     </form>
 </div>
-
+<script src="js/security.js"></script>
+<script src="js/worktree.js"></script>
 <script>
-        const providerSelect = document.getElementById('provider');
-        const openAiFields = document.getElementById('openai-fields');
-        const azureAiFields = document.getElementById('azureai-fields');
+    document.addEventListener('DOMContentLoaded', fetchConfig);
 
-        providerSelect.addEventListener('change', (e) => {
-            if (e.target.value === 'openai') {
-                openAiFields.classList.remove('hidden');
-                azureAiFields.classList.add('hidden');
-            } else if (e.target.value === 'azureai') {
-                azureAiFields.classList.remove('hidden');
-                openAiFields.classList.add('hidden');
-            }
-        });
+    function fetchConfig() {
+    startLoader();
+    dynamicXhrApi('GET',BASE_URL + 'api/ai/config' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined, populateAIDetails);
+    }
 
-        function exportData() {
-            alert("Exporting Data!");
+    function populateAIDetails(xhr,decryptedResponseObj){
+      stopLoader();
+    populateForm(decryptedResponseObj);
+    }
+
+    function populateForm(data) {
+        if (!data) return;
+
+        document.getElementById('provider').value = data.provider || '';
+        if (data.provider === 'openai') {
+            document.getElementById('openai-key').value = data.key || '';
+            document.getElementById('openai-model').value = data.model || '';
+            document.getElementById('openai-version').value = data.version || '';
+        } else if (data.provider === 'azureai') {
+            document.getElementById('azure-endpoint').value = data.endpoint || '';
+            document.getElementById('azure-model').value = data.model || '';
+            document.getElementById('azure-version').value = data.version || '';
+            document.getElementById('azure-deployment').value = data.deployment || '';
+            document.getElementById('azure-key').value = data.key || '';
         }
+        toggleFields(data.provider);
+    }
 
-        function importData(event) {
-            alert("Importing Data!");
+    function toggleFields(provider) {
+        document.getElementById('openai-fields').classList.toggle('hidden', provider !== 'openai');
+        document.getElementById('azureai-fields').classList.toggle('hidden', provider !== 'azureai');
+    }
+
+    document.getElementById('provider').addEventListener('change', (e) => {
+        toggleFields(e.target.value);
+    });
+
+    document.getElementById('aiProviderForm').addEventListener('submit', (e) => {
+
+
+
+    startLoader();
+        e.preventDefault();
+        const formData = gatherFormData();
+           dynamicXhrApi('POST',BASE_URL + 'api/ai/config' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() }
+           ,formData, function handleAIConfigSaveResp(xhr,decryptedResponseObj){
+             stopLoader();
+        showErrorMessage("OK",'Configuration saved successfully',false);
+           });
+    });
+
+    function gatherFormData() {
+        const provider = document.getElementById('provider').value;
+        const data = { provider };
+        if (provider === 'openai') {
+            data.key = document.getElementById('openai-key').value;
+            data.model = document.getElementById('openai-model').value;
+            data.version = document.getElementById('openai-version').value;
+        } else if (provider === 'azureai') {
+            data.endpoint = document.getElementById('azure-endpoint').value;
+            data.model = document.getElementById('azure-model').value;
+            data.version = document.getElementById('azure-version').value;
+            data.deployment = document.getElementById('azure-deployment').value;
+            data.key = document.getElementById('azure-key').value;
         }
+        return data;
+    }
 
-        document.getElementById('aiProviderForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Form submitted!');
-        });
-    </script>
+    function exportData() {
+        const formData = gatherFormData();
+        const blob = new Blob([JSON.stringify(formData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'ai-config.json';
+        a.click();
+        URL.revokeObjectURL(url);
+
+     showErrorMessage("OK",'Data exported successfully!',false);
+    }
+
+    function importData(event) {
+           startLoader();
+    const file = event.target.files[0];
+    if (!file){
+      stopLoader();
+         return;
+    }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+            try{
+                const data = JSON.parse(e.target.result);
+                populateForm(data);
+                    stopLoader();
+             showErrorMessage("OK",'Data imported successfully!',false);
+              } catch (error) {
+          stopLoader();
+            console.error('Invalid JSON file:', error);
+            resetFileInput();
+            showErrorMessage("Bad Request",'Failed to import data. Please upload a valid JSON file.',true);
+        }
+            };
+            reader.readAsText(file);
+    }
+
+    function goBack() {
+         startLoader();
+           gotoconfiguration();
+    }
+
+
+function resetFileInput() {
+    const importFileInput = document.getElementById('importFile');
+    importFileInput.value = ''; // Reset the input value to allow re-upload
+}
+
+    // Start Loader
+    function startLoader() {
+        document.getElementById('loader').classList.add('active');
+        document.body.classList.add('disabled-screen');  // Disable entire screen
+    }
+
+    // Stop Loader
+    function stopLoader() {
+        document.getElementById('loader').classList.remove('active');
+        document.body.classList.remove('disabled-screen');  // Re-enable the screen
+    }
+
+
+ window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the cache
+        if (event.persisted) {
+            stopLoader();
+        }
+    });
+
+
+</script>
 </body>
 </html>

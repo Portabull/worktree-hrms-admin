@@ -337,15 +337,15 @@
 
     <!-- New Import and Export Buttons -->
     <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-        <button id="export" onclick="exportData()">Export</button>
+        <button id="export" onclick="exportData()">Export <i class="fas fa-download"></i></button>
         <input type="file" id="importFile" style="display: none;" onchange="importData(event)">
-        <button id="import" onclick="document.getElementById('importFile').click()">Import</button>
+        <button id="import" onclick="document.getElementById('importFile').click()">Import <i class="fas fa-upload"></i></button>
     </div>
 
     <!-- Cement Line Separator and Submit Button Section -->
     <div class="submit-section">
         <div class="separator"></div>
-        <button id="submit">Submit</button>
+        <button id="submit">Submit <i class="fas fa-paper-plane"></i></button>
     </div>
 
 
