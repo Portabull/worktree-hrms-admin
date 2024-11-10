@@ -371,6 +371,7 @@ window.location.href="log";
     // When the user clicks on the Okay button, close the modal
     uniqueOkayBtn9875.onclick = function() {
       uniqueModal9875.style.display = "none";
+      stopLoader();
     }
 
     // Toggle message expansion on "Read more" click

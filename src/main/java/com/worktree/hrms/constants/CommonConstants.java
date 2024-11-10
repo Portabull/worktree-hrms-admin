@@ -20,6 +20,11 @@ public class CommonConstants {
             STATUS_CODE, 200
     ));
 
+    public class ServerConfig {
+        public static final String AI_CONFIG = "AI_CONFIG";
+        public static final String EMAIL_CONFIG = "EMAIL_CONFIG";
+    }
+
 }
 
 
