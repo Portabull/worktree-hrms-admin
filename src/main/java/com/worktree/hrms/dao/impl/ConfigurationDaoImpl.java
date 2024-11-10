@@ -23,11 +23,13 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private static final String SERVER_CONFIG_NAME = "serverConfigName";
+
     @Override
     public Map<String, Object> saveEmailConfiguration(Map<String, Object> payload) {
         try {
-            ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class,
-                    "serverConfigName", CommonConstants.ServerConfig.EMAIL_CONFIG);
+            ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class, SERVER_CONFIG_NAME
+                    , CommonConstants.ServerConfig.EMAIL_CONFIG);
             if (serverConfig == null) {
                 serverConfig = new ServerConfigEntity();
             }
@@ -35,7 +37,7 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
             serverConfig.setServerConfiguration(objectMapper.writeValueAsString(payload));
             hibernateUtils.saveOrUpdateEntity(serverConfig);
         } catch (Exception e) {
-            throw new BadRequestException("Something went wrong please try after sometime");
+            throw new BadRequestException(CommonConstants.INTERNAL_SERVER_ERROR);
         }
         return CommonConstants.SUCCESS_RESPONSE;
     }
@@ -44,7 +46,7 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
     public Map<String, Object> getEmailConfiguration() {
         try {
             ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class,
-                    "serverConfigName", CommonConstants.ServerConfig.EMAIL_CONFIG);
+                    SERVER_CONFIG_NAME, CommonConstants.ServerConfig.EMAIL_CONFIG);
             if (serverConfig == null) {
                 return getEmptyEmailResponse();
             } else {
@@ -62,7 +64,7 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
     public Map<String, Object> saveAIConfiguration(Map<String, Object> payload) {
         try {
             ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class,
-                    "serverConfigName", CommonConstants.ServerConfig.AI_CONFIG);
+                    SERVER_CONFIG_NAME, CommonConstants.ServerConfig.AI_CONFIG);
             if (serverConfig == null) {
                 serverConfig = new ServerConfigEntity();
             }
@@ -70,7 +72,7 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
             serverConfig.setServerConfiguration(objectMapper.writeValueAsString(payload));
             hibernateUtils.saveOrUpdateEntity(serverConfig);
         } catch (Exception e) {
-            throw new BadRequestException("Something went wrong please try after sometime");
+            throw new BadRequestException(CommonConstants.INTERNAL_SERVER_ERROR);
         }
         return CommonConstants.SUCCESS_RESPONSE;
     }
@@ -79,7 +81,7 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
     public Map<String, Object> getAIConfiguration() {
         try {
             ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class,
-                    "serverConfigName", CommonConstants.ServerConfig.AI_CONFIG);
+                    SERVER_CONFIG_NAME, CommonConstants.ServerConfig.AI_CONFIG);
             if (serverConfig == null) {
                 return getEmptyAIResponse();
             } else {
@@ -92,24 +94,69 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
         }
     }
 
+    @Override
+    public Map<String, Object> saveMobileConfiguration(Map<String, Object> payload) {
+        try {
+            ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class,
+                    SERVER_CONFIG_NAME, CommonConstants.ServerConfig.MOBILE_CONFIG);
+            if (serverConfig == null) {
+                serverConfig = new ServerConfigEntity();
+            }
+            serverConfig.setServerConfigName(CommonConstants.ServerConfig.MOBILE_CONFIG);
+            serverConfig.setServerConfiguration(objectMapper.writeValueAsString(payload));
+            hibernateUtils.saveOrUpdateEntity(serverConfig);
+        } catch (Exception e) {
+            throw new BadRequestException(CommonConstants.INTERNAL_SERVER_ERROR);
+        }
+        return CommonConstants.SUCCESS_RESPONSE;
+    }
+
+    @Override
+    public Map<String, Object> getMobileConfiguration() {
+        try {
+            ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class,
+                    SERVER_CONFIG_NAME, CommonConstants.ServerConfig.MOBILE_CONFIG);
+            if (serverConfig == null) {
+                return getEmptyMobileResponse();
+            } else {
+                return objectMapper.readValue(serverConfig.getServerConfiguration(),
+                        new TypeReference<>() {
+                        });
+            }
+        } catch (Exception e) {
+            return getEmptyMobileResponse();
+        }
+    }
+
+    private Map<String, Object> getEmptyMobileResponse() {
+        Map<String, Object> emptyMobileResponse = new HashMap<>();
+        emptyMobileResponse.put("sid", "");
+        emptyMobileResponse.put("provider", "twilio");
+        emptyMobileResponse.put("token", "");
+        emptyMobileResponse.put("mobile", "");
+        emptyMobileResponse.put("whatsapp", "");
+        emptyMobileResponse.put("additionalProperties", Arrays.asList());
+        return emptyMobileResponse;
+    }
+
     private Map<String, Object> getEmptyAIResponse() {
-        Map<String, Object> aiPayload = new HashMap<>();
-        aiPayload.put("provider", "openai");
-        aiPayload.put("key", "");
-        aiPayload.put("model", "");
-        aiPayload.put("version", "");
-        return aiPayload;
+        Map<String, Object> emptyAIResponse = new HashMap<>();
+        emptyAIResponse.put("provider", "openai");
+        emptyAIResponse.put("key", "");
+        emptyAIResponse.put("model", "");
+        emptyAIResponse.put("version", "");
+        return emptyAIResponse;
     }
 
 
     private Map<String, Object> getEmptyEmailResponse() {
-        Map<String, Object> emailConfigResponse = new HashMap<>();
-        emailConfigResponse.put("emailHost", "");
-        emailConfigResponse.put("emailPort", "");
-        emailConfigResponse.put("username", "");
-        emailConfigResponse.put("password", "");
-        emailConfigResponse.put("emailFrom", "");
-        emailConfigResponse.put("additionalProperties", Arrays.asList());
-        return emailConfigResponse;
+        Map<String, Object> emptyEmailResponse = new HashMap<>();
+        emptyEmailResponse.put("emailHost", "");
+        emptyEmailResponse.put("emailPort", "");
+        emptyEmailResponse.put("username", "");
+        emptyEmailResponse.put("password", "");
+        emptyEmailResponse.put("emailFrom", "");
+        emptyEmailResponse.put("additionalProperties", Arrays.asList());
+        return emptyEmailResponse;
     }
 }

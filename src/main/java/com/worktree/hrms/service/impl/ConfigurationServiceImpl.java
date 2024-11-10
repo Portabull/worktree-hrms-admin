@@ -32,4 +32,14 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     public Map<String, Object> getAIConfiguration() {
         return configurationDao.getAIConfiguration();
     }
+
+    @Override
+    public Map<String, Object> saveMobileConfiguration(Map<String, Object> payload) {
+        return configurationDao.saveMobileConfiguration(payload);
+    }
+
+    @Override
+    public Map<String, Object> getMobileConfiguration() {
+        return configurationDao.getMobileConfiguration();
+    }
 }

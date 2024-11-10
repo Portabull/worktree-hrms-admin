@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Configuration</title>
+    <link rel="stylesheet" href="css/common-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e9edf5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            position: relative;
+            background: #ffffff;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background-color: #5a6268;
+        }
+
+        h2 {
+            text-align: center;
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+            color: #555;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .submit-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .separator {
+            height: 4px;
+            background-color: #d6d6d6;
+            width: 100%;
+            margin-bottom: 10px;
+            border-radius: 2px;
+        }
+
+        .loader-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 8px solid #3498db;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .accordion {
+            margin-top: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            cursor: pointer;
+            font-weight: bold;
+            color: #333;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .accordion-header:hover {
+            background: #e9ecef;
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 15px;
+            background-color: #ffffff;
+        }
+
+        .accordion-content.active {
+            display: block;
+        }
+
+        .property-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .property-row input {
+            flex: 1;
+            padding: 10px;
+            font-size: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .property-row button {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: none;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .property-row .add-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .property-row .add-btn:hover {
+            background-color: #218838;
+        }
+
+        .property-row .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .property-row .delete-btn:hover {
+            background-color: #a71d2a;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .btn {
+                font-size: 14px;
+                padding: 8px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+
+<!-- Error Popup Modal -->
+<div id="uniqueErrorModal9875">
+    <div class="unique-modal-content9875" id="modalContent9875">
+        <h2 id="errorHeader9875">Error Occurred</h2>
+        <p id="errorFooter9875" class="message-container9875">An unexpected error has occurred. Please try again later.</p>
+        <span class="read-more9875" id="readMore9875">Read more</span>
+        <button id="uniqueOkayBtn9875">Okay</button>
+    </div>
+</div>
+
+
+<div class="loader-overlay" id="loader">
+    <div class="spinner"></div>
+</div>
+
+<div class="container">
+    <button class="back-btn" onclick="goBack()">Back</button>
+    <h2>Mobile Configuration</h2>
+    <form id="mobileProviderForm">
+        <label for="provider">Mobile Provider</label>
+        <select id="provider" name="provider" required>
+            <option value="" disabled selected>Select Provider</option>
+            <option value="twilio">Twilio</option>
+            <option value="textlocal">TextLocal</option>
+        </select>
+
+        <div id="twilio-fields" class="hidden">
+            <label for="twilio-sid">Account SID</label>
+            <input type="text" id="twilio-sid" placeholder="Enter Account SID">
+
+            <label for="twilio-token">Auth Token</label>
+            <input type="password" id="twilio-token" placeholder="Enter Auth Token">
+
+            <label for="twilio-mobile">Mobile Number</label>
+            <input type="text" id="twilio-mobile" placeholder="Enter Mobile Number">
+
+            <label for="twilio-whatsapp">WhatsApp Mobile Number</label>
+            <input type="text" id="twilio-whatsapp" placeholder="Enter WhatsApp Mobile Number">
+        </div>
+
+        <div id="textlocal-fields" class="hidden">
+            <label for="textlocal-client-id">Client ID</label>
+            <input type="text" id="textlocal-client-id" placeholder="Enter Client ID">
+
+            <label for="textlocal-client-secret">Client Secret</label>
+            <input type="password" id="textlocal-client-secret" placeholder="Enter Client Secret">
+
+            <label for="textlocal-mobile">Mobile Number</label>
+            <input type="text" id="textlocal-mobile" placeholder="Enter Mobile Number">
+
+            <label for="textlocal-whatsapp">WhatsApp Mobile Number</label>
+            <input type="text" id="textlocal-whatsapp" placeholder="Enter WhatsApp Mobile Number">
+        </div>
+
+        <div id="propertiesContainer">
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span>Additional Properties</span>
+                    <i class="fas fa-plus"></i>
+                </div>
+                <div class="accordion-content">
+                    <div class="property-row">
+                        <input type="text" placeholder="Property Name">
+                        <input type="text" placeholder="Value">
+                        <button class="delete-btn" onclick="deletePropertyRow(this)"><i class="fas fa-trash"></i></button>
+                        <button class="add-btn" onclick="addPropertyRow(this)"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button type="button" class="btn" onclick="exportData()">Export <i class="fas fa-download"></i></button>
+            <button type="button" class="btn" onclick="document.getElementById('importFile').click()">Import <i class="fas fa-upload"></i></button>
+            <input type="file" id="importFile" style="display: none;" onchange="importData(event)">
+        </div>
+
+        <div class="submit-section">
+            <div class="separator"></div>
+            <button id="submit" type="submit" class="btn">Submit <i class="fas fa-paper-plane"></i></button>
+        </div>
+    </form>
+</div>
+
+<script src="js/security.js"></script>
+<script src="js/worktree.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', fetchConfig);
+
+function fetchConfig() {
+    startLoader();
+    dynamicXhrApi(
+        'GET',
+        BASE_URL + 'api/mobile/config',
+        { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': getCurrentToken() },
+        undefined,
+        populateMobileDetails
+    );
+}
+
+function populateMobileDetails(xhr, decryptedResponseObj) {
+    stopLoader();
+    populateForm(decryptedResponseObj);
+}
+
+function populateForm(data) {
+    if (!data) return;
+
+    document.getElementById('provider').value = data.provider || '';
+    if (data.provider === 'twilio') {
+        document.getElementById('twilio-sid').value = data.sid || '';
+        document.getElementById('twilio-token').value = data.token || '';
+        document.getElementById('twilio-mobile').value = data.mobile || '';
+        document.getElementById('twilio-whatsapp').value = data.whatsapp || '';
+    } else if (data.provider === 'textlocal') {
+        document.getElementById('textlocal-client-id').value = data.clientId || '';
+        document.getElementById('textlocal-client-secret').value = data.clientSecret || '';
+        document.getElementById('textlocal-mobile').value = data.mobile || '';
+        document.getElementById('textlocal-whatsapp').value = data.whatsapp || '';
+    }
+    toggleFields(data.provider);
+    populateAdditionalProperties(data.additionalProperties || []);
+}
+
+function toggleFields(provider) {
+    document.getElementById('twilio-fields').classList.toggle('hidden', provider !== 'twilio');
+    document.getElementById('textlocal-fields').classList.toggle('hidden', provider !== 'textlocal');
+}
+
+document.getElementById('provider').addEventListener('change', (e) => {
+    toggleFields(e.target.value);
+});
+
+document.getElementById('mobileProviderForm').addEventListener('submit', (e) => {
+    e.preventDefault(); // Prevent default form submission
+    startLoader();
+    const formData = gatherFormData();
+    dynamicXhrApi(
+        'POST',
+        BASE_URL + 'api/mobile/config',
+        { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': getCurrentToken() },
+        formData,
+        handleSaveResponse
+    );
+});
+
+
+function gatherFormData() {
+    const provider = document.getElementById('provider').value;
+    const data = { provider };
+    if (provider === 'twilio') {
+        data.sid = document.getElementById('twilio-sid').value;
+        data.token = document.getElementById('twilio-token').value;
+        data.mobile = document.getElementById('twilio-mobile').value;
+        data.whatsapp = document.getElementById('twilio-whatsapp').value;
+    } else if (provider === 'textlocal') {
+        data.clientId = document.getElementById('textlocal-client-id').value;
+        data.clientSecret = document.getElementById('textlocal-client-secret').value;
+        data.mobile = document.getElementById('textlocal-mobile').value;
+        data.whatsapp = document.getElementById('textlocal-whatsapp').value;
+    }
+    data.additionalProperties = gatherAdditionalProperties();
+    return data;
+}
+
+function gatherAdditionalProperties() {
+    const properties = [];
+    const rows = document.querySelectorAll('.property-row');
+    rows.forEach(row => {
+        const name = row.querySelector('input[placeholder="Property Name"]').value;
+        const value = row.querySelector('input[placeholder="Value"]').value;
+        if (name && value) properties.push({ name, value });
+    });
+    return properties;
+}
+
+function handleSaveResponse(xhr, decryptedResponseObj) {
+    stopLoader();
+    showErrorMessage("OK", "Configuration saved successfully!", false);
+}
+
+function exportData() {
+    const formData = gatherFormData();
+    const blob = new Blob([JSON.stringify(formData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'mobile-config.json';
+    a.click();
+    URL.revokeObjectURL(url);
+
+    showErrorMessage("OK", "Data exported successfully!", false);
+}
+
+function importData(event) {
+    startLoader();
+    const file = event.target.files[0];
+    if (!file) {
+        stopLoader();
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const data = JSON.parse(e.target.result);
+            populateForm(data);
+            stopLoader();
+            showErrorMessage("OK", "Data imported successfully!", false);
+        } catch (error) {
+            stopLoader();
+            console.error('Invalid JSON file:', error);
+            resetFileInput();
+            showErrorMessage("Bad Request", "Failed to import data. Please upload a valid JSON file.", true);
+        }
+    };
+    reader.readAsText(file);
+}
+
+function resetFileInput() {
+    const importFileInput = document.getElementById('importFile');
+    importFileInput.value = '';
+}
+
+function goBack() {
+    startLoader();
+    gotoconfiguration();
+}
+
+function startLoader() {
+    document.getElementById('loader').classList.add('active');
+}
+
+function stopLoader() {
+    document.getElementById('loader').classList.remove('active');
+}
+
+function toggleAccordion(header) {
+    const content = header.nextElementSibling;
+    content.classList.toggle('active');
+    const icon = header.querySelector('i');
+    icon.classList.toggle('fa-plus');
+    icon.classList.toggle('fa-minus');
+}
+
+function addPropertyRow(button) {
+    const container = button.closest('.accordion-content');
+    const newRow = createPropertyRow();
+    container.appendChild(newRow);
+    updateAddButtonVisibility(container);
+}
+
+
+function deletePropertyRow(button) {
+    const row = button.parentElement;
+    const container = row.closest('.accordion-content');
+    row.remove();
+    if (container.querySelectorAll('.property-row').length === 0) container.appendChild(createPropertyRow());
+    updateAddButtonVisibility(container);
+}
+
+function createPropertyRow() {
+    const row = document.createElement('div');
+    row.className = 'property-row';
+    row.innerHTML = `
+        <input type="text" placeholder="Property Name">
+        <input type="text" placeholder="Value">
+        <button type="button" class="delete-btn" onclick="deletePropertyRow(this)"><i class="fas fa-trash"></i></button>
+        <button type="button" class="add-btn" onclick="addPropertyRow(this)"><i class="fas fa-plus"></i></button>
+    `;
+    return row;
+}
+
+
+function updateAddButtonVisibility(container) {
+    const rows = container.querySelectorAll('.property-row');
+    rows.forEach((row, index) => {
+        row.querySelector('.add-btn').style.display = index === rows.length - 1 ? 'inline-flex' : 'none';
+    });
+}
+
+function populateAdditionalProperties(properties) {
+    const container = document.querySelector('.accordion-content');
+    container.innerHTML = '';
+    properties.forEach(property => {
+        const row = createPropertyRow();
+        row.querySelector('input[placeholder="Property Name"]').value = property.name;
+        row.querySelector('input[placeholder="Value"]').value = property.value;
+        container.appendChild(row);
+    });
+    if (container.childElementCount === 0) {
+        container.appendChild(createPropertyRow());
+    }
+    updateAddButtonVisibility(container);
+}
+
+</script>
+
+</body>
+</html>

@@ -14,4 +14,7 @@ public interface ConfigurationService {
 
     Map<String, Object> getAIConfiguration();
 
+    Map<String, Object> saveMobileConfiguration(Map<String, Object> payload);
+
+    Map<String, Object> getMobileConfiguration();
 }

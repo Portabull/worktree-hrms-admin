@@ -524,6 +524,11 @@ startLoader();
 window.location.href = "email-configuration";
 }
 
+function gotoMobilesettings(){
+startLoader();
+window.location.href = "mobile-configuration";
+}
+
 
 function gotoaisettings(){
 startLoader();
