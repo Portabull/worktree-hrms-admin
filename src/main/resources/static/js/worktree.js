@@ -5,6 +5,32 @@ const userNameLS = "userName";
 const userNameTINFO = "userNameTINFO";
 const sec_key_mech = 'NWIYRFIYF%@&#$)ABCDEFGHIJKLMNOP';
 
+
+ // Disable right-click context menu
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+     document.addEventListener('keydown', function (e) {
+            // Disable F12
+            if (e.key === 'F12') {
+                e.preventDefault();
+            }
+
+            // Disable Ctrl+Shift+I (Chrome DevTools)
+            if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+                e.preventDefault();
+            }
+
+            // Disable Ctrl+Shift+J (Console)
+            if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+                e.preventDefault();
+            }
+
+            // Disable Ctrl+U (View Source)
+            if (e.ctrlKey && e.key === 'U') {
+                e.preventDefault();
+            }
+        });
+
 function dynamicXhrApi(method, url, headers, requestBody, callback, isFileUpload = false) {
     // Create a new XMLHttpRequest object
     const xhr = new XMLHttpRequest();
@@ -534,3 +560,4 @@ function gotoaisettings(){
 startLoader();
 window.location.href = "ai-configuration";
 }
+

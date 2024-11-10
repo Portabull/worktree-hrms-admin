@@ -14,6 +14,7 @@
         body, html {
             height: 100%;
             font-family: Arial, sans-serif;
+
         }
 
         /* Background gradient */
@@ -26,6 +27,10 @@
             );
             background-repeat: no-repeat;
             background-size: cover;
+                user-select: none; /* Prevent text selection */
+    -webkit-user-select: none; /* For Safari */
+    -moz-user-select: none; /* For Firefox */
+    -ms-user-select: none; /* For IE and Edge */
         }
 
         /* Background image */
