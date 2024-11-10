@@ -518,10 +518,12 @@ function getISTTimestamp() {
 
 
 function gotoemailsettings(){
+startLoader();
 window.location.href = "email-configuration";
 }
 
 
 function gotoaisettings(){
+startLoader();
 window.location.href = "ai-configuration";
 }

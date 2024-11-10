@@ -269,7 +269,8 @@ var locationDetails;
             errorMessage.style.display = 'none';
             startLoader();
             if(locationDetails==undefined){
-                showErrorMessage("Location ERROR","Hey, we didn't receive your location yet please wait few seconds and try again. Please be make sure location permission should allow from your side",true);
+                showErrorMessage("Location ERROR","We haven't received your location yet. Please wait a few seconds and try again. Make sure that location permissions are enabled.",true);
+                return;
             }
             dynamicXhrApi('POST', BASE_URL + 'api/login', { 'Content-Type': 'application/json','latlong': locationDetails,'dd':getDeviceDetails()}, { "userName": username, "password": _0x1a2b3c(password, sec_key_mech) }, afterLogin);
         } else {
@@ -357,7 +358,7 @@ function showPosition(position) {
 function showError(error) {
   switch(error.code) {
     case error.PERMISSION_DENIED:
-      showErrorMessage("Location Access Disabled","Please allow location details by enabling them in Browser. You can view site information and enable location access, then refresh the page.",true);
+      showErrorMessage("Location Access Disabled","Please enable location access in your browser by clicking the lock icon next to the URL, selecting 'Site settings,' and allowing location access. Refresh the page to proceed with logging into your account.",true);
       break;
     case error.POSITION_UNAVAILABLE:
      showErrorMessage("Location Access","Location information is unavailable.",true);
