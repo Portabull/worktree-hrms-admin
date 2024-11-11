@@ -262,6 +262,7 @@ var locationDetails;
     }
 
     var userNameCache;
+    var retryCount = 0;
 
     function login() {
         const username = document.getElementById('username').value;
@@ -272,8 +273,17 @@ var locationDetails;
         if (username && password) {
             errorMessage.style.display = 'none';
             startLoader();
-            if(locationDetails==undefined){
+
+            if(locationDetails === undefined && retryCount < 3){
+            retryCount++;
+             console.log(`Retrying login, attempt #${retryCount}`);
+                setTimeout(login, 1000);
+                return;
+            }
+
+            if(locationDetails === undefined && retryCount >= 3){
                 showErrorMessage("Location ERROR","We haven't received your location yet. Please wait a few seconds and try again. Make sure that location permissions are enabled.",true);
+                retryCount = 0;
                 return;
             }
             dynamicXhrApi('POST', BASE_URL + 'api/login', { 'Content-Type': 'application/json','latlong': locationDetails,'dd':getDeviceDetails()}, { "userName": username, "password": _0x1a2b3c(password, sec_key_mech) }, afterLogin);
