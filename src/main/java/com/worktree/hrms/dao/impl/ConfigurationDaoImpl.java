@@ -3,6 +3,7 @@ package com.worktree.hrms.dao.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worktree.hrms.constants.CommonConstants;
+import com.worktree.hrms.dao.CommonDao;
 import com.worktree.hrms.dao.ConfigurationDao;
 import com.worktree.hrms.entity.ServerConfigEntity;
 import com.worktree.hrms.exceptions.BadRequestException;
@@ -18,6 +19,9 @@ import java.util.Map;
 public class ConfigurationDaoImpl implements ConfigurationDao {
 
     @Autowired
+    private CommonDao commonDao;
+
+    @Autowired
     private HibernateUtils hibernateUtils;
 
     @Autowired
@@ -28,6 +32,8 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
     @Override
     public Map<String, Object> saveEmailConfiguration(Map<String, Object> payload) {
         try {
+            commonDao.userHasFeature(CommonConstants.Features.EMAIL_SETTINGS);
+
             ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class, SERVER_CONFIG_NAME
                     , CommonConstants.ServerConfig.EMAIL_CONFIG);
             if (serverConfig == null) {
@@ -44,6 +50,7 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 
     @Override
     public Map<String, Object> getEmailConfiguration() {
+        commonDao.userHasFeature(CommonConstants.Features.EMAIL_SETTINGS);
         try {
             ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class,
                     SERVER_CONFIG_NAME, CommonConstants.ServerConfig.EMAIL_CONFIG);
@@ -62,6 +69,7 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 
     @Override
     public Map<String, Object> saveAIConfiguration(Map<String, Object> payload) {
+        commonDao.userHasFeature(CommonConstants.Features.AI_SETTINGS);
         try {
             ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class,
                     SERVER_CONFIG_NAME, CommonConstants.ServerConfig.AI_CONFIG);
@@ -79,6 +87,7 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 
     @Override
     public Map<String, Object> getAIConfiguration() {
+        commonDao.userHasFeature(CommonConstants.Features.AI_SETTINGS);
         try {
             ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class,
                     SERVER_CONFIG_NAME, CommonConstants.ServerConfig.AI_CONFIG);
@@ -96,6 +105,7 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 
     @Override
     public Map<String, Object> saveMobileConfiguration(Map<String, Object> payload) {
+        commonDao.userHasFeature(CommonConstants.Features.MOBILE_SETTINGS);
         try {
             ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class,
                     SERVER_CONFIG_NAME, CommonConstants.ServerConfig.MOBILE_CONFIG);
@@ -113,6 +123,7 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 
     @Override
     public Map<String, Object> getMobileConfiguration() {
+        commonDao.userHasFeature(CommonConstants.Features.MOBILE_SETTINGS);
         try {
             ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class,
                     SERVER_CONFIG_NAME, CommonConstants.ServerConfig.MOBILE_CONFIG);

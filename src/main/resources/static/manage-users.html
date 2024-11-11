@@ -799,9 +799,7 @@ function createNewUser() {
 
 
     function afterUserSave(xhr,decryptedResponseObj){
-      if(xhr.status==403){
-      gotohome();
-      }
+
 
       if(xhr.status==400){
       var response = decryptedResponseObj;
@@ -824,11 +822,7 @@ function createNewUser() {
 
     function afterDeleteRecord(xhr,decryptedResponseObj){
     stopLoader();
-    if(xhr.status==403){
-      gotohome();
-      }
-
-      if(xhr.status==400){
+        if(xhr.status==400){
       var response = decryptedResponseObj;
       stopLoader();
       showErrorMessage("Bad Request",response.message,true);

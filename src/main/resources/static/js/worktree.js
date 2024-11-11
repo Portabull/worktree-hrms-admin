@@ -62,6 +62,10 @@ function dynamicXhrApi(method, url, headers, requestBody, callback, isFileUpload
                gotohome();
             }
 
+                if(xhr.status==403){
+                  gotohome();
+                  }
+
 
 
 var decryptedResponse;

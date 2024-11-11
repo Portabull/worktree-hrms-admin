@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="css/common-style.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Coupons</title>
+  <style>/* General styles */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+
+/* Loader Styles */
+.loader-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.loader-overlay.active {
+    display: flex;
+}
+
+.spinner {
+    border: 8px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 8px solid #3498db;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #343a40;
+    color: white;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .menu-button {
+    display: flex;
+    align-items: center;
+    cursor: pointer !important;
+}
+
+.navbar .menu-button div {
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    margin: 5px 0;
+}
+
+.navbar .company-name {
+    font-size: 24px;
+    font-weight: 600;
+    margin-left: 15px;
+    color: #ffcc00;
+}
+
+.navbar .profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer !important;
+}
+
+/* Breadcrumbs */
+h5 {
+    margin: 80px 0 20px 20px;
+    font-size: 16px;
+    color: #6c757d;
+}
+
+h5 .clickableRedirects {
+    color: #007bff;
+    cursor: pointer !important;
+}
+
+h5 .active-page-redirect {
+    color: #6c757d;
+    font-weight: bold;
+}
+
+/* Container styles */
+.container {
+    max-width: 1200px;
+    margin: 100px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.filter {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.filter input {
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    width: 300px;
+    font-size: 16px;
+}
+
+.filter .add-coupon-btn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.filter .add-coupon-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Table Styles */
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table thead {
+    background-color: #007bff;
+    color: white;
+}
+
+table th, table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    font-size: 16px;
+}
+
+table tr {
+    cursor: pointer !important;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Responsive Table for Small Screens */
+@media (max-width: 600px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+
+    table thead {
+        display: none;
+    }
+
+    table tr {
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        background-color: #fff;
+    }
+
+    table td {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+    }
+
+    table td:before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #007bff;
+    }
+}
+
+/* Popup Form Fixes */
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup.active {
+    display: flex;
+}
+
+.popup-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    height: auto;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.popup-content h3 {
+    margin-top: 0;
+    text-align: center;
+}
+
+.popup-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.popup-content label {
+    font-weight: bold;
+}
+
+.popup-content input[type="text"],
+.popup-content input[type="checkbox"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.popup-content button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    max-width: 120px;
+    margin: auto;
+}
+
+.popup-content button:hover {
+    background-color: #0056b3;
+}
+
+/* Close Button for Popup */
+.popup-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    background-color: #fff;
+    border: none;
+    border-radius: 50%;
+    padding: 5px 10px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.popup-close:hover {
+    background-color: #f1f1f1;
+}
+
+/* Modern Toggle Switch */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.toggle-container .toggle-switch {
+    position: relative;
+    width: 50px;
+    height: 24px;
+}
+
+.toggle-container .toggle-switch input {
+    display: none;
+}
+
+.toggle-container .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 24px;
+}
+
+.toggle-container .slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+.toggle-container input:checked + .slider {
+    background-color: #28a745;
+}
+
+.toggle-container input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Dropdown Menu Fix */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+    padding: 10px 0;
+    width: 200px;
+}
+
+.dropdown-menu a {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: black;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.dropdown-menu a i {
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+.dropdown-menu a:hover {
+    background-color: #f4f4f4;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    left: -300px;
+    top: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #343a40;
+    padding: 20px;
+    color: white;
+    transition: all 0.5s ease;
+    z-index: 1001;
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.sidebar button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer !important;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.sidebar button:hover {
+    background-color: #0056b3;
+}
+
+.sidebar .close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer !important;
+}
+
+
+  </style>
+</head>
+<body oncontextmenu="return false;">
+
+<!-- Error Popup Modal -->
+<div id="uniqueErrorModal9875">
+  <div class="unique-modal-content9875" id="modalContent9875">
+    <h2 id="errorHeader9875">Error Occurred</h2>
+    <br>
+    <p id="errorFooter9875" class="message-container9875">An unexpected error has occurred. Please try again later.</p>
+    <span class="read-more9875" id="readMore9875">Read more</span>
+    <br>
+    <button id="uniqueOkayBtn9875">Okay</button>
+  </div>
+</div>
+<!-- Loader -->
+<div class="loader-overlay" id="loader">
+  <div class="spinner"></div>
+</div>
+
+
+
+<!-- Navbar -->
+<div class="navbar">
+  <div class="menu-button" onclick="toggleSidebar()">
+    <div></div>
+    <span class="company-name">Worktree</span>
+  </div>
+  <div class="profile">
+    <img src="image/user-profile.jpeg" alt="Profile" onclick="toggleProfileDropdown()">
+    <div class="dropdown-menu" id="profile-dropdown">
+      <a href="#"  onclick="openProfileSettings()"><i class="fas fa-cog"></i> Settings</a>
+      <a href="#"  onclick="manageUserProfiles(startLoader)"><i class="fas fa-user"></i> Manage Profiles</a>
+      <a href="#"  onclick="logout(startLoader,redirectafterlogout)"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+  </div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <button class="close-btn" onclick="toggleSidebar()">× Close</button>
+  <button onclick="gotohome()">Home</button>
+  <button onclick="manageTenants(startLoader)">Manage Tenants</button>
+  <button onclick="showReports()">Reports</button>
+</div>
+
+
+
+<div class="container">
+  <h5><span onclick="gotohome()" class="clickableRedirects">Home</span> / <span onclick="gotoconfiguration()" class="clickableRedirects">Configuration</span> / <span class="active-page-redirect">Coupons</span></h5>
+  <div class="filter">
+    <input type="text" id="searchInput" placeholder="Filter by Coupon Code" onkeyup="filterUsers()">
+    <button class="add-coupon-btn" onclick="openUserForm()">Add Coupon</button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    <table id="userTable">
+      <thead>
+      <tr>
+        <th>SNO</th>
+        <th>Coupon Code</th>
+        <th>Discount Percentage</th>
+        <th>Created Date</th>
+        <th>Created By</th>
+      </tr>
+      </thead>
+      <tbody id="userTableBody">
+      <!-- Dynamic content will populate here -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add Coupon Popup -->
+<div class="popup" id="userFormPopup">
+  <div class="popup-close" onclick="closePopup()">×</div>
+  <div class="popup-content">
+    <h3>Update Coupon</h3>
+    <form id="userForm">
+      <label for="userName">Coupon Code:</label>
+      <input type="text" id="userName" name="userName" required>
+      <label for="displayName">Discount Percentage:</label>
+      <input type="text" id="displayName" name="displayName" required>
+      <div class="toggle-container">
+        <span>Status:</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="status">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <button type="button" onclick="createNewUser()">Save</button>
+    </form>
+  </div>
+</div>
+<script src="js/security.js"></script>
+<script src="js/worktree.js"></script>
+<script>
+var users = [
+    { sNo: 1, couponCode: 'SAVE20', discountPercentage: '20%', createdDate: '2024-01-01', createdBy: 'Admin', status: true },
+    { sNo: 2, couponCode: 'WELCOME10', discountPercentage: '10%', createdDate: '2024-01-05', createdBy: 'Admin', status: false }
+];
+
+
+
+
+function populateTable() {
+  const tableBody = document.getElementById('userTableBody');
+  tableBody.innerHTML = '';
+  users.forEach(user => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td data-label="SNO">${user.sNo}</td>
+      <td data-label="Coupon Code">${user.couponCode}</td>
+      <td data-label="Discount Percentage">${user.discountPercentage}</td>
+      <td data-label="Created Date">${user.createdDate}</td>
+      <td data-label="Created By">${user.createdBy}</td>
+    `;
+    row.onclick = () => openUserForm(user);
+    tableBody.appendChild(row);
+  });
+}
+
+function openUserForm(user = {}) {
+  document.getElementById('userFormPopup').classList.add('active');
+
+  if(user.couponCode == undefined){
+document.getElementById('userName').value = user.couponCode || '';
+  }else{
+  document.getElementById('userName').value = user.couponCode || '';
+    document.getElementById('userName').disabled  = true;
+  }
+
+
+  document.getElementById('displayName').value = user.discountPercentage || '';
+  document.getElementById('status').checked = user.status || false;
+}
+
+function closePopup() {
+  document.getElementById('userFormPopup').classList.remove('active');
+}
+
+function createNewUser() {
+  const newCoupon = {
+    sNo: users.length + 1,
+    couponCode: document.getElementById('userName').value,
+    discountPercentage: document.getElementById('displayName').value,
+    createdDate: new Date().toLocaleDateString(),
+    createdBy: 'Admin',
+    status: document.getElementById('status').checked
+  };
+
+startLoader();
+ dynamicXhrApi('POST', BASE_URL + 'api/coupon', { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': getCurrentToken() }, newCoupon, function afterSaveOP(xhr,decryptedResponse){
+
+
+      if(xhr.status==400){
+      var response = decryptedResponseObj;
+      closePopup();
+      stopLoader();
+      showErrorMessage("Bad Request",response.message,true);
+      return;
+      }
+
+       window.location.href = 'manage-coupons';
+ });
+}
+
+function filterUsers() {
+  const filterValue = document.getElementById('searchInput').value.toLowerCase();
+  const filteredUsers = users.filter(user => user.couponCode.toLowerCase().includes(filterValue));
+  const tableBody = document.getElementById('userTableBody');
+  tableBody.innerHTML = '';
+  filteredUsers.forEach(user => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td data-label="SNO">${user.sNo}</td>
+      <td data-label="Coupon Code">${user.couponCode}</td>
+      <td data-label="Discount Percentage">${user.discountPercentage}</td>
+      <td data-label="Created Date">${user.createdDate}</td>
+      <td data-label="Created By">${user.createdBy}</td>
+    `;
+    row.onclick = () => openUserForm(user);
+    tableBody.appendChild(row);
+  });
+}
+
+function init(){
+loadProfilePhoto();
+    startLoader();
+        dynamicXhrApi('GET',BASE_URL + 'api/coupons',{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() }
+        ,undefined, function loadInfo(xhr,decryptedResponse){
+
+        if(xhr.status == 403){
+             gotohome();
+        }
+
+        users = decryptedResponse.coupons;
+        populateTable();
+        stopLoader();
+        });
+}
+
+
+function startLoader() {
+    document.getElementById('loader').classList.add('active');
+    document.body.style.pointerEvents = 'none';
+}
+
+function stopLoader() {
+    document.getElementById('loader').classList.remove('active');
+    document.body.style.pointerEvents = 'auto';
+}
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('active');
+}
+
+    function toggleProfileDropdown() {
+        const dropdown = document.getElementById('profile-dropdown');
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+// Close dropdown when clicking outside
+window.addEventListener('click', function(event) {
+    const profile = document.querySelector('.profile');
+    const dropdownMenu = document.getElementById('profile-dropdown');
+
+    if (!profile.contains(event.target)) {
+        dropdownMenu.style.display = 'none';  // This ID is incorrect, `dropdown-menu` likely conflicts here.
+    }
+});
+
+
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

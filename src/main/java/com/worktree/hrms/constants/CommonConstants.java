@@ -31,6 +31,17 @@ public class CommonConstants {
         public static final String EMAIL_CONFIG = "EMAIL_CONFIG";
 
         public static final String MOBILE_CONFIG = "MOBILE_CONFIG";
+
+    }
+
+    public class Features {
+        private Features() {
+        }
+
+        public static final String EMAIL_SETTINGS = "Email Settings";
+        public static final String MOBILE_SETTINGS = "Mobile Settings";
+        public static final String AI_SETTINGS = "AI Settings";
+        public static final String COUPON_SETTINGS = "Coupon Settings";
     }
 
 }

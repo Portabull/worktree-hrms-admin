@@ -37,6 +37,8 @@ public class TestConfig {
             hibernateUtils.saveOrUpdateEntity(new FeatureEntity("Mobile Settings", dateUtils.getCurrentDate()));
         if (getFeature("AI Settings") == null)
             hibernateUtils.saveOrUpdateEntity(new FeatureEntity("AI Settings", dateUtils.getCurrentDate()));
+        if (getFeature("Coupon Settings") == null)
+            hibernateUtils.saveOrUpdateEntity(new FeatureEntity("Coupon Settings", dateUtils.getCurrentDate()));
     }
 
     private FeatureEntity getFeature(String featureName) {

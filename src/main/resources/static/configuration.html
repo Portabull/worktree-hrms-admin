@@ -368,6 +368,12 @@
         <i class="fas fa-wifi"></i>
         <div class="settings-label">Network</div>
     </div>
+
+    <!-- Coupon option -->
+    <div class="settings-option" data-alias="Coupon Settings" onclick="gotoCouponSettings()" data-tooltip="Manage coupons">
+        <i class="fas fa-tags"></i>
+        <div class="settings-label">Coupons</div>
+    </div>
 </div>
 <script src="js/security.js"></script>
 <script src="js/worktree.js"></script>
@@ -432,6 +438,11 @@ window.addEventListener('pageshow', function(event) {
 function stopLoader() {
     document.getElementById('loader').style.visibility = 'hidden';
     document.body.style.pointerEvents = 'auto'; // Re-enable interaction with the screen
+}
+
+function gotoCouponSettings(){
+startLoader();
+  window.location.href = "manage-coupons";
 }
 
 loadProfilePhoto();
