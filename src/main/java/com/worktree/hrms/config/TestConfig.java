@@ -1,5 +1,6 @@
 package com.worktree.hrms.config;
 
+import com.worktree.hrms.constants.CommonConstants;
 import com.worktree.hrms.entity.FeatureEntity;
 import com.worktree.hrms.entity.UserEntity;
 import com.worktree.hrms.utils.DateUtils;
@@ -31,14 +32,14 @@ public class TestConfig {
         admin.setAdmin(true);
         hibernateUtils.saveOrUpdateEntity(admin);
 
-        if (getFeature("Email Settings") == null)
-            hibernateUtils.saveOrUpdateEntity(new FeatureEntity("Email Settings", dateUtils.getCurrentDate()));
-        if (getFeature("Mobile Settings") == null)
-            hibernateUtils.saveOrUpdateEntity(new FeatureEntity("Mobile Settings", dateUtils.getCurrentDate()));
-        if (getFeature("AI Settings") == null)
-            hibernateUtils.saveOrUpdateEntity(new FeatureEntity("AI Settings", dateUtils.getCurrentDate()));
-        if (getFeature("Coupon Settings") == null)
-            hibernateUtils.saveOrUpdateEntity(new FeatureEntity("Coupon Settings", dateUtils.getCurrentDate()));
+        if (getFeature(CommonConstants.Features.EMAIL_SETTINGS) == null)
+            hibernateUtils.saveOrUpdateEntity(new FeatureEntity(CommonConstants.Features.EMAIL_SETTINGS, dateUtils.getCurrentDate()));
+        if (getFeature(CommonConstants.Features.MOBILE_SETTINGS) == null)
+            hibernateUtils.saveOrUpdateEntity(new FeatureEntity(CommonConstants.Features.MOBILE_SETTINGS, dateUtils.getCurrentDate()));
+        if (getFeature(CommonConstants.Features.AI_SETTINGS) == null)
+            hibernateUtils.saveOrUpdateEntity(new FeatureEntity(CommonConstants.Features.AI_SETTINGS, dateUtils.getCurrentDate()));
+        if (getFeature(CommonConstants.Features.COUPON_SETTINGS) == null)
+            hibernateUtils.saveOrUpdateEntity(new FeatureEntity(CommonConstants.Features.COUPON_SETTINGS, dateUtils.getCurrentDate()));
     }
 
     private FeatureEntity getFeature(String featureName) {
