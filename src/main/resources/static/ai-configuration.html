@@ -274,7 +274,7 @@
 
     function fetchConfig() {
     startLoader();
-    dynamicXhrApi('GET',BASE_URL + 'api/ai/config' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined, populateAIDetails);
+    dynamicXhrApi('GET',BASE_URL + 'api/ai/config' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken(),'featureType':'AI Settings' },undefined, populateAIDetails);
     }
 
     function populateAIDetails(xhr,decryptedResponseObj){
@@ -316,7 +316,7 @@
     startLoader();
         e.preventDefault();
         const formData = gatherFormData();
-           dynamicXhrApi('POST',BASE_URL + 'api/ai/config' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() }
+           dynamicXhrApi('POST',BASE_URL + 'api/ai/config' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() ,'featureType':'AI Settings'}
            ,formData, function handleAIConfigSaveResp(xhr,decryptedResponseObj){
              stopLoader();
         showErrorMessage("OK",'Configuration saved successfully',false);

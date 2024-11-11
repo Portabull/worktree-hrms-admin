@@ -45,8 +45,6 @@ public class CommonDaoImpl implements CommonDao {
     @Override
     public Map<String, Object> getCoupons() {
 
-        userHasFeature(CommonConstants.Features.COUPON_SETTINGS);
-
         Map<String, Object> couponResponse = new HashMap<>();
         List<CouponEntity> couponEntities;
         try (Session session = hibernateUtils.getSession()) {
@@ -76,8 +74,6 @@ public class CommonDaoImpl implements CommonDao {
 
     @Override
     public Map<String, Object> saveCoupon(Map<String, Object> payload) {
-
-        userHasFeature(CommonConstants.Features.COUPON_SETTINGS);
 
         CouponEntity couponEntity = hibernateUtils.findEntityByCriteria(CouponEntity.class,
                 "couponCode", payload.get("couponCode").toString());

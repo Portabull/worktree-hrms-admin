@@ -1,5 +1,6 @@
 package com.worktree.hrms.controllers;
 
+import com.worktree.hrms.annotations.Feature;
 import com.worktree.hrms.service.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,31 +16,37 @@ public class ConfigurationController {
     @Autowired
     private ConfigurationService configurationService;
 
+    @Feature
     @PostMapping("email/config")
     public ResponseEntity<Map<String, Object>> saveEmailConfiguration(@RequestBody Map<String, Object> payload) {
         return new ResponseEntity<>(configurationService.saveEmailConfiguration(payload), HttpStatus.OK);
     }
 
+    @Feature
     @GetMapping("email/config")
     public ResponseEntity<Map<String, Object>> getEmailConfiguration() {
         return new ResponseEntity<>(configurationService.getEmailConfiguration(), HttpStatus.OK);
     }
 
+    @Feature
     @PostMapping("ai/config")
     public ResponseEntity<Map<String, Object>> saveAIConfiguration(@RequestBody Map<String, Object> payload) {
         return new ResponseEntity<>(configurationService.saveAIConfiguration(payload), HttpStatus.OK);
     }
 
+    @Feature
     @GetMapping("ai/config")
     public ResponseEntity<Map<String, Object>> getAIConfiguration() {
         return new ResponseEntity<>(configurationService.getAIConfiguration(), HttpStatus.OK);
     }
 
+    @Feature
     @PostMapping("mobile/config")
     public ResponseEntity<Map<String, Object>> saveMobileConfiguration(@RequestBody Map<String, Object> payload) {
         return new ResponseEntity<>(configurationService.saveMobileConfiguration(payload), HttpStatus.OK);
     }
 
+    @Feature
     @GetMapping("mobile/config")
     public ResponseEntity<Map<String, Object>> getMobileConfiguration() {
         return new ResponseEntity<>(configurationService.getMobileConfiguration(), HttpStatus.OK);

@@ -32,7 +32,6 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
     @Override
     public Map<String, Object> saveEmailConfiguration(Map<String, Object> payload) {
         try {
-            commonDao.userHasFeature(CommonConstants.Features.EMAIL_SETTINGS);
 
             ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class, SERVER_CONFIG_NAME
                     , CommonConstants.ServerConfig.EMAIL_CONFIG);
@@ -50,7 +49,6 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 
     @Override
     public Map<String, Object> getEmailConfiguration() {
-        commonDao.userHasFeature(CommonConstants.Features.EMAIL_SETTINGS);
         try {
             ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class,
                     SERVER_CONFIG_NAME, CommonConstants.ServerConfig.EMAIL_CONFIG);
@@ -69,7 +67,6 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 
     @Override
     public Map<String, Object> saveAIConfiguration(Map<String, Object> payload) {
-        commonDao.userHasFeature(CommonConstants.Features.AI_SETTINGS);
         try {
             ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class,
                     SERVER_CONFIG_NAME, CommonConstants.ServerConfig.AI_CONFIG);
@@ -87,7 +84,6 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 
     @Override
     public Map<String, Object> getAIConfiguration() {
-        commonDao.userHasFeature(CommonConstants.Features.AI_SETTINGS);
         try {
             ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class,
                     SERVER_CONFIG_NAME, CommonConstants.ServerConfig.AI_CONFIG);
@@ -105,7 +101,6 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 
     @Override
     public Map<String, Object> saveMobileConfiguration(Map<String, Object> payload) {
-        commonDao.userHasFeature(CommonConstants.Features.MOBILE_SETTINGS);
         try {
             ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class,
                     SERVER_CONFIG_NAME, CommonConstants.ServerConfig.MOBILE_CONFIG);
@@ -123,7 +118,6 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 
     @Override
     public Map<String, Object> getMobileConfiguration() {
-        commonDao.userHasFeature(CommonConstants.Features.MOBILE_SETTINGS);
         try {
             ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class,
                     SERVER_CONFIG_NAME, CommonConstants.ServerConfig.MOBILE_CONFIG);
