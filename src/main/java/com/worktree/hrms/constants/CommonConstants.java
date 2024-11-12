@@ -42,6 +42,8 @@ public class CommonConstants {
         public static final String MOBILE_SETTINGS = "Mobile Settings";
         public static final String AI_SETTINGS = "AI Settings";
         public static final String COUPON_SETTINGS = "Coupon Settings";
+
+        public static final String PAYSLIP_SETTINGS = "Payslip Settings";
     }
 
 }

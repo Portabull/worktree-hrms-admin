@@ -40,6 +40,8 @@ public class TestConfig {
             hibernateUtils.saveOrUpdateEntity(new FeatureEntity(CommonConstants.Features.AI_SETTINGS, dateUtils.getCurrentDate()));
         if (getFeature(CommonConstants.Features.COUPON_SETTINGS) == null)
             hibernateUtils.saveOrUpdateEntity(new FeatureEntity(CommonConstants.Features.COUPON_SETTINGS, dateUtils.getCurrentDate()));
+        if (getFeature(CommonConstants.Features.PAYSLIP_SETTINGS) == null)
+            hibernateUtils.saveOrUpdateEntity(new FeatureEntity(CommonConstants.Features.PAYSLIP_SETTINGS, dateUtils.getCurrentDate()));
     }
 
     private FeatureEntity getFeature(String featureName) {

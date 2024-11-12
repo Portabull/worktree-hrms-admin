@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced PDF Viewer</title>
+    <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #eaeaea;
+    }
+
+    .pdf-viewer-container {
+      width: 90%;
+      height: 90%;
+      max-width: 1200px;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .toolbar {
+      background-color: #333;
+      color: white;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .toolbar button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+      transition: background 0.3s ease;
+    }
+
+    .toolbar button:hover {
+      background-color: #0056b3;
+    }
+
+    .toolbar input {
+      width: 50px;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    .toolbar span {
+      font-size: 14px;
+    }
+
+    .main-viewer {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #fafafa;
+      position: relative;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    #pdf-canvas {
+      margin: auto;
+      border: 1px solid #ddd;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .back-button {
+  position: absolute;
+  top: 10px;
+  left: 10px; /* Move button to the top-left */
+  background-color: #f44336;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  font-size: 14px;
+  transition: background 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #d32f2f;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* loader starts */
+.loader-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.loader-overlay.active {
+    display: flex;
+}
+
+.spinner {
+    border: 8px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 8px solid #3498db;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+/* loader ends */
+  </style>
+</head>
+
+<body>
+<!-- Loader -->
+<div class="loader-overlay" id="loader">
+    <div class="spinner"></div>
+</div>
+
+
+<div class="pdf-viewer-container">
+    <div class="toolbar">
+        <div>
+            <button id="zoom-in">Zoom In</button>
+            <button id="zoom-out">Zoom Out</button>
+            <button id="rotate-left">Rotate Left</button>
+            <button id="rotate-right">Rotate Right</button>
+            <button id="fit-width">Fit Width</button>
+            <button id="fit-height">Fit Height</button>
+            <button id="download-pdf">Download</button>
+        </div>
+        <div>
+            <span>Page <input id="page-num" type="number" min="1" value="1"> of <span id="page-count">?</span></span>
+        </div>
+    </div>
+    <button class="back-button" onclick="goBack()">Back</button>
+    <div class="main-viewer">
+        <canvas id="pdf-canvas"></canvas>
+    </div>
+</div>
+<script src="js/worktree.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+<script>
+    const url = BASE_URL + 'generate'; // Replace with a valid PDF URL
+var pdfData;
+    let pdfDoc = null,
+        pageNum = 1,
+        scale = 1,
+        rotation = 0,
+        canvas = document.getElementById('pdf-canvas'),
+        ctx = canvas.getContext('2d');
+
+startLoader();
+    const fetchPdfWithHeaders = async () => {
+        try {
+            const response = await fetch(url, {
+                method: 'POST', // Use POST if you need a request body
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': getCurrentToken(),
+                    'featureType':'Payslip Settings'
+                },
+                body: window.localStorage.getItem('position')
+            });
+
+            if(response.status == 403){
+                gotohome();
+            }
+
+            if (!response.ok) {
+                throw new Error('Failed to load PDF');
+            }
+
+
+
+             pdfData = await response.arrayBuffer();
+            pdfjsLib.getDocument({ data: pdfData }).promise.then((pdfDoc_) => {
+                pdfDoc = pdfDoc_;
+                renderPage(pageNum);
+            });
+
+            stopLoader();
+        } catch (error) {
+            console.error('Error fetching PDF:', error);
+        }
+    };
+
+    const renderPage = (num) => {
+        pdfDoc.getPage(num).then((page) => {
+            const viewport = page.getViewport({ scale: scale, rotation: rotation });
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            const renderContext = {
+                canvasContext: ctx,
+                viewport: viewport,
+            };
+            page.render(renderContext);
+
+            document.getElementById('page-num').value = num;
+            document.getElementById('page-count').textContent = pdfDoc.numPages;
+        });
+    };
+
+    const queueRenderPage = (num) => {
+        if (num < 1 || num > pdfDoc.numPages) return;
+        pageNum = num;
+        renderPage(pageNum);
+    };
+
+    document.getElementById('page-num').addEventListener('change', (e) => {
+        const pageNumber = parseInt(e.target.value);
+        if (pageNumber > 0 && pageNumber <= pdfDoc.numPages) {
+            queueRenderPage(pageNumber);
+        } else {
+            alert('Invalid Page Number');
+        }
+    });
+
+    document.getElementById('zoom-in').addEventListener('click', () => {
+        scale += 0.2;
+        renderPage(pageNum);
+    });
+
+    document.getElementById('zoom-out').addEventListener('click', () => {
+        if (scale > 0.4) {
+            scale -= 0.2;
+            renderPage(pageNum);
+        }
+    });
+
+    document.getElementById('rotate-left').addEventListener('click', () => {
+        rotation = (rotation - 90) % 360;
+        renderPage(pageNum);
+    });
+
+    document.getElementById('rotate-right').addEventListener('click', () => {
+        rotation = (rotation + 90) % 360;
+        renderPage(pageNum);
+    });
+
+    document.getElementById('fit-width').addEventListener('click', () => {
+        pdfDoc.getPage(pageNum).then((page) => {
+            const containerWidth = canvas.parentElement.clientWidth;
+            scale = containerWidth / page.getViewport({ scale: 1 }).width;
+            renderPage(pageNum);
+        });
+    });
+
+    document.getElementById('fit-height').addEventListener('click', () => {
+        pdfDoc.getPage(pageNum).then((page) => {
+            const containerHeight = canvas.parentElement.clientHeight;
+            scale = containerHeight / page.getViewport({ scale: 1 }).height;
+            renderPage(pageNum);
+        });
+    });
+
+    fetchPdfWithHeaders();
+
+
+document.getElementById('download-pdf').addEventListener('click', () => {
+    if (pdfData) {
+        const blob = new Blob([pdfData], { type: 'application/pdf' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'downloaded.pdf'; // Change to your desired file name
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } else {
+        console.error('PDF data is not available for download');
+    }
+});
+
+    function goBack() {
+
+ window.location.href = "pdf-cords";
+    }
+
+
+function startLoader() {
+    document.getElementById('loader').classList.add('active');
+    document.body.style.pointerEvents = 'none';
+}
+
+function stopLoader() {
+    document.getElementById('loader').classList.remove('active');
+    document.body.style.pointerEvents = 'auto';
+}
+
+
+ window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the cache
+        if (event.persisted) {
+            stopLoader();
+        }
+    });
+</script>
+
+</body>
+
+</html>

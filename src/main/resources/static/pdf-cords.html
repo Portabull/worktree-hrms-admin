@@ -75,6 +75,32 @@
             transform: scale(0.98);
         }
 
+
+         #generateButton, #sheetSizeSelector {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #generateButton {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        #generateButton:hover {
+            background-color: #45a049;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        #generateButton:active {
+            transform: scale(0.98);
+        }
+
         #sheetSizeSelector {
             background-color: #008CBA;
             color: white;
@@ -113,9 +139,72 @@
                 transform: translateY(0);
             }
         }
+
+
+
+
+/* loader starts */
+.loader-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.loader-overlay.active {
+    display: flex;
+}
+
+.spinner {
+    border: 8px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 8px solid #3498db;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+/* loader ends */
+
+
+
+.back-button {
+  position: absolute;
+  top: 10px;
+  left: 10px; /* Move button to the top-left */
+  background-color: #f44336;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  font-size: 14px;
+  transition: background 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #d32f2f;
+}
     </style>
 </head>
 <body>
+
+<button class="back-button" onclick="goBack()">Back</button>
+
+<!-- Loader -->
+<div class="loader-overlay" id="loader">
+    <div class="spinner"></div>
+</div>
 
 <h3>Drag, Resize, or Upload Your Image Logo</h3>
 <select id="sheetSizeSelector">
@@ -125,12 +214,14 @@
     <option value="A3">A3 (297mm x 420mm)</option>
     <option value="A4" selected>A4 (210mm x 297mm)</option>
 </select>
+<br>
 <div id="a4Canvas" style="width: 595px; height: 842px;">
     <div class="draggable" id="imageContainer" tabindex="0" style="width: 150px; height: 100px; left: 50px; top: 50px;">
         <img src="https://via.placeholder.com/150" alt="Tenant Logo" id="uploadedLogo">
     </div>
 </div>
 <button id="uploadButton">Upload Logo</button>
+<button id="generateButton" onclick="generate()">Generate</button>
 <p>Position and Size Configuration:</p>
 <pre id="configOutput"></pre>
 
@@ -215,6 +306,8 @@
     const observer = new MutationObserver(updateConfig);
     observer.observe(container, { attributes: true, attributeFilter: ['style'] });
 
+var base64logo;
+
     // Handle file upload
     uploadButton.addEventListener('click', () => {
         const fileInput = document.createElement('input');
@@ -227,6 +320,7 @@
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     uploadedLogo.src = e.target.result;
+                    base64logo = e.target.result;
                 };
                 reader.readAsDataURL(file);
             }
@@ -235,7 +329,137 @@
         fileInput.click();
     });
 
+
+
+
+
+
+
+
+
+
+     // Handle keyboard controls for moving and resizing
+    container.addEventListener('keydown', (e) => {
+        const canvasRect = canvas.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+
+        if (e.ctrlKey) {
+            // Move the logo
+            switch (e.key) {
+                case 'ArrowLeft':
+                    if (container.offsetLeft > 0) {
+                        container.style.left = `${container.offsetLeft - MOVE_STEP}px`;
+                    }
+                    break;
+                case 'ArrowRight':
+                    if (containerRect.right < canvasRect.right) {
+                        container.style.left = `${container.offsetLeft + MOVE_STEP}px`;
+                    }
+                    break;
+                case 'ArrowUp':
+                    if (container.offsetTop > 0) {
+                        container.style.top = `${container.offsetTop - MOVE_STEP}px`;
+                    }
+                    break;
+                case 'ArrowDown':
+                    if (containerRect.bottom < canvasRect.bottom) {
+                        container.style.top = `${container.offsetTop + MOVE_STEP}px`;
+                    }
+                    break;
+            }
+        } else if (e.key.toLowerCase() === 'e') {
+            isResizing = true;
+        } else if (isResizing) {
+            // Resize the logo
+            switch (e.key) {
+                case 'ArrowLeft':
+                    if (container.offsetWidth > RESIZE_STEP) {
+                        container.style.width = `${container.offsetWidth - RESIZE_STEP}px`;
+                    }
+                    break;
+                case 'ArrowRight':
+                    if (containerRect.right < canvasRect.right) {
+                        container.style.width = `${container.offsetWidth + RESIZE_STEP}px`;
+                    }
+                    break;
+                case 'ArrowUp':
+                    if (container.offsetHeight > RESIZE_STEP) {
+                        container.style.height = `${container.offsetHeight - RESIZE_STEP}px`;
+                    }
+                    break;
+                case 'ArrowDown':
+                    if (containerRect.bottom < canvasRect.bottom) {
+                        container.style.height = `${container.offsetHeight + RESIZE_STEP}px`;
+                    }
+                    break;
+            }
+            updateConfig();
+        }
+    });
+
+    container.addEventListener('keyup', (e) => {
+        if (e.key.toLowerCase() === 'e') {
+            isResizing = false;
+        }
+    });
+
     updateConfig(); // Initial update
+
+    init();
+
+    function generate() {
+
+    if(base64logo==undefined){
+        alert('Please upload Logo before you generate...');
+        return;
+    }
+
+    startLoader();
+           const rect = container.getBoundingClientRect();
+        const canvasRect = canvas.getBoundingClientRect();
+        const xPosition = rect.left - canvasRect.left;
+        const yPosition = canvasRect.height - (rect.bottom - canvasRect.top); // A4 Y-axis flipped
+        const logoWidth = rect.width;
+        const logoHeight = rect.height;
+
+        window.localStorage.setItem('position', JSON.stringify({"xPosition":xPosition,"yPosition":yPosition,"logoWidth":logoWidth,"logoHeight":logoHeight,"logo":base64logo,"size":document.getElementById("sheetSizeSelector").value}));
+
+
+
+ window.location.href = "pdf-viewer";
+
+    }
+
+    function init(){
+        //clearing
+
+window.localStorage.removeItem('logo');
+window.localStorage.removeItem('position');
+    }
+
+
+function startLoader() {
+    document.getElementById('loader').classList.add('active');
+    document.body.style.pointerEvents = 'none';
+}
+
+function stopLoader() {
+    document.getElementById('loader').classList.remove('active');
+    document.body.style.pointerEvents = 'auto';
+}
+
+
+ window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the cache
+        if (event.persisted) {
+            stopLoader();
+        }
+    });
+
+    function goBack() {
+    window.location.href = "configuration";
+    }
+
 </script>
 
 </body>
