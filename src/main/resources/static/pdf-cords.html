@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Image Position Configurator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #a4Canvas {
+            border: 2px dashed #333;
+            position: relative;
+            background-color: #ffffff;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            animation: slideInCanvas 1s ease-in-out;
+        }
+
+        .draggable {
+            position: absolute;
+            cursor: move;
+            resize: both;
+            overflow: hidden;
+            animation: fadeIn 0.7s ease-in-out;
+            border: 2px solid #555;
+            border-radius: 8px;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .draggable:active {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transform: scale(1.05);
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            border-radius: 6px;
+        }
+
+        #uploadButton, #sheetSizeSelector {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #uploadButton {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        #uploadButton:hover {
+            background-color: #45a049;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        #uploadButton:active {
+            transform: scale(0.98);
+        }
+
+        #sheetSizeSelector {
+            background-color: #008CBA;
+            color: white;
+        }
+
+        #sheetSizeSelector:hover {
+            background-color: #007B9A;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        pre {
+            background-color: #e8e8e8;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideInCanvas {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h3>Drag, Resize, or Upload Your Image Logo</h3>
+<select id="sheetSizeSelector">
+    <option value="A0">A0 (841mm x 1189mm)</option>
+    <option value="A1">A1 (594mm x 841mm)</option>
+    <option value="A2">A2 (420mm x 594mm)</option>
+    <option value="A3">A3 (297mm x 420mm)</option>
+    <option value="A4" selected>A4 (210mm x 297mm)</option>
+</select>
+<div id="a4Canvas" style="width: 595px; height: 842px;">
+    <div class="draggable" id="imageContainer" tabindex="0" style="width: 150px; height: 100px; left: 50px; top: 50px;">
+        <img src="https://via.placeholder.com/150" alt="Tenant Logo" id="uploadedLogo">
+    </div>
+</div>
+<button id="uploadButton">Upload Logo</button>
+<p>Position and Size Configuration:</p>
+<pre id="configOutput"></pre>
+
+<script>
+    const container = document.getElementById('imageContainer');
+    const output = document.getElementById('configOutput');
+    const canvas = document.getElementById('a4Canvas');
+    const uploadButton = document.getElementById('uploadButton');
+    const uploadedLogo = document.getElementById('uploadedLogo');
+    const sheetSizeSelector = document.getElementById('sheetSizeSelector');
+    const MOVE_STEP = 5; // Pixels to move
+    const RESIZE_STEP = 5; // Pixels to resize
+
+    const sheetSizes = {
+        A0: { width: 2384, height: 3370 },
+        A1: { width: 1684, height: 2384 },
+        A2: { width: 1191, height: 1684 },
+        A3: { width: 842, height: 1191 },
+        A4: { width: 595, height: 842 }
+    };
+
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    // Update canvas size based on selected sheet size
+    sheetSizeSelector.addEventListener('change', (e) => {
+        const selectedSize = e.target.value;
+        const { width, height } = sheetSizes[selectedSize];
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        updateConfig();
+    });
+
+    // Update position and size
+    function updateConfig() {
+        const rect = container.getBoundingClientRect();
+        const canvasRect = canvas.getBoundingClientRect();
+        const xPosition = rect.left - canvasRect.left;
+        const yPosition = canvasRect.height - (rect.bottom - canvasRect.top); // A4 Y-axis flipped
+        const logoWidth = rect.width;
+        const logoHeight = rect.height;
+
+        output.textContent = `float logoWidth = ${logoWidth.toFixed(2)};\nfloat logoHeight = ${logoHeight.toFixed(2)};\nfloat xPosition = ${xPosition.toFixed(2)};\nfloat yPosition = ${yPosition.toFixed(2)};`;
+    }
+
+    // Enable dragging
+    container.addEventListener('mousedown', (e) => {
+        if (e.target !== container) return; // Ensure only container triggers drag
+        isDragging = true;
+        offsetX = e.clientX - container.offsetLeft;
+        offsetY = e.clientY - container.offsetTop;
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    });
+
+    function onMouseMove(e) {
+        if (isDragging) {
+            const newX = e.clientX - offsetX;
+            const newY = e.clientY - offsetY;
+            const canvasRect = canvas.getBoundingClientRect();
+
+            if (
+                newX >= 0 &&
+                newX + container.offsetWidth <= canvasRect.width &&
+                newY >= 0 &&
+                newY + container.offsetHeight <= canvasRect.height
+            ) {
+                container.style.left = `${newX}px`;
+                container.style.top = `${newY}px`;
+            }
+            updateConfig();
+        }
+    }
+
+    function onMouseUp() {
+        isDragging = false;
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+    }
+
+    // Observe resizing
+    const observer = new MutationObserver(updateConfig);
+    observer.observe(container, { attributes: true, attributeFilter: ['style'] });
+
+    // Handle file upload
+    uploadButton.addEventListener('click', () => {
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    uploadedLogo.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        fileInput.click();
+    });
+
+    updateConfig(); // Initial update
+</script>
+
+</body>
+</html>
