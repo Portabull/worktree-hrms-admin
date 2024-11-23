@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar .menu-button {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .navbar .company-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-left: 15px;
+            color: #ffcc00;
+        }
+
+        .navbar .profile {
+            position: relative;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .navbar .profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            width: 180px;
+        }
+
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            text-decoration: none;
+            color: black;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-menu a i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f4f4f4;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            width: 250px;
+            height: 100%;
+            background-color: #343a40;
+            padding: 20px;
+            color: white;
+            transition: all 0.5s ease;
+            z-index: 1001;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar .close-btn {
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+        }
+
+        .sidebar button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Tabs */
+        .tabs {
+            margin-top: 80px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .tabs button {
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            cursor: pointer;
+            background-color: #f9f9f9;
+            transition: background-color 0.3s ease;
+        }
+
+        .tabs button.active {
+            background-color: #343a40;
+            color: white;
+        }
+
+        /* Filter Icon */
+        .filter-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            padding: 0 20px;
+        }
+
+        .filter-container i {
+            cursor: pointer;
+            font-size: 28px;
+            color: #007bff;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .filter-container i.filtered {
+            color: #28a745;
+            transform: scale(1.2);
+        }
+
+        /* Table */
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            animation: fadeInTable 1s ease;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        tbody tr {
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f1f1;
+            transform: scale(1.02);
+        }
+
+        /* Popups */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -60%);
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 500px;
+            padding: 20px;
+            opacity: 0;
+            animation: none;
+            z-index: 2000;
+        }
+
+        .popup.active {
+            display: block;
+            animation: popupSlideIn 0.5s forwards;
+        }
+
+        .popup.closing {
+            animation: popupSlideOut 0.5s forwards;
+        }
+
+        .popup h3 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .popup .close-btn {
+            float: right;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            color: red;
+            transition: transform 0.3s ease;
+        }
+
+        .popup .close-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .popup-content label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+
+        .popup-content input,
+        .popup-content select {
+            width: calc(100% - 20px);
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .popup-content button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .popup-content button:hover {
+            background-color: #0056b3;
+        }
+
+        @keyframes popupSlideIn {
+            from {
+                transform: translate(-50%, -70%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%);
+                opacity: 1;
+            }
+        }
+
+        @keyframes popupSlideOut {
+            from {
+                transform: translate(-50%, -50%);
+                opacity: 1;
+            }
+            to {
+                transform: translate(-50%, -70%);
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeInTable {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<div class="navbar">
+    <div class="menu-button" onclick="toggleSidebar()">
+        <div></div>
+        <span class="company-name">Worktree</span>
+    </div>
+    <div class="profile" onclick="toggleDropdown()">
+        <img src="https://via.placeholder.com/40" alt="Profile">
+        <div class="dropdown-menu" id="profileDropdown">
+            <a href="#"><i class="fas fa-user"></i> Profile</a>
+            <a href="#"><i class="fas fa-cog"></i> Settings</a>
+            <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+</div>
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <span class="close-btn" onclick="toggleSidebar()">×</span>
+    <button onclick="alert('Home clicked')">Home</button>
+    <button onclick="alert('Reports clicked')">Reports</button>
+</div>
+<!-- Tabs -->
+<div class="tabs">
+    <button class="active" onclick="switchTab('featureAudit')">Feature Audit</button>
+    <button onclick="switchTab('userAudit')">User Audit</button>
+    <button onclick="switchTab('loginAudit')">Login Audit</button>
+</div>
+<!-- Filter Icon -->
+<div class="filter-container">
+    <i class="fas fa-filter" id="filterIcon" onclick="toggleFilterPopup()"></i>
+</div>
+<!-- Table -->
+<table id="auditTable">
+    <thead>
+    <tr>
+        <th>SNO</th>
+        <th>User</th>
+        <th>Audit Type</th>
+        <th>Audit Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Rows will be dynamically populated -->
+    </tbody>
+</table>
+<!-- Filter Popup -->
+<div class="popup" id="filterPopup">
+    <span class="close-btn" onclick="closeFilterPopup()">×</span>
+    <h3>Filter and Sort</h3>
+    <div class="popup-content">
+        <label for="filterUser">Filter by User:</label>
+        <input type="text" id="filterUser" placeholder="Enter user name">
+
+        <label for="filterType">Filter by Audit Type:</label>
+        <input type="text" id="filterType" placeholder="Enter audit type">
+
+        <label for="filterDate">Filter by Audit Date:</label>
+        <input type="date" id="filterDate">
+
+        <label for="sortBy">Sort By:</label>
+        <select id="sortBy">
+            <option value="none">None</option>
+            <option value="user">User</option>
+            <option value="auditType">Audit Type</option>
+            <option value="auditDate">Audit Date</option>
+        </select>
+
+        <label for="sortOrder">Sort Order:</label>
+        <select id="sortOrder">
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+
+        <button onclick="applyFilters()">Apply Filters</button>
+        <button onclick="clearFilters()" style="background-color: #dc3545;">Clear Filters</button>
+    </div>
+</div>
+
+<!-- Row Detail Popup -->
+<div class="popup" id="rowPopup">
+    <span class="close-btn" onclick="closeRowPopup()">×</span>
+    <h3>Row Details</h3>
+    <div class="popup-content" id="rowDetails"></div>
+</div>
+
+<script>
+        const auditData = {
+            featureAudit: [
+                { sno: "1", user: "Alice", auditType: "Feature Access", auditDate: "2024-11-10" },
+                { sno: "2", user: "Bob", auditType: "Feature Update", auditDate: "2024-11-11" }
+            ],
+            userAudit: [
+                { sno: "3", user: "Charlie", auditType: "Login", auditDate: "2024-11-12" }
+            ],
+            loginAudit: [
+                { sno: "4", user: "Alice", auditType: "Failed Login", auditDate: "2024-11-13" }
+            ]
+        };
+
+        let currentTab = "featureAudit";
+
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("active");
+        }
+
+        function toggleDropdown() {
+            const dropdown = document.getElementById("profileDropdown");
+            dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+        }
+
+        function switchTab(tabName) {
+            currentTab = tabName;
+            document.querySelectorAll(".tabs button").forEach(btn => btn.classList.remove("active"));
+            event.target.classList.add("active");
+            populateTable();
+        }
+
+        function populateTable() {
+            const tableBody = document.querySelector("#auditTable tbody");
+            tableBody.innerHTML = "";
+            auditData[currentTab].forEach(row => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${row.sno}</td>
+                    <td>${row.user}</td>
+                    <td>${row.auditType}</td>
+                    <td>${row.auditDate}</td>
+                `;
+                tr.onclick = () => showRowDetails(row);
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function toggleFilterPopup() {
+            document.getElementById("filterPopup").classList.add("active");
+        }
+
+        function closeFilterPopup() {
+            document.getElementById("filterPopup").classList.remove("active");
+        }
+
+        function applyFilters() {
+            const userFilter = document.getElementById("filterUser").value.toLowerCase();
+            const typeFilter = document.getElementById("filterType").value.toLowerCase();
+            const dateFilter = document.getElementById("filterDate").value;
+            const sortBy = document.getElementById("sortBy").value;
+            const sortOrder = document.getElementById("sortOrder").value;
+
+            let filteredData = auditData[currentTab].filter(row =>
+                (!userFilter || row.user.toLowerCase().includes(userFilter)) &&
+                (!typeFilter || row.auditType.toLowerCase().includes(typeFilter)) &&
+                (!dateFilter || row.auditDate === dateFilter)
+            );
+
+            if (sortBy !== "none") {
+                filteredData = filteredData.sort((a, b) => {
+                    if (sortOrder === "asc") {
+                        return a[sortBy] > b[sortBy] ? 1 : a[sortBy] < b[sortBy] ? -1 : 0;
+                    } else {
+                        return a[sortBy] < b[sortBy] ? 1 : a[sortBy] > b[sortBy] ? -1 : 0;
+                    }
+                });
+            }
+
+            const tableBody = document.querySelector("#auditTable tbody");
+            tableBody.innerHTML = "";
+            filteredData.forEach(row => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td>${row.sno}</td><td>${row.user}</td><td>${row.auditType}</td><td>${row.auditDate}</td>`;
+                tr.onclick = () => showRowDetails(row);
+                tableBody.appendChild(tr);
+            });
+
+            // Highlight the filter icon if any filter is applied
+            const filterIcon = document.getElementById("filterIcon");
+            if (userFilter || typeFilter || dateFilter || sortBy !== "none") {
+                filterIcon.classList.add("filtered");
+            } else {
+                filterIcon.classList.remove("filtered");
+            }
+
+            closeFilterPopup();
+        }
+
+        function clearFilters() {
+            document.getElementById("filterUser").value = "";
+            document.getElementById("filterType").value = "";
+            document.getElementById("filterDate").value = "";
+            document.getElementById("sortBy").value = "none";
+            document.getElementById("sortOrder").value = "asc";
+            document.getElementById("filterIcon").classList.remove("filtered");
+            populateTable();
+        }
+
+        function showRowDetails(row) {
+            const popup = document.getElementById("rowPopup");
+            const details = document.getElementById("rowDetails");
+            details.innerHTML = `
+                <p><strong>SNO:</strong> ${row.sno}</p>
+                <p><strong>User:</strong> ${row.user}</p>
+                <p><strong>Audit Type:</strong> ${row.auditType}</p>
+                <p><strong>Audit Date:</strong> ${row.auditDate}</p>
+            `;
+            popup.classList.add("active");
+        }
+
+        function closeRowPopup() {
+            document.getElementById("rowPopup").classList.remove("active");
+        }
+
+        // Initialize
+        populateTable();
+    </script>
+</body>
+</html>
