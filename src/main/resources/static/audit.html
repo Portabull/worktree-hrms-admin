@@ -37,9 +37,17 @@
             cursor: pointer;
         }
 
+        .navbar .menu-button div {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+
         .navbar .company-name {
             font-size: 24px;
-            font-weight: bold;
+            font-weight: 600;
             margin-left: 15px;
             color: #ffcc00;
         }
@@ -88,6 +96,7 @@
             background-color: #f4f4f4;
         }
 
+
         /* Sidebar */
         .sidebar {
             position: fixed;
@@ -106,15 +115,6 @@
             left: 0;
         }
 
-        .sidebar .close-btn {
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            position: absolute;
-            top: 10px;
-            right: 15px;
-        }
-
         .sidebar button {
             background-color: #007bff;
             color: white;
@@ -123,13 +123,23 @@
             border-radius: 5px;
             cursor: pointer;
             width: 100%;
-            margin-top: 20px;
+            margin-bottom: 10px;
             transition: all 0.3s ease;
         }
 
         .sidebar button:hover {
             background-color: #0056b3;
         }
+
+        .sidebar .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+
 
         /* Tabs */
         .tabs {
@@ -311,26 +321,35 @@
 </head>
 <body>
 <!-- Navbar -->
+
+<!-- Navbar -->
 <div class="navbar">
     <div class="menu-button" onclick="toggleSidebar()">
         <div></div>
         <span class="company-name">Worktree</span>
     </div>
-    <div class="profile" onclick="toggleDropdown()">
-        <img src="https://via.placeholder.com/40" alt="Profile">
-        <div class="dropdown-menu" id="profileDropdown">
-            <a href="#"><i class="fas fa-user"></i> Profile</a>
-            <a href="#"><i class="fas fa-cog"></i> Settings</a>
-            <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+
+    <div class="profile" id="profile-dropdown">
+        <img src="https://via.placeholder.com/50" alt="Profile" onclick="toggleProfileDropdown()">
+        <div class="dropdown-menu" id="dropdown-menu">
+            <a href="#" onclick="openSettings()"><i class="fas fa-cog"></i>Settings</a>
+            <a href="#" onclick="manageProfiles()"><i class="fas fa-user"></i>Manage Profiles</a>
+            <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</a>
         </div>
     </div>
 </div>
+
+
+
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
-    <span class="close-btn" onclick="toggleSidebar()">×</span>
-    <button onclick="alert('Home clicked')">Home</button>
-    <button onclick="alert('Reports clicked')">Reports</button>
+    <button class="close-btn" onclick="toggleSidebar()">× Close</button>
+    <button onclick="showHome()">Home</button>
+    <button onclick="manageTenants()">Manage Tenants</button>
+    <button onclick="showReports()">Reports</button>
 </div>
+
+
 <!-- Tabs -->
 <div class="tabs">
     <button class="active" onclick="switchTab('featureAudit')">Feature Audit</button>
@@ -344,11 +363,8 @@
 <!-- Table -->
 <table id="auditTable">
     <thead>
-    <tr>
-        <th>SNO</th>
-        <th>User</th>
-        <th>Audit Type</th>
-        <th>Audit Date</th>
+    <tr id="tableHeader">
+        <!-- Headers will be dynamically populated -->
     </tr>
     </thead>
     <tbody>
@@ -366,6 +382,11 @@
         <label for="filterType">Filter by Audit Type:</label>
         <input type="text" id="filterType" placeholder="Enter audit type">
 
+        <label for="filterFeatureType" id="filterFeatureTypeLabel" style="display:none;">Filter by Feature Type:</label>
+        <select id="filterFeatureType" style="display:none;">
+            <option value="">All</option>
+        </select>
+
         <label for="filterDate">Filter by Audit Date:</label>
         <input type="date" id="filterDate">
 
@@ -375,6 +396,7 @@
             <option value="user">User</option>
             <option value="auditType">Audit Type</option>
             <option value="auditDate">Audit Date</option>
+            <option value="featureType" id="sortFeatureTypeOption" style="display:none;">Feature Type</option>
         </select>
 
         <label for="sortOrder">Sort Order:</label>
@@ -398,16 +420,18 @@
 <script>
         const auditData = {
             featureAudit: [
-                { sno: "1", user: "Alice", auditType: "Feature Access", auditDate: "2024-11-10" },
-                { sno: "2", user: "Bob", auditType: "Feature Update", auditDate: "2024-11-11" }
+                { auditId: "1", sno: "1", user: "Alice", featureType: "Feature A", auditType: "Feature Access", auditDate: "2024-11-10" },
+                { auditId: "2", sno: "2", user: "Bob", featureType: "Feature B", auditType: "Feature Update", auditDate: "2024-11-11" }
             ],
             userAudit: [
-                { sno: "3", user: "Charlie", auditType: "Login", auditDate: "2024-11-12" }
+                { auditId: "3", sno: "3", user: "Charlie", auditType: "Login", auditDate: "2024-11-12" }
             ],
             loginAudit: [
-                { sno: "4", user: "Alice", auditType: "Failed Login", auditDate: "2024-11-13" }
+                { auditId: "4", sno: "4", user: "Alice", auditType: "Failed Login", auditDate: "2024-11-13" }
             ]
         };
+
+        const featureTypes = ["Feature A", "Feature B", "Feature C"];
 
         let currentTab = "featureAudit";
 
@@ -425,19 +449,51 @@
             document.querySelectorAll(".tabs button").forEach(btn => btn.classList.remove("active"));
             event.target.classList.add("active");
             populateTable();
+            toggleFeatureTypeFilter();
+        }
+
+        function toggleFeatureTypeFilter() {
+	    clearFilters();
+            const filterFeatureTypeLabel = document.getElementById("filterFeatureTypeLabel");
+            const filterFeatureType = document.getElementById("filterFeatureType");
+            const sortFeatureTypeOption = document.getElementById("sortFeatureTypeOption");
+
+            if (currentTab === "featureAudit") {
+                filterFeatureTypeLabel.style.display = "block";
+                filterFeatureType.style.display = "block";
+                sortFeatureTypeOption.style.display = "block";
+
+                // Populate the feature type dropdown
+                filterFeatureType.innerHTML = '<option value="">All</option>';
+                featureTypes.forEach(feature => {
+                    filterFeatureType.innerHTML += `<option value="${feature}">${feature}</option>`;
+                });
+            } else {
+                filterFeatureTypeLabel.style.display = "none";
+                filterFeatureType.style.display = "none";
+                sortFeatureTypeOption.style.display = "none";
+            }
         }
 
         function populateTable() {
+            const tableHeader = document.getElementById("tableHeader");
+            tableHeader.innerHTML = "";
+
+            if (currentTab === "featureAudit") {
+                tableHeader.innerHTML = "<th>SNO</th><th>User</th><th>Feature Type</th><th>Audit Type</th><th>Audit Date</th>";
+            } else {
+                tableHeader.innerHTML = "<th>SNO</th><th>User</th><th>Audit Type</th><th>Audit Date</th>";
+            }
+
             const tableBody = document.querySelector("#auditTable tbody");
             tableBody.innerHTML = "";
             auditData[currentTab].forEach(row => {
                 const tr = document.createElement("tr");
-                tr.innerHTML = `
-                    <td>${row.sno}</td>
-                    <td>${row.user}</td>
-                    <td>${row.auditType}</td>
-                    <td>${row.auditDate}</td>
-                `;
+                if (currentTab === "featureAudit") {
+                    tr.innerHTML = `<td>${row.sno}</td><td>${row.user}</td><td>${row.featureType}</td><td>${row.auditType}</td><td>${row.auditDate}</td>`;
+                } else {
+                    tr.innerHTML = `<td>${row.sno}</td><td>${row.user}</td><td>${row.auditType}</td><td>${row.auditDate}</td>`;
+                }
                 tr.onclick = () => showRowDetails(row);
                 tableBody.appendChild(tr);
             });
@@ -454,6 +510,7 @@
         function applyFilters() {
             const userFilter = document.getElementById("filterUser").value.toLowerCase();
             const typeFilter = document.getElementById("filterType").value.toLowerCase();
+            const featureTypeFilter = document.getElementById("filterFeatureType").value;
             const dateFilter = document.getElementById("filterDate").value;
             const sortBy = document.getElementById("sortBy").value;
             const sortOrder = document.getElementById("sortOrder").value;
@@ -461,6 +518,7 @@
             let filteredData = auditData[currentTab].filter(row =>
                 (!userFilter || row.user.toLowerCase().includes(userFilter)) &&
                 (!typeFilter || row.auditType.toLowerCase().includes(typeFilter)) &&
+                (!featureTypeFilter || row.featureType === featureTypeFilter) &&
                 (!dateFilter || row.auditDate === dateFilter)
             );
 
@@ -478,14 +536,18 @@
             tableBody.innerHTML = "";
             filteredData.forEach(row => {
                 const tr = document.createElement("tr");
-                tr.innerHTML = `<td>${row.sno}</td><td>${row.user}</td><td>${row.auditType}</td><td>${row.auditDate}</td>`;
+                if (currentTab === "featureAudit") {
+                    tr.innerHTML = `<td>${row.sno}</td><td>${row.user}</td><td>${row.featureType}</td><td>${row.auditType}</td><td>${row.auditDate}</td>`;
+                } else {
+                    tr.innerHTML = `<td>${row.sno}</td><td>${row.user}</td><td>${row.auditType}</td><td>${row.auditDate}</td>`;
+                }
                 tr.onclick = () => showRowDetails(row);
                 tableBody.appendChild(tr);
             });
 
             // Highlight the filter icon if any filter is applied
             const filterIcon = document.getElementById("filterIcon");
-            if (userFilter || typeFilter || dateFilter || sortBy !== "none") {
+            if (userFilter || typeFilter || featureTypeFilter || dateFilter || sortBy !== "none") {
                 filterIcon.classList.add("filtered");
             } else {
                 filterIcon.classList.remove("filtered");
@@ -497,6 +559,7 @@
         function clearFilters() {
             document.getElementById("filterUser").value = "";
             document.getElementById("filterType").value = "";
+            document.getElementById("filterFeatureType").value = "";
             document.getElementById("filterDate").value = "";
             document.getElementById("sortBy").value = "none";
             document.getElementById("sortOrder").value = "asc";
@@ -512,6 +575,9 @@
                 <p><strong>User:</strong> ${row.user}</p>
                 <p><strong>Audit Type:</strong> ${row.auditType}</p>
                 <p><strong>Audit Date:</strong> ${row.auditDate}</p>
+                ${row.featureType ? `<p><strong>Feature Type:</strong> ${row.featureType}</p>` : ""}
+
+		 ${row.featureType ? `<button>Use This Version</button>` :  `<button>Restore User</button>`}
             `;
             popup.classList.add("active");
         }
@@ -520,8 +586,15 @@
             document.getElementById("rowPopup").classList.remove("active");
         }
 
+ // Profile Dropdown
+    function toggleProfileDropdown() {
+        const dropdown = document.getElementById('dropdown-menu');
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
         // Initialize
         populateTable();
+        toggleFeatureTypeFilter();
     </script>
 </body>
 </html>
