@@ -108,11 +108,23 @@ var decryptedResponse;
         // Send FormData directly for file uploads
         xhr.send(requestBody);
     } else if (requestBody) {
-        // For JSON requests, send as JSON string
-        xhr.send(_0x1a2b3c(JSON.stringify(requestBody), sec_key_mech));
+    if(window.localStorage.getItem("use-plain")==undefined){
+       // For JSON requests, send as JSON string
+            xhr.send(_0x1a2b3c(JSON.stringify(requestBody), sec_key_mech));
+    }else{
+      xhr.setRequestHeader("X-ENCRYPT-ID",getISTTimestamp());
+    // For JSON requests, send as JSON string
+                xhr.send(JSON.stringify(requestBody));
+    }
     } else {
+     if(window.localStorage.getItem("use-plain")==undefined){
         // Send request without body if no data is provided
         xhr.send();
+     }else{
+            xhr.setRequestHeader("X-ENCRYPT-ID",getISTTimestamp());
+            // Send request without body if no data is provided
+                  xhr.send();
+          }
     }
 }
 
@@ -565,3 +577,8 @@ startLoader();
 window.location.href = "ai-configuration";
 }
 
+
+function showAuditLogs(){
+startLoader();
+window.location.href = "audit";
+}
