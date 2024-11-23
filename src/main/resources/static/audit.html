@@ -317,10 +317,62 @@
                 opacity: 1;
             }
         }
+
+
+           /* loader css starts */
+
+
+ /* Rotate animation for the loader */
+    .loading {
+      animation: rotate 1s linear infinite;
+    }
+
+    /* Keyframes for the rotating animation */
+    @keyframes rotate {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+
+
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    visibility: hidden; /* Hide loader by default */
+}
+
+.loader {
+    border: 8px solid #f3f3f3; /* Light gray */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* loader css ends */
     </style>
 </head>
 <body>
-<!-- Navbar -->
+
+
+<div id="loader" class="loader-overlay">
+    <div class="loader"></div>
+</div>
 
 <!-- Navbar -->
 <div class="navbar">
@@ -332,9 +384,9 @@
     <div class="profile" id="profile-dropdown">
         <img src="https://via.placeholder.com/50" alt="Profile" onclick="toggleProfileDropdown()">
         <div class="dropdown-menu" id="dropdown-menu">
-            <a href="#" onclick="openSettings()"><i class="fas fa-cog"></i>Settings</a>
-            <a href="#" onclick="manageProfiles()"><i class="fas fa-user"></i>Manage Profiles</a>
-            <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</a>
+            <a href="#" onclick="openProfileSettings()"><i class="fas fa-cog"></i>Settings</a>
+            <a href="#" onclick="manageUserProfiles(startLoader)"><i class="fas fa-user"></i>Manage Profiles</a>
+            <a href="#" onclick="logout(startLoader,redirectafterlogout)"><i class="fas fa-sign-out-alt"></i>Logout</a>
         </div>
     </div>
 </div>
@@ -344,8 +396,8 @@
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
     <button class="close-btn" onclick="toggleSidebar()">× Close</button>
-    <button onclick="showHome()">Home</button>
-    <button onclick="manageTenants()">Manage Tenants</button>
+    <button onclick="gotohome()">Home</button>
+    <button onclick="manageTenants(startLoader)">Manage Tenants</button>
     <button onclick="showReports()">Reports</button>
 </div>
 
@@ -596,6 +648,26 @@
         // Initialize
         populateTable();
         toggleFeatureTypeFilter();
+        loadProfilePhoto();
+
+
+        function startLoader() {
+    document.getElementById('loader').style.visibility = 'visible';
+    document.body.style.pointerEvents = 'none'; // Disable interaction with the screen
+}
+
+window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the cache
+        if (event.persisted) {
+            stopLoader();
+        }
+    });
+
+function stopLoader() {
+    document.getElementById('loader').style.visibility = 'hidden';
+    document.body.style.pointerEvents = 'auto'; // Re-enable interaction with the screen
+}
+
     </script>
 </body>
 </html>
