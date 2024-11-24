@@ -582,3 +582,34 @@ function showAuditLogs(){
 startLoader();
 window.location.href = "audit";
 }
+
+
+
+   function changeSidebarNavbarColor(color) {
+   if(window.localStorage.getItem("current-color-code")!=undefined){
+ color=    window.localStorage.getItem("current-color-code");
+   }
+        if( document.querySelector('.sidebar')!=undefined)
+        document.querySelector('.sidebar').style.backgroundColor = color;
+        if( document.querySelector('.navbar')!=undefined)
+        document.querySelector('.navbar').style.backgroundColor = color;
+    }
+
+
+
+changeSidebarNavbarColor('#000000');
+
+
+checkConfButtons();
+function checkConfButtons(){
+
+    var userFeatures = getCurrentUserFeatures();
+        if(userFeatures != undefined && userFeatures.length!=0){
+ const button = document.getElementById('configurationButton');
+ if(button!=undefined)
+       {
+        button.style.display = 'block'; // Show the button
+               this.textContent = 'Hide Button'; // Change toggle button text
+       }
+        }
+}

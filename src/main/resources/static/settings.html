@@ -108,39 +108,6 @@
             background-color: #f4f4f4;
         }
 
-        /* Sidebar */
-        .sidebar {
-            position: fixed;
-            left: -300px;
-            top: 0;
-            width: 250px;
-            height: 100%;
-            background-color: #343a40;
-            padding: 20px;
-            color: white;
-            transition: all 0.5s ease;
-            z-index: 1001;
-        }
-
-        .sidebar.active {
-            left: 0;
-        }
-
-        .sidebar button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            margin-bottom: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar button:hover {
-            background-color: #0056b3;
-        }
 
         /* Profile Page Content */
         .profile-container {
@@ -615,6 +582,186 @@
 }
 
 
+
+
+
+
+
+
+
+
+
+/* Container for color settings */
+.color-settings-container {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping to the next line */
+    justify-content: center; /* Center align items */
+    gap: 20px; /* Add consistent spacing between elements */
+    padding: 10px;
+}
+
+/* Individual color options */
+.color-option {
+    flex: 1 0 30%; /* Flexible sizing: take up 30% width or auto-fit */
+    max-width: 100px; /* Ensure it doesn't grow too large */
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Color box design */
+.color-box {
+    width: 70px;
+    height: 70px;
+    border-radius: 10px;
+    margin: 0 auto 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+/* Highlight selected box */
+.color-option.selected .color-box {
+    border: 3px solid #4a90e2;
+    transform: scale(1.2); /* Make it larger to indicate selection */
+    box-shadow: 0 10px 20px rgba(74, 144, 226, 0.5);
+}
+
+/* Ensure the color picker is properly positioned */
+.color-option input[type="color"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0; /* Hide the input but keep it clickable */
+    cursor: pointer;
+}
+
+/* Hover effect */
+.color-option:hover .color-box {
+    transform: scale(1.05);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+}
+
+/* Color labels */
+.color-label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .color-option {
+        flex: 1 0 45%; /* Adjust size to fit more items in one row */
+        max-width: 80px;
+    }
+
+    .color-box {
+        width: 60px;
+        height: 60px;
+    }
+
+    .color-label {
+        font-size: 12px; /* Smaller font size for labels */
+    }
+}
+/* Position the color picker correctly */
+#colorPicker {
+    position: absolute;
+    top: -9999px; /* Move it out of visible view */
+    left: -9999px; /* Move it out of visible view */
+    pointer-events: none; /* Prevent accidental interaction */
+}
+
+
+
+
+
+
+
+
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    left: -300px;
+    top: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #343a40;
+    padding: 20px;
+    color: white;
+    transition: all 0.5s ease;
+    z-index: 1001;
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.sidebar .sidebar-item {
+    color: white;
+    padding: 15px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar .sidebar-item:hover {
+    background-color: #50575d;
+}
+
+.sidebar .sidebar-item i {
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.sidebar .close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.sidebar .close-btn i {
+    margin-right: 10px;
+}
+
+.sidebar .close-btn:hover {
+    color: #ff5c5c;
+    transform: scale(1.1);
+    transition: all 0.3s ease;
+}
+
+/* Add animation to sidebar opening */
+.sidebar.active {
+    animation: slideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+    0% {
+        left: -300px;
+    }
+    100% {
+        left: 0;
+    }
+}
+
+/* Add bounce effect on item click */
+.sidebar .sidebar-item:active {
+    transform: scale(0.95);
+    transition: transform 0.1s;
+}
     </style>
 </head>
 <body>
@@ -650,12 +797,33 @@
     </div>
 </div>
 
+
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
-    <button class="close-btn" onclick="toggleSidebar()">× Close</button>
-    <button onclick="gotohome()">Home</button>
-    <button onclick="manageTenants(startLoader)">Manage Tenants</button>
-    <button onclick="showReports()">Reports</button>
+    <button class="close-btn" onclick="toggleSidebar()">
+        <i class="fas fa-times"></i>
+        <span>Close</span>
+    </button>
+    <div class="sidebar-item" onclick="gotohome()">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+    </div>
+    <div class="sidebar-item" onclick="manageTenants(startLoader)">
+        <i class="fas fa-users"></i>
+        <span>Manage Tenants</span>
+    </div>
+    <div class="sidebar-item" onclick="showReports()">
+        <i class="fas fa-chart-bar"></i>
+        <span>Reports</span>
+    </div>
+    <div class="sidebar-item" onclick="showAuditLogs()">
+        <i class="fas fa-file-alt"></i>
+        <span>Audit Logs</span>
+    </div>
+    <div id="configurationButton" class="sidebar-item" onclick="gotoconfiguration()"  style="display: none;">
+        <i class="fas fa-cog"></i>
+        <span>Configuration</span>
+    </div>
 </div>
 
 <!-- Profile Page Content -->
@@ -675,6 +843,7 @@
     <div class="tabs">
         <div class="tab active" onclick="openTab(event, 'profile')">Profile</div>
         <div class="tab" onclick="openTab(event, 'security')">Security</div>
+        <div class="tab" onclick="openTab(event, 'ui-settings')">Settings</div>
         <div class="tab" id="accounts-tab" style="display: none;" onclick="openTab(event, 'accounts')">Accounts</div>
     </div>
 
@@ -716,6 +885,53 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Updated Color Settings Section -->
+    <div id="ui-settings" class="tab-content">
+        <div style="text-align: center; margin: 20px 0;">
+            <p style="font-size: 20px; font-weight: bold; color: #333; margin-bottom: 20px;">Color Settings</p>
+            <div class="color-settings-container">
+                <!-- Add as many colors as needed -->
+                <div class="color-option" id="blueColor" onclick="selectColor('blue')">
+                    <div class="color-box" style="background: #0000FF;"></div>
+                    <p class="color-label">Blue Color</p>
+                </div>
+
+                <div class="color-option" id="redColor" onclick="selectColor('red')">
+                    <div class="color-box" style="background: #FF0000;"></div>
+                    <p class="color-label">Red Color</p>
+                </div>
+
+                <div class="color-option" id="greenColor" onclick="selectColor('green')">
+                    <div class="color-box" style="background: #00FF00;"></div>
+                    <p class="color-label">Green Color</p>
+                </div>
+
+                <div class="color-option" id="purpleColor" onclick="selectColor('purple')">
+                    <div class="color-box" style="background: #FF00FF;"></div>
+                    <p class="color-label">Purple Color</p>
+                </div>
+
+                <div class="color-option" id="yellowColor" onclick="selectColor('yellow')">
+                    <div class="color-box" style="background: #FFFF00;"></div>
+                    <p class="color-label">Yellow Color</p>
+                </div>
+
+                <div class="color-option" id="customColor">
+                    <div class="color-box" id="customColorBox" style="background: #0070C6;"></div>
+                    <p class="color-label">Custom Color</p>
+                    <input type="color" id="colorPicker" value="#0070C6" style="display: none;" />
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+
+
+
 
     <!-- Accounts Tab Content -->
     <div id="accounts" class="tab-content">
@@ -1003,6 +1219,81 @@ function stopLoader() {
     function redirectToAddViewUsers(){
             window.location.href = "manage-users";
     }
+
+
+
+
+
+
+
+// Map predefined colors to their hex codes
+    const colorOptions = {
+        blue: '#0000FF',
+        red: '#FF0000',
+        green: '#00FF00',
+        purple: '#FF00FF',
+        yellow: '#FFFF00',
+    };
+
+let selectedColor = null;
+
+// Function to select predefined colors
+function selectColor(color) {
+    // Remove 'selected' class from all color options
+    document.querySelectorAll('.color-option').forEach(option => {
+        option.classList.remove('selected');
+    });
+
+    // Highlight the selected color if it's predefined
+    if (colorOptions[color]) {
+         window.localStorage.setItem("current-color-code", colorOptions[color]);
+        selectedColor = colorOptions[color];
+        document.getElementById(`${color}Color`).classList.add('selected');
+        changeSidebarNavbarColor();
+    }
+
+    console.log('Selected color:', selectedColor);
+}
+
+function selectCustomColor() {
+    const colorPicker = document.getElementById('colorPicker');
+    colorPicker.click(); // Programmatically trigger the color picker
+}
+
+// Function to update the custom color box when a new color is picked
+function updateCustomColor() {
+    const colorPicker = document.getElementById('colorPicker');
+    const customColorBox = document.getElementById('customColorBox');
+    customColorBox.style.background = colorPicker.value; // Update the background color
+    console.log('Custom color selected:', colorPicker.value);
+     document.querySelectorAll('.color-option').forEach(option => {
+        option.classList.remove('selected');
+    });
+     document.getElementById(`customColor`).classList.add('selected');
+       window.localStorage.setItem("current-color-code", colorPicker.value);
+       changeSidebarNavbarColor();
+}
+document.getElementById('customColorBox').onclick = selectCustomColor;
+document.getElementById('colorPicker').oninput = updateCustomColor;
+
+colorinit();
+
+function colorinit(){
+var color =  window.localStorage.getItem("current-color-code");
+if(color!=undefined){
+
+ if (colorOptions[color]) {
+selectedColor = colorOptions[color];
+        document.getElementById(`${color}Color`).classList.add('selected');
+ }else{
+ var colorPicker = document.getElementById('colorPicker');
+ colorPicker.value =color;
+  customColorBox.style.background =color;
+  document.getElementById(`customColor`).classList.add('selected');
+ }
+}
+}
+
 
 </script>
 

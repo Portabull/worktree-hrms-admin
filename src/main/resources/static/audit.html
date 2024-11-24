@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audit Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/common-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -94,49 +96,6 @@
 
         .dropdown-menu a:hover {
             background-color: #f4f4f4;
-        }
-
-
-        /* Sidebar */
-        .sidebar {
-            position: fixed;
-            left: -300px;
-            top: 0;
-            width: 250px;
-            height: 100%;
-            background-color: #343a40;
-            padding: 20px;
-            color: white;
-            transition: all 0.5s ease;
-            z-index: 1001;
-        }
-
-        .sidebar.active {
-            left: 0;
-        }
-
-        .sidebar button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            margin-bottom: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar button:hover {
-            background-color: #0056b3;
-        }
-
-        .sidebar .close-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
         }
 
 
@@ -365,6 +324,100 @@
 }
 
 /* loader css ends */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    left: -300px;
+    top: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #343a40;
+    padding: 20px;
+    color: white;
+    transition: all 0.5s ease;
+    z-index: 1001;
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.sidebar .sidebar-item {
+    color: white;
+    padding: 15px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar .sidebar-item:hover {
+    background-color: #50575d;
+}
+
+.sidebar .sidebar-item i {
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.sidebar .close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.sidebar .close-btn i {
+    margin-right: 10px;
+}
+
+.sidebar .close-btn:hover {
+    color: #ff5c5c;
+    transform: scale(1.1);
+    transition: all 0.3s ease;
+}
+
+/* Add animation to sidebar opening */
+.sidebar.active {
+    animation: slideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+    0% {
+        left: -300px;
+    }
+    100% {
+        left: 0;
+    }
+}
+
+/* Add bounce effect on item click */
+.sidebar .sidebar-item:active {
+    transform: scale(0.95);
+    transition: transform 0.1s;
+}
+
     </style>
 </head>
 <body>
@@ -372,6 +425,16 @@
 
 <div id="loader" class="loader-overlay">
     <div class="loader"></div>
+</div>
+
+<!-- Error Popup Modal -->
+<div id="uniqueErrorModal9875">
+    <div class="unique-modal-content9875" id="modalContent9875">
+        <h2 id="errorHeader9875">Error Occurred</h2>
+        <p id="errorFooter9875" class="message-container9875">An unexpected error has occurred. Please try again later.</p>
+        <span class="read-more9875" id="readMore9875">Read more</span>
+        <button id="uniqueOkayBtn9875">Okay</button>
+    </div>
 </div>
 
 <!-- Navbar -->
@@ -393,12 +456,34 @@
 
 
 
+
+
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
-    <button class="close-btn" onclick="toggleSidebar()">× Close</button>
-    <button onclick="gotohome()">Home</button>
-    <button onclick="manageTenants(startLoader)">Manage Tenants</button>
-    <button onclick="showReports()">Reports</button>
+    <button class="close-btn" onclick="toggleSidebar()">
+        <i class="fas fa-times"></i>
+        <span>Close</span>
+    </button>
+    <div class="sidebar-item" onclick="gotohome()">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+    </div>
+    <div class="sidebar-item" onclick="manageTenants(startLoader)">
+        <i class="fas fa-users"></i>
+        <span>Manage Tenants</span>
+    </div>
+    <div class="sidebar-item" onclick="showReports()">
+        <i class="fas fa-chart-bar"></i>
+        <span>Reports</span>
+    </div>
+    <div class="sidebar-item" onclick="showAuditLogs()" style="pointer-events: none; opacity: 0.5;" aria-disabled="true">
+        <i class="fas fa-file-alt"></i>
+        <span>Audit Logs</span>
+    </div>
+    <div class="sidebar-item" onclick="gotoconfiguration()">
+        <i class="fas fa-cog"></i>
+        <span>Configuration</span>
+    </div>
 </div>
 
 
@@ -468,6 +553,9 @@
     <h3>Row Details</h3>
     <div class="popup-content" id="rowDetails"></div>
 </div>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
 <script src="js/security.js"></script>
 <script src="js/worktree.js"></script>
 <script>
