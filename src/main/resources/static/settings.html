@@ -150,35 +150,39 @@
             font-size: 16px;
         }
 
-        /* Tabs */
-        .tabs {
-            display: flex;
-            background-color: #f9f9f9;
-            padding: 15px;
-            justify-content: space-evenly;
-            border-bottom: 2px solid #e0e0e0;
-        }
+      /* Tabs container: allow wrapping */
+.tabs {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping to the next line */
+    justify-content: center; /* Center align tabs */
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-bottom: 2px solid #e0e0e0;
+    gap: 10px; /* Add spacing between rows and tabs */
+}
 
-        .tab {
-            padding: 10px 30px;
-            cursor: pointer;
-            background-color: #f1f1f1;
-            border-radius: 10px 10px 0 0;
-            font-size: 16px;
-            transition: background-color 0.4s, color 0.4s;
-            text-align: center;
-            flex-grow: 1;
-        }
+        /* Individual tabs */
+.tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #f1f1f1;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: background-color 0.4s, color 0.4s;
+    text-align: center;
+    flex-grow: 1;
+}
 
-        .tab.active {
-            background-color: #4a90e2;
-            color: white;
-        }
+       .tab.active {
+    background-color: #4a90e2;
+    color: white;
+}
 
-        .tab:hover {
-            background-color: #4a90e2;
-            color: white;
-        }
+/* Hover effect */
+.tab:hover {
+    background-color: #4a90e2;
+    color: white;
+}
 
         /* Scrollable Tab Content */
         .tab-content {
@@ -685,7 +689,7 @@
 
 /* Sidebar */
 .sidebar {
-    position: fixed;
+ position: fixed;
     left: -300px;
     top: 0;
     width: 250px;
@@ -695,6 +699,8 @@
     color: white;
     transition: all 0.5s ease;
     z-index: 1001;
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Hide horizontal scrolling */
 }
 
 .sidebar.active {
@@ -761,6 +767,34 @@
 .sidebar .sidebar-item:active {
     transform: scale(0.95);
     transition: transform 0.1s;
+}
+
+/* Add a scrollbar only if content overflows */
+.sidebar::-webkit-scrollbar {
+    width: 6px; /* Adjust scrollbar width */
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.5); /* Scrollbar color */
+    border-radius: 10px; /* Rounded corners */
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.8); /* Hover color */
+}
+
+
+
+/* Ensure Accounts Tab is visible and styled correctly */
+#accounts-tab {
+    display: block !important; /* Force display for all screens */
+}
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .tab {
+        font-size: 14px; /* Reduce font size for smaller screens */
+        padding: 8px 15px; /* Adjust padding for smaller screens */
+    }
 }
     </style>
 </head>
@@ -893,29 +927,29 @@
             <p style="font-size: 20px; font-weight: bold; color: #333; margin-bottom: 20px;">Color Settings</p>
             <div class="color-settings-container">
                 <!-- Add as many colors as needed -->
-                <div class="color-option" id="blueColor" onclick="selectColor('blue')">
-                    <div class="color-box" style="background: #0000FF;"></div>
-                    <p class="color-label">Blue Color</p>
+                <div class="color-option" id="slateColor" onclick="selectColor('slate')">
+                    <div class="color-box" style="background: #7a7d7f;"></div>
+                    <p class="color-label">Slate Color</p>
                 </div>
 
-                <div class="color-option" id="redColor" onclick="selectColor('red')">
-                    <div class="color-box" style="background: #FF0000;"></div>
-                    <p class="color-label">Red Color</p>
+                <div class="color-option" id="azureColor" onclick="selectColor('azure')">
+                    <div class="color-box" style="background: #4a90e2;"></div>
+                    <p class="color-label">Azure Color</p>
                 </div>
 
-                <div class="color-option" id="greenColor" onclick="selectColor('green')">
-                    <div class="color-box" style="background: #00FF00;"></div>
-                    <p class="color-label">Green Color</p>
+                <div class="color-option" id="blackColor" onclick="selectColor('black')">
+                    <div class="color-box" style="background: #000000;"></div>
+                    <p class="color-label">Black Color</p>
                 </div>
 
-                <div class="color-option" id="purpleColor" onclick="selectColor('purple')">
-                    <div class="color-box" style="background: #FF00FF;"></div>
-                    <p class="color-label">Purple Color</p>
+                <div class="color-option" id="pinkColor" onclick="selectColor('pink')">
+                    <div class="color-box" style="background: #bb116c;"></div>
+                    <p class="color-label">Crimson Pink</p>
                 </div>
 
                 <div class="color-option" id="yellowColor" onclick="selectColor('yellow')">
-                    <div class="color-box" style="background: #FFFF00;"></div>
-                    <p class="color-label">Yellow Color</p>
+                    <div class="color-box" style="background: #c8a114;"></div>
+                    <p class="color-label">Mustard Yellow</p>
                 </div>
 
                 <div class="color-option" id="customColor">
@@ -1128,13 +1162,14 @@ function uploadImage() {
 
 // Manage viewAccounts flag to show/hide Accounts tab
 function manageAccountsTab() {
-    if (profileData.viewAccounts) {
-        document.getElementById("accounts-tab").style.display = "block";
+    const accountsTab = document.getElementById("accounts-tab");
+
+    if (profileData && profileData.viewAccounts) {
+        accountsTab.style.display = "block"; // Show the tab
     } else {
-        document.getElementById("accounts-tab").style.display = "none";
+        accountsTab.style.display = "none"; // Hide the tab
     }
 }
-
 
 function viewLoginLocation(url) {
     window.open(url, '_blank'); // Open the URL in a new tab
@@ -1228,11 +1263,11 @@ function stopLoader() {
 
 // Map predefined colors to their hex codes
     const colorOptions = {
-        blue: '#0000FF',
-        red: '#FF0000',
-        green: '#00FF00',
-        purple: '#FF00FF',
-        yellow: '#FFFF00',
+        slate: '#7a7d7f',
+        azure: '#4a90e2',
+        black: '#000000',
+        pink: '#bb116c',
+        yellow: '#c8a114',
     };
 
 let selectedColor = null;
@@ -1282,9 +1317,9 @@ function colorinit(){
 var color =  window.localStorage.getItem("current-color-code");
 if(color!=undefined){
 
- if (colorOptions[color]) {
-selectedColor = colorOptions[color];
-        document.getElementById(`${color}Color`).classList.add('selected');
+ if (Object.values(colorOptions).includes(color)) {
+selectedColor = Object.keys(colorOptions).find(key => colorOptions[key] === color);
+        document.getElementById(`${selectedColor}Color`).classList.add('selected');
  }else{
  var colorPicker = document.getElementById('colorPicker');
  colorPicker.value =color;
