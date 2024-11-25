@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>License Registration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e2a38, #3e576d);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            height: 100%;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #fff;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 1s ease-in-out;
+            text-align: center;
+        }
+
+        .cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .card {
+            background: linear-gradient(145deg, #2f4157, #223140);
+            border-radius: 20px;
+            box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.7), -10px -10px 20px rgba(70, 100, 130, 0.2);
+            text-align: center;
+            padding: 30px;
+            width: 100%;
+            max-width: 350px;
+            position: relative;
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-15px);
+            box-shadow: 15px 15px 25px rgba(0, 0, 0, 0.8), -15px -15px 25px rgba(70, 100, 130, 0.3);
+        }
+
+        .card img {
+            width: 70px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.3));
+        }
+
+        .card h2 {
+            font-size: 1.8rem;
+            color: #fff;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4);
+        }
+
+        .card p {
+            font-size: 1rem;
+            color: #c4d3df;
+            margin-bottom: 30px;
+        }
+
+        .card button {
+            background: linear-gradient(145deg, #4caf50, #357a38);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .card button:hover {
+            transform: scale(1.1);
+            background: #3e8e41;
+        }
+
+        footer {
+            margin-top: 30px;
+            font-size: 1rem;
+            color: #c4d3df;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .cards {
+                flex-direction: column;
+                align-items: center;
+                gap: 30px;
+            }
+
+            .card {
+                width: 90%;
+            }
+
+            .card p {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .card h2 {
+                font-size: 1.5rem;
+            }
+
+            .card p {
+                font-size: 0.9rem;
+            }
+
+            .card button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>License Registration</h1>
+    <div class="cards">
+        <!-- Trial User Card -->
+        <div class="card">
+            <img src="https://img.icons8.com/ios-filled/70/ffffff/clock.png" alt="Trial User">
+            <h2>Trial User</h2>
+            <p>For Trial License, please contact <br><a href="mailto:contact@worktree.com" style="color: #4caf50; text-decoration: none;">contact@worktree.com</a></p>
+        </div>
+
+        <!-- Licensed User Card -->
+        <div class="card" onclick="triggerFileUpload()">
+            <img src="https://img.icons8.com/ios-filled/70/ffffff/key.png" alt="Licensed User">
+            <h2>Licensed User</h2>
+            <p>Already have a License Key? <br>Click below to activate it.</p>
+            <button onclick="triggerFileUpload(event)">Activate License Key</button>
+            <input type="file" id="fileInput" style="display: none;" onchange="handleFileUpload(event)">
+        </div>
+    </div>
+    <footer>
+        Copyright © 2024 Worktree Inc. All rights reserved.
+    </footer>
+    <script>
+        function triggerFileUpload(event) {
+            if (event) {
+                // Prevent triggering the card's onclick event
+                event.stopPropagation();
+            }
+            document.getElementById("fileInput").click();
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                alert(`File uploaded: ${file.name}`);
+                // Add additional file handling logic here
+            }
+        }
+    </script>
+</body>
+</html>
