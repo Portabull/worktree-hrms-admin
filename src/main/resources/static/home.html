@@ -7,6 +7,7 @@
     <title>Home</title>
     <!-- Add FontAwesome for Icons -->
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/common.css">
     <style>
   /* Style for the reload button */
     .reload-button {
@@ -113,13 +114,7 @@
             transition: all 0.3s ease;
         }
 
-        .navbar .company-name {
-            font-size: 24px;
-            font-weight: 600;
-            margin-left: 15px;
-            color: #ffcc00;
-            animation: fadeInSlide 2s ease-in-out;
-        }
+
 
         @keyframes fadeInSlide {
             0% {
@@ -137,10 +132,10 @@
         }
 
         .navbar .profile img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
+           width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer !important;
         }
 
         .dropdown-menu {
@@ -425,9 +420,18 @@
 <div class="navbar">
     <div class="menu-button" onclick="toggleSidebar()">
         <div></div>
-        <span class="company-name">Worktree</span>
+        <span class="company-name"></span>
     </div>
 
+
+    &nbsp;&nbsp;    &nbsp;&nbsp;
+    <div class="search-box-container-2123112">
+        <input type="text" class="search-box-2123112" id="searchInput-2123112" placeholder="Search any action or ask for help...">
+        <div class="dropdown-container-2123112" id="dropdownMenu-2123112">
+        </div>
+    </div>
+    &nbsp;&nbsp;
+    &nbsp;&nbsp;
     <div class="profile" id="profile-dropdown">
         <img src="image/user-profile.jpeg" alt="Profile" onclick="toggleProfileDropdown()">
         <div class="dropdown-menu" id="dropdown-menu">
@@ -715,27 +719,6 @@ function updateChart(period) {
 
 
 
-
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
-        closeProfileDropdown();
-        closeSidebar();
-    }
-});
-
-// Function to close the profile dropdown
-function closeProfileDropdown() {
-    const dropdown = document.getElementById('dropdown-menu');
-    if (dropdown.style.display === 'block') {
-        dropdown.style.display = 'none';
-    }
-}
-
-// Function to close the sidebar
-function closeSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    sidebar.classList.remove('active');
-}
 
 function goToRecentErrors(){
     startLoader();

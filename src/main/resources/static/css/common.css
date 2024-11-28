@@ -1,0 +1,107 @@
+      .search-box-container-2123112 {
+            position: relative;
+            width: 60%;
+            max-width: 600px;
+        }
+
+        .search-box-2123112 {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 25px;
+            border: 1px solid #ccc;
+            outline: none;
+            transition: border-color 0.3s ease-in-out;
+        }
+
+        .search-box-2123112:focus {
+            border-color: #0056b3;
+        }
+
+        .dropdown-container-2123112 {
+            position: absolute;
+            top: 50px;
+            left: 0;
+            right: 0;
+            background-color: #7a7d7f;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            display: none;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 50;
+        }
+
+        .dropdown-item-2123112 {
+            padding: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-item-2123112:hover {
+            background-color: #768788;
+        }
+
+        .dropdown-icon-2123112 {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 600px) {
+            .search-box-2123112 {
+                font-size: 0.9rem;
+                padding: 8px;
+            }
+
+            .dropdown-item-2123112 {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 280px) {
+            .search-box-container-2123112 {
+                display: none;
+            }
+        }
+
+.navbar .company-name {
+    font-size: 24px;
+    font-weight: 600;
+    margin-left: 15px;
+    color: #ffcc00;
+    animation: fadeInSlide 2s ease-in-out;
+}
+
+
+
+/* Responsive styles for smaller screens */
+@media screen and (max-width: 650px) {
+    .navbar .company-name {
+        font-size: 24px; /* Optional: adjust font size for smaller screens */
+    }
+
+    .navbar .company-name::before {
+        content: "W"; /* Show 'W' on smaller screens */
+    }
+
+
+}
+
+/* Responsive styles for smaller screens */
+@media screen and (min-width: 651px) {
+    .navbar .company-name {
+        font-size: 24px; /* Optional: adjust font size for smaller screens */
+          font-weight: 600;
+           margin-left: 15px;
+            color: #ffcc00;
+    }
+
+    .navbar .company-name::before {
+        content: "Worktree"; /* Show 'W' on smaller screens */
+    }
+
+
+}

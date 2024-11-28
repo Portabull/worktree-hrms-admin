@@ -600,16 +600,247 @@ window.location.href = "audit";
 changeSidebarNavbarColor('#000000');
 
 
-checkConfButtons();
+
 function checkConfButtons(){
 
     var userFeatures = getCurrentUserFeatures();
         if(userFeatures != undefined && userFeatures.length!=0){
  const button = document.getElementById('configurationButton');
+ const searchDropDownButton = document.getElementById('configurationButtonSearch');
  if(button!=undefined)
        {
         button.style.display = 'block'; // Show the button
                this.textContent = 'Hide Button'; // Change toggle button text
        }
+
+       if(searchDropDownButton!=undefined){
+          searchDropDownButton.style.display = 'block'; // Show the button
+       }
         }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+     const dropdownMenu = document.getElementById("dropdownMenu-2123112");
+     if(dropdownMenu!=undefined)
+     dropdownMenu.style.display = "none";
+        closeProfileDropdown12345();
+        closeSidebar12345();
+    }
+});
+
+// Function to close the profile dropdown
+function closeProfileDropdown12345() {
+    const dropdown = document.getElementById('dropdown-menu');
+    if (dropdown!=undefined && dropdown.style.display === 'block') {
+        dropdown.style.display = 'none';
+    }
+}
+
+// Function to close the sidebar
+function closeSidebar12345() {
+    const sidebar = document.getElementById('sidebar');
+    if(sidebar!=undefined)
+    sidebar.classList.remove('active');
+}
+
+
+
+
+  function showSearchDropdown12345() {
+    const dropdownMenu = document.getElementById("dropdownMenu-2123112");
+    if(dropdownMenu!=undefined)
+    dropdownMenu.style.display = "block";
+}
+
+// Close dropdown when clicking outside the search container or dropdown
+function closeSearchDropdown12345(event) {
+    const searchContainer = document.querySelector('.search-box-container-2123112');
+    const dropdownMenu = document.getElementById("dropdownMenu-2123112");
+
+    if(searchContainer==undefined || dropdownMenu==undefined)
+    return;
+
+    // Check if the clicked element is not inside the search container or dropdown
+    if (!searchContainer.contains(event.target) && !dropdownMenu.contains(event.target)) {
+        dropdownMenu.style.display = "none";
+    }
+}
+
+ // Add event listeners
+document.addEventListener('click', closeSearchDropdown12345); // Close dropdown when clicking anywhere outside
+if(document.querySelector('.search-box-container-2123112')!=undefined)
+document.querySelector('.search-box-container-2123112').addEventListener('click', (event) => {
+    event.stopPropagation(); // Prevent triggering the closeDropdown when clicking inside the search container
+    showSearchDropdown12345(); // Show the dropdown
+});
+
+
+const worktreeSearchCache = [
+    {
+        key: ["Home"],
+        value: `
+            <div class="dropdown-item-2123112" onclick="gotohome()">
+                <span class="dropdown-icon-2123112">
+                    <i class="fas fa-home"></i>
+                </span>
+                Home
+            </div>
+        `
+    },
+    {
+            key: ["Manage Tenants"],
+            value: `
+                <div class="dropdown-item-2123112" onclick="manageTenants(startLoader)">
+                        <span class="dropdown-icon-2123112"><i class="fas fa-users"></i></span>
+                        Manage Tenants
+                    </div>
+            `
+        },
+        {
+                key: ["Reports","Logs"],
+                value: `
+                     <div class="dropdown-item-2123112" onclick="showReports()">
+                            <span class="dropdown-icon-2123112"><i class="fas fa-chart-bar"></i></span>
+                            Reports
+                        </div>
+                `
+            },
+            {
+                    key: ["Audit Logs"],
+                    value: `
+                        <div class="dropdown-item-2123112" onclick="showAuditLogs()">
+                                <span class="dropdown-icon-2123112"><i class="fas fa-file-alt"></i></span>
+                                Audit Logs
+                            </div>
+                    `
+                },
+                {
+                        key: ["Configuration"],
+                        value: `
+                            <div class="dropdown-item-2123112" id="configurationButtonSearch" onclick="gotoconfiguration()" style="display: none;">
+                                    <span class="dropdown-icon-2123112"><i class="fas fa-cog"></i></span>
+                                    Configuration
+                                </div>
+                        `
+                    },
+                    {
+                                            key: ["Accounts","Users"],
+                                            value: `
+                                                <div class="dropdown-item-2123112" id="manageUsersButton" onclick="gotoAccounts()">
+                                                        <span class="dropdown-icon-2123112"><i class="fas fa-users"></i></span>
+                                                        Accounts
+                                                    </div>
+                                            `
+                                        }
+];
+
+function filterWorktreeSearch(searchKey) {
+    const lowerSearchKey = searchKey.toLowerCase(); // Make the search case-insensitive
+ var list =    worktreeSearchCache
+        .filter(item =>
+            item.key.some(k => k.toLowerCase().includes(lowerSearchKey)) // Check if any key contains the search term
+        )
+        .map(item => item.value); // Extract the matching values
+
+        return list;
+}
+
+function gotoAccounts(){
+ window.location.href = 'manage-users';
+}
+
+
+
+var searchBox12345 = document.getElementById("searchInput-2123112");
+
+if(searchBox12345!=undefined){
+
+
+searchBox12345.addEventListener("input", function(event) {
+
+     let searchInput =  event.target.value;
+
+    if(searchInput!=null && searchInput!=undefined && searchInput.length>=1){
+
+          var results = filterWorktreeSearch(searchInput);
+
+           var innerHtmlContent = '';
+
+          results.forEach((result, index) => {
+            innerHtmlContent = innerHtmlContent + result;
+          });
+
+
+if(innerHtmlContent==''){
+    innerHtmlContent = `
+                                   <div class="dropdown-item-2123112" onclick="gotohome()">
+                                       <span class="dropdown-icon-2123112">
+
+                                       </span>
+                                       No results found
+                                   </div>
+                               `;
+}
+
+var searchDropdownMenu = document.getElementById("dropdownMenu-2123112");
+
+if(searchDropdownMenu!=undefined){
+searchDropdownMenu.innerHTML = '';
+searchDropdownMenu.innerHTML = innerHtmlContent;
+}
+
+
+    }else{
+loadDropDownInit1234();
+    }
+
+});
+
+}
+
+loadDropDownInit1234();
+checkConfButtons();
+function loadDropDownInit1234(){
+const innerHtmlContent = `
+    <div class="dropdown-item-2123112" onclick="gotohome()">
+        <span class="dropdown-icon-2123112"><i class="fas fa-home"></i></span>
+        Home
+    </div>
+    <div class="dropdown-item-2123112" onclick="manageTenants(startLoader)">
+        <span class="dropdown-icon-2123112"><i class="fas fa-users"></i></span>
+        Manage Tenants
+    </div>
+    <div class="dropdown-item-2123112" onclick="showReports()">
+        <span class="dropdown-icon-2123112"><i class="fas fa-chart-bar"></i></span>
+        Reports
+    </div>
+    <div class="dropdown-item-2123112" onclick="showAuditLogs()">
+        <span class="dropdown-icon-2123112"><i class="fas fa-file-alt"></i></span>
+        Audit Logs
+    </div>
+    <div class="dropdown-item-2123112" id="configurationButtonSearch" onclick="gotoconfiguration()" style="display: none;">
+        <span class="dropdown-icon-2123112"><i class="fas fa-cog"></i></span>
+        Configuration
+    </div>
+`;
+
+var searchDropdownMenu = document.getElementById("dropdownMenu-2123112");
+
+if(searchDropdownMenu!=undefined){
+searchDropdownMenu.innerHTML = '';
+searchDropdownMenu.innerHTML = innerHtmlContent;
+}
+}
+

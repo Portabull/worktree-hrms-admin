@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <link rel="stylesheet" href="css/common-style.css">
   <link rel="stylesheet" href="css/style.css">
-
+  <link rel="stylesheet" href="css/common.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Manage Coupons</title>
   <style>/* General styles */
@@ -54,37 +54,31 @@ body {
 
 /* Navbar */
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    background-color: #343a40;
-    color: white;
-    position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .navbar .menu-button {
-    display: flex;
-    align-items: center;
-    cursor: pointer !important;
+     display: flex;
+            align-items: center;
+            cursor: pointer;
 }
 
 .navbar .menu-button div {
-    width: 25px;
-    height: 3px;
-    background-color: white;
-    margin: 5px 0;
-}
-
-.navbar .company-name {
-    font-size: 24px;
-    font-weight: 600;
-    margin-left: 15px;
-    color: #ffcc00;
+width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 5px 0;
+            transition: all 0.3s ease;
 }
 
 .navbar .profile img {
@@ -352,36 +346,36 @@ table tr:hover {
 
 /* Dropdown Menu Fix */
 .dropdown-menu {
-    display: none;
-    position: absolute;
-    top: 50px;
-    right: 0;
-    background-color: white;
-    border-radius: 5px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-    z-index: 1001;
-    padding: 10px 0;
-    width: 200px;
+     display: none;
+            position: absolute;
+            top: 60px; /* Position dropdown below profile icon */
+            right: 0;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            padding: 10px;
+            width: 180px; /* Increased width to prevent text overflow */
 }
 
 .dropdown-menu a {
-    display: flex;
-    align-items: center;
-    padding: 10px 15px;
-    text-decoration: none;
-    color: black;
-    font-weight: 500;
-    font-size: 14px;
-    cursor: pointer;
+      display: flex;
+            align-items: center;
+            padding: 10px;
+            text-decoration: none;
+            color: black;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            white-space: nowrap;
 }
 
 .dropdown-menu a i {
-    margin-right: 10px;
-    font-size: 16px;
+      margin-right: 10px;
+            font-size: 18px;
 }
 
 .dropdown-menu a:hover {
-    background-color: #f4f4f4;
+  background-color: #f4f4f4;
 }
 
 
@@ -507,8 +501,19 @@ table tr:hover {
 <div class="navbar">
   <div class="menu-button" onclick="toggleSidebar()">
     <div></div>
-    <span class="company-name">Worktree</span>
+    <span class="company-name"></span>
   </div>
+
+
+  &nbsp;&nbsp;    &nbsp;&nbsp;
+  <div class="search-box-container-2123112">
+    <input type="text" class="search-box-2123112" id="searchInput-2123112" placeholder="Search any action or ask for help...">
+    <div class="dropdown-container-2123112" id="dropdownMenu-2123112">
+    </div>
+  </div>
+  &nbsp;&nbsp;
+
+
   <div class="profile">
     <img src="image/user-profile.jpeg" alt="Profile" onclick="toggleProfileDropdown()">
     <div class="dropdown-menu" id="profile-dropdown">

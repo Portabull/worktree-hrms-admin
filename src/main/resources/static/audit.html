@@ -6,6 +6,7 @@
     <title>Audit Dashboard</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/common-style.css">
+    <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -45,13 +46,6 @@
             background-color: white;
             margin: 5px 0;
             transition: all 0.3s ease;
-        }
-
-        .navbar .company-name {
-            font-size: 24px;
-            font-weight: 600;
-            margin-left: 15px;
-            color: #ffcc00;
         }
 
         .navbar .profile {
@@ -457,8 +451,16 @@
 <div class="navbar">
     <div class="menu-button" onclick="toggleSidebar()">
         <div></div>
-        <span class="company-name">Worktree</span>
+        <span class="company-name"></span>
     </div>
+
+    &nbsp;&nbsp;    &nbsp;&nbsp;
+    <div class="search-box-container-2123112">
+        <input type="text" class="search-box-2123112" id="searchInput-2123112" placeholder="Search any action or ask for help...">
+        <div class="dropdown-container-2123112" id="dropdownMenu-2123112">
+        </div>
+    </div>
+    &nbsp;&nbsp;
 
     <div class="profile" id="profile-dropdown">
         <img src="https://via.placeholder.com/50" alt="Profile" onclick="toggleProfileDropdown()">
