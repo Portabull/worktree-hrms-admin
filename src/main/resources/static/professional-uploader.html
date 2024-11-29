@@ -19,12 +19,6 @@
             height: 100vh;
             background: linear-gradient(135deg, #4caf50, #2196f3);
             color: #333;
-            animation: fadeIn 1.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
         }
 
         .container {
@@ -35,13 +29,6 @@
             max-width: 500px;
             width: 100%;
             text-align: center;
-            transform: translateY(30px);
-            animation: slideUp 1s ease forwards;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
         }
 
         h2 {
@@ -61,12 +48,6 @@
             cursor: pointer;
             outline: none;
             background: #f9f9f9;
-            transition: border-color 0.3s ease, background-color 0.3s ease;
-        }
-
-        input[type="file"]:hover {
-            border-color: #4caf50;
-            background-color: #e8f5e9;
         }
 
         button {
@@ -79,17 +60,6 @@
             font-weight: bold;
             border-radius: 10px;
             cursor: pointer;
-            transition: background 0.3s ease, transform 0.2s ease;
-        }
-
-        button:hover {
-            background: linear-gradient(135deg, #2196f3, #4caf50);
-            transform: scale(1.05);
-        }
-
-        button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
         }
 
         #progress-container {
@@ -99,8 +69,7 @@
             margin-top: 20px;
             height: 25px;
             overflow: hidden;
-            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
-            display: none; /* Hidden by default */
+            display: none;
         }
 
         #progress-bar {
@@ -108,7 +77,6 @@
             height: 100%;
             background: linear-gradient(135deg, #4caf50, #2196f3);
             border-radius: 5px;
-            transition: width 0.5s ease-in-out;
         }
 
         #status {
@@ -118,35 +86,10 @@
             color: #333;
         }
 
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-top: 4px solid #4caf50;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 0.8s linear infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .processing p {
+        .info {
             margin-top: 10px;
             font-size: 16px;
             color: #555;
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 20px 15px;
-            }
-
-            input[type="file"], button {
-                font-size: 14px;
-            }
         }
     </style>
 </head>
@@ -154,7 +97,6 @@
 
 <div class="container">
     <h2>Professional File Uploader</h2>
-
     <form id="uploadForm" enctype="multipart/form-data">
         <input type="file" name="file" id="file" required>
         <button type="submit" id="uploadBtn">Upload</button>
@@ -164,16 +106,12 @@
         <div id="progress-bar"></div>
     </div>
 
-    <div id="processing" class="processing" style="display:none;">
-        <div class="spinner"></div>
-        <p>Processing your file...</p>
-    </div>
-
     <div id="status"></div>
+    <div id="speed-info" class="info"></div>
 </div>
 
 <script>
-    const MAX_FILE_SIZE = 5 * 1024 * 1024 * 1024;
+    const MAX_FILE_SIZE = 5 * 1024 * 1024 * 1024; // 5 GB
 
     const uploadForm = document.getElementById('uploadForm');
     const fileInput = document.getElementById('file');
@@ -181,7 +119,9 @@
     const progressBar = document.getElementById('progress-bar');
     const progressContainer = document.getElementById('progress-container');
     const status = document.getElementById('status');
-    const processingSpinner = document.getElementById('processing');
+    const speedInfo = document.getElementById('speed-info');
+
+    let startTime;
 
     uploadForm.addEventListener('submit', function (event) {
         event.preventDefault();
@@ -200,22 +140,28 @@
 
         const xhr = new XMLHttpRequest();
 
-const BASE_URL = new URL(window.location.href).protocol + "//" + new URL(window.location.href).hostname  + ":" + new URL(window.location.href).port + "/";
-
+        const BASE_URL = new URL(window.location.href).protocol + "//" + new URL(window.location.href).hostname + ":" + new URL(window.location.href).port + "/";
         xhr.open('POST', BASE_URL + 'upload', true);
 
         uploadBtn.disabled = true;
         progressContainer.style.display = 'block';
 
+        startTime = new Date().getTime();
+
         xhr.upload.onprogress = function (e) {
             if (e.lengthComputable) {
                 const percent = (e.loaded / e.total) * 100;
+                const elapsedTime = (new Date().getTime() - startTime) / 1000; // Time in seconds
+                const uploadSpeed = (e.loaded / elapsedTime / 1024 / 1024).toFixed(2); // Speed in MB/s
+                const uploadedMB = (e.loaded / 1024 / 1024).toFixed(2); // Uploaded in MB
+                const totalMB = (e.total / 1024 / 1024).toFixed(2); // Total size in MB
+
                 progressBar.style.width = percent + '%';
-                status.innerText = 'Uploading: ' + percent.toFixed(2) + '%';
+                status.innerText = `Uploading: ${percent.toFixed(2)}%`;
+                speedInfo.innerText = `Speed: ${uploadSpeed} MB/s | Uploaded: ${uploadedMB} MB / ${totalMB} MB`;
 
                 if (percent === 100) {
                     status.innerText = 'Upload complete. Processing...';
-                    processingSpinner.style.display = 'block';
                 }
             }
         };
@@ -224,11 +170,8 @@ const BASE_URL = new URL(window.location.href).protocol + "//" + new URL(window.
             if (xhr.status === 200) {
                 const response = JSON.parse(xhr.responseText);
                 if (response.status === 'success') {
-                    setTimeout(() => {
-                        processingSpinner.style.display = 'none';
-                        status.innerText = 'Upload and processing complete!';
-                        status.style.color = 'green';
-                    }, 2000);
+                    status.innerText = 'Upload and processing complete!';
+                    status.style.color = 'green';
                 } else {
                     showError('Error processing file. Please try again.');
                 }
@@ -249,14 +192,14 @@ const BASE_URL = new URL(window.location.href).protocol + "//" + new URL(window.
     function resetUI() {
         progressBar.style.width = '0';
         status.innerText = '';
-        processingSpinner.style.display = 'none';
+        speedInfo.innerText = '';
         progressContainer.style.display = 'none';
     }
 
     function showError(message) {
-        processingSpinner.style.display = 'none';
         status.innerText = message;
         status.style.color = 'red';
+        speedInfo.innerText = '';
     }
 </script>
 
