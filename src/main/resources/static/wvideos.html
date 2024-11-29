@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        #video-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .video-card {
+            width: 200px;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .video-card img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .video-card h4 {
+            padding: 10px;
+            font-size: 16px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+         button:hover {
+        background-color: #45a049; /* Darker green on hover */
+        transform: scale(1.05); /* Slight zoom effect */
+    }
+    </style>
+</head>
+<body>
+
+<button onclick="redirectToUpload()" style="
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    padding: 15px 32px; /* Padding around the text */
+    text-align: center; /* Center text */
+    text-decoration: none; /* Remove underline */
+    font-size: 16px; /* Text size */
+    border: none; /* Remove border */
+    border-radius: 8px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+    position: fixed; /* Fixed position relative to the browser window */
+    top: 20px; /* Distance from the top */
+    right: 20px; /* Distance from the right */
+    z-index: 1000; /* Make sure it stays on top of other elements */
+">
+    Upload New Videos
+</button>
+
+<h1>Available Videos</h1>
+<div id="video-list"></div>
+
+<script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const videoList = document.getElementById("video-list");
+
+            async function fetchVideos() {
+                try {
+                    const response = await fetch('/videos');
+                    if (!response.ok) throw new Error('Failed to fetch videos');
+                    return await response.json();
+                } catch (error) {
+                    console.error(error);
+                    return [];
+                }
+            }
+
+            async function loadVideos() {
+                const videos = await fetchVideos();
+                videos.forEach(video => {
+                    const card = document.createElement('div');
+                    card.className = 'video-card';
+                    card.innerHTML = `
+                        <img src="https://via.placeholder.com/200x120?text=Video" alt="${video.title}">
+                        <h4>${video.title}</h4>
+                    `;
+                    card.addEventListener('click', () => {
+                    var myredirecturl = '/stream/' + video.url;
+                        window.location.href = `player?url=${encodeURIComponent(myredirecturl)}&title=${encodeURIComponent(video.title)}`;
+                    });
+                    videoList.appendChild(card);
+                });
+            }
+
+            await loadVideos();
+        });
+
+        function redirectToUpload(){
+          window.location.href = "professional-uploader";
+        }
+    </script>
+</body>
+</html>

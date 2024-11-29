@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Video Player</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            position: relative;
+        }
+
+        #back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        video {
+            width: 80%;
+            max-width: 1200px;
+            height: auto;
+            border-radius: 8px;
+            background-color: black;
+        }
+
+        #loading-message {
+            display: none;
+            color: gray;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<button id="back-button">Back</button>
+<video id="video" controls autoplay>
+    Your browser does not support the video tag.
+</video>
+<p id="loading-message">Loading video...</p>
+
+<script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const backButton = document.getElementById("back-button");
+            const videoElement = document.getElementById("video");
+            const loadingMessage = document.getElementById("loading-message");
+
+            // Parse query parameters
+            const params = new URLSearchParams(window.location.search);
+            const videoUrl = params.get('url');
+            const videoTitle = params.get('title');
+
+            if (!videoUrl) {
+                alert('No video URL provided');
+                window.location.href = 'wvideos'; // Replace with your video list page
+                return;
+            }
+
+            // Set video source and title
+            videoElement.src = videoUrl;
+            document.title = videoTitle || "Video Player";
+
+            // Display loading message until the video starts playing
+            videoElement.addEventListener('waiting', () => {
+                loadingMessage.style.display = 'block';
+            });
+
+            videoElement.addEventListener('canplay', () => {
+                loadingMessage.style.display = 'none';
+            });
+
+            videoElement.addEventListener('error', () => {
+                alert('Failed to load the video. Please check the file or URL.');
+                loadingMessage.style.display = 'none';
+            });
+
+            // Back button functionality
+            backButton.addEventListener('click', () => {
+                window.location.href = 'wvideos'; // Replace with your video list page
+            });
+        });
+    </script>
+</body>
+</html>
