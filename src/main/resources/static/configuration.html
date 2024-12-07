@@ -484,7 +484,11 @@
         <div class="settings-label">Payslip</div>
     </div>
 
-
+    <div class="settings-option" data-alias="Keystore Settings" onclick="gotoKeystoreSettings()" data-tooltip="Manage Keystore">
+        <!-- Keystore Icon -->
+        <i class="fas fa-key"></i>
+        <div class="settings-label">Keystore</div>
+    </div>
 
 
 </div>
@@ -563,7 +567,10 @@ startLoader();
   window.location.href = "pdf-cords";
 }
 
-
+function gotoKeystoreSettings(){
+startLoader();
+  window.location.href = "key-store";
+}
 
  window.addEventListener('pageshow', function(event) {
         // Check if the page is loaded from the cache

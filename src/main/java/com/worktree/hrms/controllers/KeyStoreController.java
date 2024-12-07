@@ -1,5 +1,6 @@
 package com.worktree.hrms.controllers;
 
+import com.worktree.hrms.annotations.Feature;
 import com.worktree.hrms.constants.CommonConstants;
 import org.apache.pdfbox.io.IOUtils;
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ public class KeyStoreController {
 
     private final static Logger logger = LoggerFactory.getLogger(KeyStoreController.class);
 
+    @Feature
     @PostMapping("/generate/keystore")
     public ResponseEntity<?> generateKeystore(@RequestBody Map<String, Object> request) {
 

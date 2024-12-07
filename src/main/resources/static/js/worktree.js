@@ -64,6 +64,7 @@ function dynamicXhrApi(method, url, headers, requestBody, callback, isFileUpload
 
                 if(xhr.status==403){
                   gotohome();
+                  return;
                   }
 
 
