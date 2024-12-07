@@ -42,12 +42,17 @@ public class EncryptedHttpResponseWrapper extends HttpServletResponseWrapper {
         return writer;
     }
 
-    public void encryptResponse() throws IOException {
+    public void handleResponse(boolean encrypt) throws IOException {
         writer.flush();
         String responseBody = byteArrayOutputStream.toString();
         try {
-            String encryptedBody = EncryptionUtils.encrypt(responseBody);
-            getResponse().getOutputStream().write(encryptedBody.getBytes());
+            if (encrypt) {
+                String encryptedBody = EncryptionUtils.encrypt(responseBody);
+                getResponse().getOutputStream().write(encryptedBody.getBytes());
+            } else {
+                getResponse().getOutputStream().write(responseBody.getBytes());
+            }
+
         } catch (Exception e) {
             throw new IOException("Failed to encrypt response body", e);
         }

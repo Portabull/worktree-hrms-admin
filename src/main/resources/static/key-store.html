@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Configuration</title>
+    <link rel="stylesheet" href="css/common-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e9edf5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+                user-select: none; /* Prevent text selection */
+    -webkit-user-select: none; /* For Safari */
+    -moz-user-select: none; /* For Firefox */
+    -ms-user-select: none; /* For IE and Edge */
+        }
+
+        .container {
+            position: relative;
+            background: #ffffff;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background-color: #5a6268;
+        }
+
+        h2 {
+            text-align: center;
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="number"],
+        select,
+        input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .accordion {
+            margin-top: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            cursor: pointer;
+            font-weight: bold;
+            color: #333;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .accordion-header:hover {
+            background: #e9ecef;
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 15px;
+            background-color: #ffffff;
+        }
+
+        .accordion-content.active {
+            display: block;
+        }
+
+        .property-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .property-row input {
+            flex: 1;
+            padding: 10px;
+            font-size: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .property-row button {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: none;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .property-row .add-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .property-row .add-btn:hover {
+            background-color: #218838;
+        }
+
+        .property-row .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .property-row .delete-btn:hover {
+            background-color: #a71d2a;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+.submit-section {
+    text-align: center;
+    margin-top: 20px;
+    position: relative;
+}
+
+.separator {
+    height: 4px; /* Thickness of the line */
+    background-color: #d6d6d6; /* Cement color */
+    width: 100%; /* Full width */
+    margin-bottom: 10px; /* Space between line and button */
+    border-radius: 2px; /* Rounded ends */
+}
+
+#submit {
+    background-color: #007bff; /* Same blue as Import/Export buttons */
+    color: white;
+    border: none;
+    padding: 10px 20px; /* Consistent padding */
+    border-radius: 50px; /* Fully rounded button */
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+#submit:hover {
+    background-color: #0056b3; /* Darker blue for hover effect */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+}
+
+
+
+
+
+
+
+
+
+
+#export, #import {
+    background-color: #007bff; /* Brighter blue color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 50px; /* Rounded buttons */
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Smooth transitions */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+#export:hover, #import:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow on hover */
+}
+
+#export i, #import i {
+    font-size: 18px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ /* Loader Styles */
+        .loader-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader-overlay.active {
+            display: flex;
+        }
+
+
+          .spinner {
+            border: 8px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 8px solid #3498db;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Error Popup Modal -->
+<div id="uniqueErrorModal9875">
+    <div class="unique-modal-content9875" id="modalContent9875">
+        <h2 id="errorHeader9875">Error Occurred</h2>
+        <p id="errorFooter9875" class="message-container9875">An unexpected error has occurred. Please try again later.</p>
+        <span class="read-more9875" id="readMore9875">Read more</span>
+        <button id="uniqueOkayBtn9875">Okay</button>
+    </div>
+</div>
+
+
+
+<!-- Loader Overlay -->
+<div class="loader-overlay" id="loader">
+    <div class="spinner"></div>
+</div>
+
+
+
+<div class="container">
+    <button class="back-btn" onclick="goBack()">Back</button>
+    <h2>Keystore Configuration</h2>
+
+    <label for="algorithm">Algorithm</label>
+    <select id="algorithm" name="algorithm" required>
+        <option value="" disabled selected>Select Algorithm</option>
+        <option value="RSA">RSA</option>
+        <option value="DSA">DSA</option>
+    </select>
+
+    <label for="aliasName">Alias Name</label>
+    <input type="text" id="aliasName" placeholder="Enter Alias Name">
+
+    <label for="keySize">Key Size</label>
+    <input type="number" id="keySize" placeholder="Enter key size">
+
+    <label for="validity">Validity (Days):</label>
+    <input type="number" id="validity" placeholder="Enter validity in days">
+
+
+    <label for="keyStorePassword">Keystore Password</label>
+    <input type="password" id="keyStorePassword" placeholder="Enter Keystore password">
+
+    <label for="commonName">Common Name (CN)</label>
+    <input type="text" id="commonName" placeholder="Enter Common Name ">
+
+    <label for="orgUnit">Organization Unit (OU)</label>
+    <input type="text" id="orgUnit" placeholder="Enter Organization Unit">
+
+    <label for="org">Organization (O)</label>
+    <input type="text" id="org" placeholder="Enter Organization">
+
+    <label for="locality">Locality (L)</label>
+    <input type="text" id="locality" placeholder="Enter Locality">
+
+    <label for="state">State (S)</label>
+    <input type="text" id="state" placeholder="Enter State">
+
+    <label for="countryCode">Country Code (C)</label>
+    <input type="text" id="countryCode" placeholder="Enter Organization">
+
+    <!-- Accordion Section -->
+    <div id="propertiesContainer">
+        <div class="accordion">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+                <span>Additional Properties</span>
+                <i class="fas fa-plus"></i>
+            </div>
+            <div class="accordion-content">
+                <div class="property-row">
+                    <input type="text" placeholder="Property Name">
+                    <input type="text" placeholder="Value">
+                    <button class="delete-btn" onclick="deletePropertyRow(this)"><i class="fas fa-trash"></i></button>
+                    <button class="add-btn" onclick="addPropertyRow(this)"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Import and Export Buttons -->
+    <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+        <button id="export" onclick="exportData()">Export <i class="fas fa-download"></i></button>
+        <input type="file" id="importFile" style="display: none;" onchange="importData(event)">
+        <button id="import" onclick="document.getElementById('importFile').click()">Import <i class="fas fa-upload"></i></button>
+    </div>
+
+    <!-- Cement Line Separator and Submit Button Section -->
+    <div class="submit-section">
+        <div class="separator"></div>
+        <button id="submit">Generate <i class="fas fa-paper-plane"></i></button>
+    </div>
+
+
+</div>
+<script src="js/security.js"></script>
+<script src="js/worktree.js"></script>
+<script>
+
+        function populateForm(data) {
+
+            if(data==null || data==undefined){
+            return;
+            }
+
+            document.getElementById('aliasName').value = data.aliasName || '';
+            document.getElementById('algorithm').value = data.algorithm || '';
+            document.getElementById('keySize').value = data.keySize || '';
+             document.getElementById('validity').value = data.validity || '';
+            document.getElementById('commonName').value = data.commonName || '';
+            document.getElementById('keyStorePassword').value = data.keyStorePassword || '';
+            document.getElementById('locality').value = data.locality || '';
+            document.getElementById('countryCode').value = data.countryCode || '';
+            document.getElementById('state').value = data.state || '';
+            document.getElementById('org').value = data.org || '';
+            document.getElementById('orgUnit').value = data.orgUnit || '';
+            const container = document.querySelector('.accordion-content');
+            container.innerHTML = '';  // Clear any existing properties
+
+            (data.additionalProperties || []).forEach(property => {
+                const newRow = createPropertyRow();
+                newRow.querySelector('input[placeholder="Property Name"]').value = property.name || '';
+                newRow.querySelector('input[placeholder="Value"]').value = property.value || '';
+                container.appendChild(newRow);
+            });
+
+            if (container.childElementCount === 0) container.appendChild(createPropertyRow());
+            updateAddButtonVisibility(container);
+        }
+
+        document.getElementById('submit').addEventListener('click', async function () {
+            const formData = gatherFormData();
+            try {
+startLoader();
+             dynamicXhrApi('POST',BASE_URL + 'api/generate/keystore' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken(),'featureType':'Keystore Settings' }, formData, afterGenerate);
+            } catch (error) {
+                console.error('Error saving form:', error);
+                alert('Failed to save form data');
+            }
+        });
+
+        function afterGenerate(xhr, decryptedResponse) {
+    stopLoader();
+
+    if (xhr.status !== 200) {
+        showErrorMessage("Error:", decryptedResponse.message, false);
+        return;
+    }
+
+    // Extract the filename from the Content-Disposition header
+    const contentDisposition = xhr.getResponseHeader("Content-Disposition");
+    let filename = "downloaded-file.p12"; // Default filename
+    if (contentDisposition && contentDisposition.includes("filename=")) {
+        filename = contentDisposition.split("filename=")[1].replace(/"/g, "").trim();
+    }
+
+    // Create a Blob from the response data
+    const blob = new Blob([xhr.response], { type: "application/octet-stream" });
+
+    // Create a temporary anchor element to trigger the download
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = filename;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+
+    // Revoke the URL to release memory
+    URL.revokeObjectURL(url);
+
+    // Get the command message and display it
+    const commandMessage = xhr.getResponseHeader("commandMessage");
+    showErrorMessage("OK", "Keystore file generated and downloaded successfully!", false);
+}
+
+
+        function gatherFormData() {
+            const formData = {
+                algorithm: document.getElementById('algorithm').value,
+                aliasName: document.getElementById('aliasName').value,
+                keySize: document.getElementById('keySize').value,
+                validity: document.getElementById('validity').value,
+                commonName: document.getElementById('commonName').value,
+                keyStorePassword: document.getElementById('keyStorePassword').value,
+                locality: document.getElementById('locality').value,
+                state: document.getElementById('state').value,
+                countryCode: document.getElementById('countryCode').value,
+                org: document.getElementById('org').value,
+                orgUnit: document.getElementById('orgUnit').value,
+                additionalProperties: []
+            };
+            const rows = document.querySelectorAll('.property-row');
+            rows.forEach(row => {
+                const name = row.querySelector('input[placeholder="Property Name"]').value;
+                const value = row.querySelector('input[placeholder="Value"]').value;
+                if (name && value) formData.additionalProperties.push({ name, value });
+            });
+            return formData;
+        }
+
+        function toggleAccordion(header) {
+            const content = header.nextElementSibling;
+            content.classList.toggle('active');
+            const icon = header.querySelector('i');
+            icon.classList.toggle('fa-plus');
+            icon.classList.toggle('fa-minus');
+        }
+
+        function addPropertyRow(button) {
+            const container = button.closest('.accordion-content');
+            const newRow = createPropertyRow();
+            container.appendChild(newRow);
+            updateAddButtonVisibility(container);
+        }
+
+        function deletePropertyRow(button) {
+            const row = button.parentElement;
+            const container = row.closest('.accordion-content');
+            row.remove();
+            if (container.querySelectorAll('.property-row').length === 0) container.appendChild(createPropertyRow());
+            updateAddButtonVisibility(container);
+        }
+
+        function createPropertyRow() {
+            const row = document.createElement('div');
+            row.className = 'property-row';
+            row.innerHTML = `
+                <input type="text" placeholder="Property Name">
+                <input type="text" placeholder="Value">
+                <button class="delete-btn" onclick="deletePropertyRow(this)"><i class="fas fa-trash"></i></button>
+                <button class="add-btn" onclick="addPropertyRow(this)"><i class="fas fa-plus"></i></button>
+            `;
+            return row;
+        }
+
+        function updateAddButtonVisibility(container) {
+            const rows = container.querySelectorAll('.property-row');
+            rows.forEach((row, index) => {
+                row.querySelector('.add-btn').style.display = index === rows.length - 1 ? 'inline-flex' : 'none';
+            });
+        }
+
+        function goBack() {
+        startLoader();
+           gotoconfiguration();
+        }
+
+
+ // Start Loader
+    function startLoader() {
+        document.getElementById('loader').classList.add('active');
+        document.body.classList.add('disabled-screen');  // Disable entire screen
+    }
+
+    // Stop Loader
+    function stopLoader() {
+        document.getElementById('loader').classList.remove('active');
+        document.body.classList.remove('disabled-screen');  // Re-enable the screen
+    }
+
+
+ window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the cache
+        if (event.persisted) {
+            stopLoader();
+        }
+    });
+
+
+    function exportData() {
+    const formData = gatherFormData();
+    const blob = new Blob([JSON.stringify(formData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'key-store-config.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+     showErrorMessage("OK",'Data exported successfully!',false);
+}
+
+function importData(event) {
+    startLoader();
+    const file = event.target.files[0];
+    if (!file){
+      stopLoader();
+         return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+
+            const importedData = JSON.parse(e.target.result);
+            populateForm(importedData);
+              stopLoader();
+             showErrorMessage("OK",'Data imported successfully!',false);
+        } catch (error) {
+          stopLoader();
+            console.error('Invalid JSON file:', error);
+            resetFileInput();
+            showErrorMessage("Bad Request",'Failed to import data. Please upload a valid JSON file.',true);
+        }
+    };
+    reader.readAsText(file);
+}
+
+
+function resetFileInput() {
+    const importFileInput = document.getElementById('importFile');
+    importFileInput.value = ''; // Reset the input value to allow re-upload
+}
+
+
+document.addEventListener('keydown', function(event) {
+
+    var a = uniqueModal9875.style.display;
+
+   if(event.key === 'Enter' && uniqueModal9875.style.display == 'none'){
+          event.preventDefault(); // Prevent default form submission behavior
+        document.getElementById('submit').click(); // Trigger the Submit button
+    }
+
+       if(event.key == 'Enter'){
+            uniqueModal9875.style.display = "none";
+            return;
+    }
+
+});
+
+
+    </script>
+</body>
+</html>

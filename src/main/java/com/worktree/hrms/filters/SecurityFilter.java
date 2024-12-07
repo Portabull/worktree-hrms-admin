@@ -162,7 +162,7 @@ public class SecurityFilter extends OncePerRequestFilter {
                 EncryptedHttpRequestWrapper encryptedRequest = new EncryptedHttpRequestWrapper(request);
                 EncryptedHttpResponseWrapper encryptedResponse = new EncryptedHttpResponseWrapper(response);
                 filterChain.doFilter(encryptedRequest, encryptedResponse);
-                encryptedResponse.encryptResponse();
+                encryptedResponse.handleResponse(!MediaType.APPLICATION_OCTET_STREAM_VALUE.equalsIgnoreCase(response.getHeader("Content-Type")));
                 return;
             }
         }

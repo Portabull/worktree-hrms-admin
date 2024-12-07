@@ -72,11 +72,27 @@ var decryptedResponse;
   try {
   decryptedResponse = JSON.parse(xhr.responseText);
   } catch (error) {
-    decryptedResponse    = _0x3c2b1a(xhr.responseText,sec_key_mech);
-      if(decryptedResponse!=undefined){
-             decryptedResponse=   JSON.parse(decryptedResponse);
+        try{
+         decryptedResponse    = _0x3c2b1a(xhr.responseText,sec_key_mech);
+              if(decryptedResponse!=undefined){
+                     decryptedResponse=   JSON.parse(decryptedResponse);
+                        }
+        }catch(error){
+                if(xhr.getResponseHeader("Content-Type").includes("application/octet-stream")){
+                       decryptedResponse=  xhr.responseText;
                 }
+        }
   }
+
+              if(xhr.status == 402){
+
+              if(url.endsWith("/api/login")){
+               setAsCurrentUser(userNameCache);
+                             loginCacheTokenInfo(xhr,decryptedResponse);
+              }
+                  window.location.href="license";
+                  return;
+              }
 
 //            var decryptedResponse = _0x3c2b1a(xhr.responseText,sec_key_mech);
 //
