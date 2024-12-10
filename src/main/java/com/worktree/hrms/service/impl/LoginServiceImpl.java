@@ -1,5 +1,6 @@
 package com.worktree.hrms.service.impl;
 
+import com.worktree.hrms.config.TestConfig;
 import com.worktree.hrms.dao.UserDao;
 import com.worktree.hrms.service.LoginService;
 import com.worktree.hrms.utils.EncryptionUtils;
@@ -31,7 +32,9 @@ public class LoginServiceImpl implements LoginService {
             response.put("jwt", jwt);
             Map<String, String> userProfileInfo = userDao.getUserProfileInfo(userName);
             response.put("userDisplayName", userProfileInfo.get("displayName"));
-            response.put("userProfileImage", userProfileInfo.get("profilePic"));
+            response.put("userProfileImage", userProfileInfo.get("profilePic") != null &&
+                    !userProfileInfo.get("profilePic").trim().equals("") ? userProfileInfo.get("profilePic")
+                    : TestConfig.DEFAULT_PROFILE_PIC);
             response.put("userFeatures", userDao.getFeatures(userName));
         } else {
             response.put("status", "FAILED");
