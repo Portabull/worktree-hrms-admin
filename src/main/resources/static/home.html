@@ -201,7 +201,7 @@
 
         .popout-icon {
             font-size: 18px;
-            color: #007bff;
+            color: #5A5A5A;
             cursor: pointer;
             margin-left: 10px;
             vertical-align: middle;
@@ -398,6 +398,21 @@
 }
 
 /* Sidebar ends */
+
+
+
+.chart-button:hover {
+    background-color: #e0e7ff;
+    color: #0056b3;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+
+.chart-button.selected {
+    background-color: #e0e7ff;
+    color: #0056b3;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+
     </style>
 </head>
 <body oncontextmenu="return false;"> <!-- Disable right click -->
@@ -482,12 +497,12 @@
             <i class="fas fa-external-link-alt popout-icon" onclick="showPopup('Instance Graph Pop-out')"></i>
         </h2>
         <div id="chart"></div>
-        <div class="buttons">
-            <button onclick="updateChart('1D')">1 Day</button>
-            <button onclick="updateChart('1W')">Week</button>
-            <button onclick="updateChart('1M')">Month</button>
-            <button onclick="updateChart('6M')">6 Months</button>
-            <button onclick="updateChart('1Y')">1 Year</button>
+        <div id="button-container" class="button">
+            <button id="chart1DayButton" onclick="updateChart(this,'1D')" style="background-color: #f4f4f4;color: #007bff;border: none;border-radius: 6px;padding: 10px 15px;font-size: 14px;font-weight: bold;cursor: pointer;margin: 5px;transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;">1 Day</button>
+            <button onclick="updateChart(this,'1W')" style="background-color: #f4f4f4;color: #007bff;border: none;border-radius: 6px;padding: 10px 15px;font-size: 14px;font-weight: bold;cursor: pointer;margin: 5px;transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;">Week</button>
+            <button onclick="updateChart(this,'1M')" style="background-color: #f4f4f4;color: #007bff;border: none;border-radius: 6px;padding: 10px 15px;font-size: 14px;font-weight: bold;cursor: pointer;margin: 5px;transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;">Month</button>
+            <button onclick="updateChart(this,'6M')" style="background-color: #f4f4f4;color: #007bff;border: none;border-radius: 6px;padding: 10px 15px;font-size: 14px;font-weight: bold;cursor: pointer;margin: 5px;transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;">6 Months</button>
+            <button onclick="updateChart(this,'1Y')" style="background-color: #f4f4f4;color: #007bff;border: none;border-radius: 6px;padding: 10px 15px;font-size: 14px;font-weight: bold;cursor: pointer;margin: 5px;transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;">1 Year</button>
         </div>
 
     </div>
@@ -673,18 +688,15 @@
     }
 
 // Update Chart
-function updateChart(period) {
- // Remove 'selected' class from all buttons
-    const buttons = document.querySelectorAll('.buttons button');
-    buttons.forEach(button => button.classList.remove('selected'));
+function updateChart(button, period) {
+    // Remove 'selected' class from all buttons
+    const buttons = document.querySelectorAll('#button-container button');
+    buttons.forEach(btn => btn.classList.remove('selected'));
 
     // Add 'selected' class to the clicked button
-    const selectedButton = Array.from(buttons).find(button => button.innerText.includes(period));
-    if (selectedButton) {
-        selectedButton.classList.add('selected');
-    }
+    button.classList.add('selected');
 
-    // Update the chart with the new data
+    // Update chart with the new period
     chart.updateSeries([{ data: processApiResponse(apiResponse[period].instances) }]);
 }
 
@@ -772,6 +784,9 @@ getCurrentToken();
    const profilePicBase64 = getCurrentProfileImageWithoutRedirect();
       const profileBtn = document.querySelector('.profile img');
             profileBtn.src = profilePicBase64;
+
+ const firstButton = document.getElementById('chart1DayButton'); // Select the button by ID
+        updateChart(firstButton, '1D');
 
             stopLoader();
 }
