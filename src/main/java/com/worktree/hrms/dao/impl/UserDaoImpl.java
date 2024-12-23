@@ -111,7 +111,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public Map<String, Object> getUsers(Integer page) {
-        int fetchSize = 10;
+        int fetchSize = 100;
         if (page == null) {
             page = 0;
         }
