@@ -39,8 +39,8 @@ public class UserProfileSettingsServiceImpl implements UserProfileSettingsServic
     }
 
     @Override
-    public Map<String, Object> getUsers() {
-        return userDao.getUsers();
+    public Map<String, Object> getUsers(Integer page) {
+        return userDao.getUsers(page);
     }
 
     @Override

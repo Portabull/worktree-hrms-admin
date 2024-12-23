@@ -798,8 +798,7 @@ input:checked + .slider:before {
 var tempUserId;
 var tempDeleteUserId;
     var users = [
-        { sNo: 1, userName: 'jdoe', displayName: 'John Doe', email: 'jdoe@example.com', mobile: '1234567890', isAdmin: true,userId:1 },
-        { sNo: 2, userName: 'asmith', displayName: 'Alice Smith', email: 'asmith@example.com', mobile: '0987654321', isAdmin: false ,userId:2}
+
     ];
 
 
@@ -938,7 +937,7 @@ function createNewUser() {
     function init(){
     loadProfilePhoto();
     startLoader();
-        dynamicXhrApi('GET',BASE_URL + 'api/users',{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined, afterPageLoad);
+        dynamicXhrApi('GET',BASE_URL + 'api/users?page=0',{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined, afterPageLoad);
     }
 
 
@@ -948,7 +947,12 @@ function afterPageLoad(xhr,decryptedResponseObj) {
   }
 
   var response = decryptedResponseObj;
-  users = response.users;
+
+  if(response.users.length!=response.maxPageSize){
+    hasNextRecords = false;
+  }
+
+  users = users.concat(response.users);
   features = response.features;
   populateTable();
   stopLoader();
@@ -1034,6 +1038,19 @@ function toggleDropdown() {
     });
 
 
+var hasNextRecords = true;
+
+let currentPage = 1;
+// Infinite Scroll Event Listener
+window.addEventListener('scroll', () => {
+  const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+  if (scrollTop + clientHeight >= scrollHeight - 10 && hasNextRecords) { // Check if the user scrolled near the bottom
+      startLoader();
+       dynamicXhrApi('GET',BASE_URL + 'api/users?page=' + currentPage,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined, afterPageLoad);
+       currentPage++;
+  }
+});
 </script>
 </body>
 </html>

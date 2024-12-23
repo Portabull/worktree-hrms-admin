@@ -82,8 +82,8 @@ public class UserProfileSettingsController {
     }
 
     @GetMapping("users")
-    public ResponseEntity<?> getUsers() {
-        return new ResponseEntity<>(userProfileSettingsService.getUsers(), HttpStatus.OK);
+    public ResponseEntity<?> getUsers(@RequestParam(required = false) Integer page) {
+        return new ResponseEntity<>(userProfileSettingsService.getUsers(page), HttpStatus.OK);
     }
 
     @PostMapping("user")

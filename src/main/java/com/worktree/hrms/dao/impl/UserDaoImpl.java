@@ -110,7 +110,14 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public Map<String, Object> getUsers() {
+    public Map<String, Object> getUsers(Integer page) {
+        int fetchSize = 10;
+        if (page == null) {
+            page = 0;
+        }
+
+        int firstResult = page * fetchSize;
+
         Map<String, Object> usersResponse = new HashMap<>();
 
         List<UserEntity> users;
@@ -122,13 +129,15 @@ public class UserDaoImpl implements UserDao {
 
         try (Session session = hibernateUtils.getSession()) {
             users = session.createQuery("FROM UserEntity")
+                    .setFirstResult(firstResult) // Set the offset
+                    .setMaxResults(fetchSize)    // Set the fetch size
                     .list();
             features = session.createQuery("FROM FeatureEntity")
                     .list();
         }
 
         if (!CollectionUtils.isEmpty(users)) {
-            AtomicInteger sNo = new AtomicInteger(1);
+            AtomicInteger sNo = new AtomicInteger(firstResult + 1);
             users.forEach(user -> {
                 Map<String, Object> userResponse = new HashMap<>();
                 userResponse.put("sNo", sNo.getAndIncrement());
@@ -148,11 +157,11 @@ public class UserDaoImpl implements UserDao {
         }
 
 
+        usersResponse.put("maxPageSize", fetchSize);
         usersResponse.put("users", response);
         usersResponse.put("features", features.stream().map(FeatureEntity::getFeatureName).collect(Collectors.toList()));
-
-
         return usersResponse;
+
     }
 
     @Override
