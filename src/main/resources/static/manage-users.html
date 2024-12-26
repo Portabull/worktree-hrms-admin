@@ -639,6 +639,14 @@ input:checked + .slider:before {
 }
 
 /* Sidebar ends */
+
+
+
+
+
+
+
+     .uploadLoading:after { content: ' .'; animation: dots 1s steps(5, end) infinite;} @keyframes dots { 0%, 20% { color: rgba(0,0,0,0); text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0);} 40% { color: #4CAF50; text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0);} 60% { text-shadow: .25em 0 0 #4CAF50, .5em 0 0 rgba(0,0,0,0);} 80%, 100% { text-shadow: .25em 0 0 #4CAF50, .5em 0 0 #4CAF50;}}  
   </style>
 </head>
 <body oncontextmenu="return false;">
@@ -744,6 +752,14 @@ input:checked + .slider:before {
       </tbody>
     </table>
   </div>
+
+  <div id="loadingDiv" hidden>
+    <h4 class="uploadLoading" style="text-align: center; color: #7A7D7F;">Loading</h4>
+</div>
+
+  <div id="scrollInfoText">
+    <h4 style="text-align: center; color: #7A7D7F;">Scroll down to view more records</h4>
+</div>
 </div>
 
 
@@ -947,7 +963,7 @@ function afterPageLoad(xhr,decryptedResponseObj) {
   }
 
   var response = decryptedResponseObj;
-
+hideDiv();
   if(response.users.length!=response.maxPageSize){
     hasNextRecords = false;
   }
@@ -1046,11 +1062,37 @@ window.addEventListener('scroll', () => {
   const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
 
   if (scrollTop + clientHeight >= scrollHeight - 10 && hasNextRecords) { // Check if the user scrolled near the bottom
-      startLoader();
+     
+    unhideDiv();
        dynamicXhrApi('GET',BASE_URL + 'api/users?page=' + currentPage,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined, afterPageLoad);
        currentPage++;
   }
 });
+
+
+function unhideDiv() {
+    const div = document.getElementById('loadingDiv');
+    div.removeAttribute('hidden');  // Unhides the div
+    div.style.display = 'block';    // Ensure the display property is set to block or any other appropriate value
+
+
+   const div1 = document.getElementById('scrollInfoText');
+     div1.setAttribute('hidden', true);
+  
+}
+
+// Function to hide the div
+function hideDiv() {
+    const div = document.getElementById('loadingDiv');
+    div.setAttribute('hidden', true); // Hides the div by setting the hidden attribute
+    // or alternatively
+    // div.style.display = 'none';    // Hides the div by setting display to none
+
+
+   const div1 = document.getElementById('scrollInfoText');
+    div1.removeAttribute('hidden');  // Unhides the div
+    div1.style.display = 'block';
+}
 </script>
 </body>
 </html>
