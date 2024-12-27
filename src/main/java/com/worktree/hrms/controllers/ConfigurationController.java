@@ -52,4 +52,16 @@ public class ConfigurationController {
         return new ResponseEntity<>(configurationService.getMobileConfiguration(), HttpStatus.OK);
     }
 
+    @Feature
+    @PostMapping("storage/config")
+    public ResponseEntity<Map<String, Object>> saveStorageConfiguration(@RequestBody Map<String, Object> payload) {
+        return new ResponseEntity<>(configurationService.saveStorageConfiguration(payload), HttpStatus.OK);
+    }
+
+    @Feature
+    @GetMapping("storage/config")
+    public ResponseEntity<Map<String, Object>> getStorageConfiguration() {
+        return new ResponseEntity<>(configurationService.getStorageConfiguration(), HttpStatus.OK);
+    }
+
 }

@@ -46,6 +46,8 @@ public class TestConfig {
             hibernateUtils.saveOrUpdateEntity(new FeatureEntity(CommonConstants.Features.PAYSLIP_SETTINGS, dateUtils.getCurrentDate()));
         if (getFeature(CommonConstants.Features.KEYSTORE_SETTINGS) == null)
             hibernateUtils.saveOrUpdateEntity(new FeatureEntity(CommonConstants.Features.KEYSTORE_SETTINGS, dateUtils.getCurrentDate()));
+        if (getFeature(CommonConstants.Features.STORAGE_SETTINGS) == null)
+            hibernateUtils.saveOrUpdateEntity(new FeatureEntity(CommonConstants.Features.STORAGE_SETTINGS, dateUtils.getCurrentDate()));
     }
 
     private FeatureEntity getFeature(String featureName) {

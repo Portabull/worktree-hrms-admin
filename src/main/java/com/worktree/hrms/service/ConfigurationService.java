@@ -17,4 +17,8 @@ public interface ConfigurationService {
     Map<String, Object> saveMobileConfiguration(Map<String, Object> payload);
 
     Map<String, Object> getMobileConfiguration();
+
+    Map<String, Object> saveStorageConfiguration(Map<String, Object> payload);
+
+    Map<String, Object> getStorageConfiguration();
 }

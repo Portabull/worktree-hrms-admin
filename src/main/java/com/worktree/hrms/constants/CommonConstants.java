@@ -32,6 +32,8 @@ public class CommonConstants {
 
         public static final String MOBILE_CONFIG = "MOBILE_CONFIG";
 
+        public static final String STORAGE_CONFIG = "STORAGE_CONFIG";
+
     }
 
     public class Features {
@@ -44,6 +46,8 @@ public class CommonConstants {
         public static final String COUPON_SETTINGS = "Coupon Settings";
         public static final String PAYSLIP_SETTINGS = "Payslip Settings";
         public static final String KEYSTORE_SETTINGS = "Keystore Settings";
+
+        public static final String STORAGE_SETTINGS = "Storage Settings";
     }
 
 }

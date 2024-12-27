@@ -133,6 +133,51 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
         }
     }
 
+    @Override
+    public Map<String, Object> saveStorageConfiguration(Map<String, Object> payload) {
+        try {
+            ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class,
+                    SERVER_CONFIG_NAME, CommonConstants.ServerConfig.STORAGE_CONFIG);
+            if (serverConfig == null) {
+                serverConfig = new ServerConfigEntity();
+            }
+            serverConfig.setServerConfigName(CommonConstants.ServerConfig.STORAGE_CONFIG);
+            serverConfig.setServerConfiguration(objectMapper.writeValueAsString(payload));
+            hibernateUtils.saveOrUpdateEntity(serverConfig);
+        } catch (Exception e) {
+            throw new BadRequestException(CommonConstants.INTERNAL_SERVER_ERROR);
+        }
+        return CommonConstants.SUCCESS_RESPONSE;
+    }
+
+    @Override
+    public Map<String, Object> getStorageConfiguration() {
+        try {
+            ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class,
+                    SERVER_CONFIG_NAME, CommonConstants.ServerConfig.STORAGE_CONFIG);
+            if (serverConfig == null) {
+                return getEmptyStorageResponse();
+            } else {
+                return objectMapper.readValue(serverConfig.getServerConfiguration(),
+                        new TypeReference<>() {
+                        });
+            }
+        } catch (Exception e) {
+            return getEmptyStorageResponse();
+        }
+    }
+
+    private Map<String, Object> getEmptyStorageResponse() {
+        Map<String, Object> emptyMobileResponse = new HashMap<>();
+        emptyMobileResponse.put("provider", "aws3");
+        emptyMobileResponse.put("bucketName", "");
+        emptyMobileResponse.put("secretKey", "");
+        emptyMobileResponse.put("accessKey", "");
+        emptyMobileResponse.put("localFileLocation", "");
+        emptyMobileResponse.put("additionalProperties", Arrays.asList());
+        return emptyMobileResponse;
+    }
+
     private Map<String, Object> getEmptyMobileResponse() {
         Map<String, Object> emptyMobileResponse = new HashMap<>();
         emptyMobileResponse.put("sid", "");

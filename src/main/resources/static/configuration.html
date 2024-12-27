@@ -491,6 +491,17 @@
     </div>
 
 
+
+
+
+
+    <div class="settings-option" data-alias="Storage Settings" onclick="gotoStorageSettings()" data-tooltip="Manage Storage">
+        <i class="fas fa-database"></i>
+        <div class="settings-label">Storage</div>
+    </div>
+
+
+
 </div>
 <script src="js/security.js"></script>
 <script src="js/worktree.js"></script>
@@ -579,6 +590,12 @@ startLoader();
         }
     });
 loadProfilePhoto();
+
+
+function gotoStorageSettings(){
+    startLoader();
+  window.location.href = "storage-configuration";
+}
 </script>
 
 </body>
