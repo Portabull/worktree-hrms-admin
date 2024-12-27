@@ -2,6 +2,7 @@ package com.worktree.hrms.service.impl;
 
 import com.worktree.hrms.dao.ConfigurationDao;
 import com.worktree.hrms.service.ConfigurationService;
+import com.worktree.hrms.service.TestConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Autowired
     private ConfigurationDao configurationDao;
+
+    @Autowired
+    private TestConfigService testConfigService;
 
     @Override
     public Map<String, Object> saveEmailConfiguration(Map<String, Object> payload) {
@@ -45,6 +49,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Override
     public Map<String, Object> saveStorageConfiguration(Map<String, Object> payload) {
+        testConfigService.validateStorageConfiguration(payload);
         return configurationDao.saveStorageConfiguration(payload);
     }
 

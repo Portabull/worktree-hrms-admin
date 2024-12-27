@@ -60,6 +60,12 @@
 
 
 
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>s3</artifactId>
+			<version>2.20.30</version>
+		</dependency>
+
 
 
 

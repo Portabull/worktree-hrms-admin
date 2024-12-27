@@ -175,6 +175,7 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
         emptyMobileResponse.put("accessKey", "");
         emptyMobileResponse.put("localFileLocation", "");
         emptyMobileResponse.put("additionalProperties", Arrays.asList());
+        emptyMobileResponse.put("awsRegion", "");
         return emptyMobileResponse;
     }
 

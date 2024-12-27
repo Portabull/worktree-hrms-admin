@@ -279,6 +279,9 @@
       <label for="aws3-bucket-name">AWS Bucket Name</label>
       <input type="text" id="aws3-bucket-name" placeholder="Enter Bucket Name">
 
+      <label for="aws3-region">AWS Region</label>
+      <input type="text" id="aws3-region" placeholder="Enter AWS Region">
+
     </div>
 
     <div id="azureADLS-fields" class="hidden">
@@ -361,6 +364,7 @@ function populateForm(data) {
         document.getElementById('aws3-bucket-name').value = data.bucketName || '';
         document.getElementById('aws3-secret-key').value = data.secretKey || '';
         document.getElementById('aws3-access-key').value = data.accessKey || '';
+        document.getElementById('aws3-region').value = data.awsRegion || '';
     } else if (data.provider === 'azureADLS') {
         document.getElementById('azureADLS-client-id').value = data.clientId || '';
         document.getElementById('azureADLS-client-secret').value = data.clientSecret || '';
@@ -404,6 +408,7 @@ function gatherFormData() {
         data.bucketName = document.getElementById('aws3-bucket-name').value;
         data.secretKey = document.getElementById('aws3-secret-key').value;
         data.accessKey = document.getElementById('aws3-access-key').value;
+        data.awsRegion = document.getElementById('aws3-region').value;
     } else if (provider === 'azureADLS') {
         data.clientId = document.getElementById('azureADLS-client-id').value;
         data.clientSecret = document.getElementById('azureADLS-client-secret').value;
@@ -429,6 +434,12 @@ function gatherAdditionalProperties() {
 
 function handleSaveResponse(xhr, decryptedResponseObj) {
     stopLoader();
+
+    if(xhr.status == 400){
+          showErrorMessage("Bad Request", decryptedResponseObj.message, true);
+          return;
+    }
+
     showErrorMessage("OK", "Configuration saved successfully!", false);
 }
 
