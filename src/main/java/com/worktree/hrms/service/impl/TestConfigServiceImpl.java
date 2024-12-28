@@ -1,5 +1,10 @@
 package com.worktree.hrms.service.impl;
 
+import com.azure.core.http.netty.NettyAsyncHttpClientBuilder;
+import com.azure.core.http.policy.*;
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.BlobServiceClientBuilder;
+import com.azure.storage.blob.models.BlobStorageException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worktree.hrms.constants.CommonConstants;
 import com.worktree.hrms.exceptions.BadRequestException;
@@ -15,6 +20,9 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.File;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -37,6 +45,7 @@ public class TestConfigServiceImpl implements TestConfigService {
                     validateAWSS3(payload);
                     break;
                 case "azureadls":
+                    validateADLS(payload);
                     break;
                 case "gcs":
                     break;
@@ -50,6 +59,79 @@ public class TestConfigServiceImpl implements TestConfigService {
         } catch (Exception e) {
             logger.error("Exception occurred", e);
             throw new BadRequestException(CommonConstants.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    private void validateADLS(Map<String, Object> payload) {
+        String adlsAccountName = payload.get("adlsAccountName").toString();
+        String adlsContainerName = payload.get("adlsContainerName").toString();
+        String adlsAccountKey = payload.get("adlsAccountKey").toString();
+
+
+        String host = adlsAccountName + ".blob.core.windows.net";
+        // Endpoint for the Azure Blob Storage account
+        String endpoint = "https://" + host;
+
+        // Step 1: Validate the account name using DNS
+        if (!isHostReachable(host, 2000)) {
+            throw new BadRequestException("Invalid account name please check and try after sometime.");
+        }
+
+        try {
+            // Step 2: Configure retry options with minimal retries
+            RetryOptions retryOptions = new RetryOptions(new FixedDelayOptions(0, java.time.Duration.ofSeconds(5)));
+
+            BlobServiceClient blobServiceClient = new BlobServiceClientBuilder()
+                    .endpoint(endpoint)
+                    .sasToken(adlsAccountKey)
+                    .addPolicy(new RetryPolicy(retryOptions)) // Apply custom retry policy
+                    .httpClient(new NettyAsyncHttpClientBuilder()
+                            .readTimeout(java.time.Duration.ofSeconds(5)) // Read timeout
+                            .connectTimeout(java.time.Duration.ofSeconds(5)) // Connect timeout
+                            .responseTimeout(java.time.Duration.ofSeconds(5)) // Response timeout
+                            .build())
+                    .httpLogOptions(new HttpLogOptions().setLogLevel(HttpLogDetailLevel.BODY_AND_HEADERS))
+                    .buildClient();
+
+            // Step 3: Check if the container exists
+            boolean containerExists = blobServiceClient.getBlobContainerClient(adlsContainerName).exists();
+
+            if (!containerExists) {
+                throw new BadRequestException("Container does not exist. Please create this container or try another.");
+            }
+
+        } catch (BadRequestException e) {
+            throw e;
+        } catch (BlobStorageException e) {
+            logger.error("Exception Occurred :: ", e);
+            int statusCode = e.getStatusCode();
+            String errorMessage = e.getMessage();
+            switch (statusCode) {
+                case 401:
+                    throw new BadRequestException("Unauthorized: Please check your access key or SAS token.");
+                case 403:
+                    throw new BadRequestException("Forbidden: You do not have permission to access this resource.");
+                case 404:
+                    throw new BadRequestException("Not Found: The specified endpoint or container name is incorrect.");
+                default:
+                    throw new BadRequestException(errorMessage);
+            }
+        } catch (Exception e) {
+            logger.error("Exception Occurred :: ", e);
+            if (e.getCause() instanceof UnknownHostException) {
+                throw new BadRequestException("Invalid account name. Please check and try again later.");
+            }
+            throw new BadRequestException(CommonConstants.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private boolean isHostReachable(String host, int timeoutMs) {
+        try (Socket socket = new Socket()) {
+            socket.connect(new InetSocketAddress(host, 443), timeoutMs); // Check HTTPS port
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 

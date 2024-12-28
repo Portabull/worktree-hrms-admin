@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mobile Configuration</title>
+  <title>Storage Configuration</title>
   <link rel="stylesheet" href="css/common-style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
@@ -285,17 +285,19 @@
     </div>
 
     <div id="azureADLS-fields" class="hidden">
-      <label for="azureADLS-client-id">Client ID</label>
-      <input type="text" id="azureADLS-client-id" placeholder="Enter Client ID">
 
-      <label for="azureADLS-client-secret">Client Secret</label>
-      <input type="password" id="azureADLS-client-secret" placeholder="Enter Client Secret">
+      <label for="azureADLS-account-endpoint">Account Endpoint</label>
+      <input type="text" id="azureADLS-account-endpoint" value="https://{ACCOUNT_NAME}.blob.core.windows.net" disabled>
 
-      <label for="azureADLS-mobile">Mobile Number</label>
-      <input type="text" id="azureADLS-mobile" placeholder="Enter Mobile Number">
+      <label for="azureADLS-account-name">Account Name</label>
+      <input type="text" id="azureADLS-account-name" placeholder="Enter Account Name" onchange="loadAccountEndpoint()" oninput="loadAccountEndpoint()">
 
-      <label for="azureADLS-whatsapp">WhatsApp Mobile Number</label>
-      <input type="text" id="azureADLS-whatsapp" placeholder="Enter WhatsApp Mobile Number">
+      <label for="azureADLS-account-key">Account Key/SAS Token</label>
+      <input type="password" id="azureADLS-account-key" placeholder="Enter Account Key/SAS token">
+
+      <label for="azureADLS-container-name">Container Name</label>
+      <input type="text" id="azureADLS-container-name" placeholder="Enter Container Name">
+
     </div>
 
     <div id="serverLocalStorage-fields" class="hidden">
@@ -354,6 +356,7 @@ function fetchConfig() {
 function populateStorageDetails(xhr, decryptedResponseObj) {
     stopLoader();
     populateForm(decryptedResponseObj);
+    loadAccountEndpoint();
 }
 
 function populateForm(data) {
@@ -366,10 +369,9 @@ function populateForm(data) {
         document.getElementById('aws3-access-key').value = data.accessKey || '';
         document.getElementById('aws3-region').value = data.awsRegion || '';
     } else if (data.provider === 'azureADLS') {
-        document.getElementById('azureADLS-client-id').value = data.clientId || '';
-        document.getElementById('azureADLS-client-secret').value = data.clientSecret || '';
-        document.getElementById('azureADLS-mobile').value = data.mobile || '';
-        document.getElementById('azureADLS-whatsapp').value = data.whatsapp || '';
+        document.getElementById('azureADLS-account-name').value = data.adlsAccountName || '';
+        document.getElementById('azureADLS-account-key').value = data.adlsAccountKey || '';
+        document.getElementById('azureADLS-container-name').value = data.adlsContainerName || '';
     } else if(data.provider === 'serverLocalStorage') {
         document.getElementById('local-file-location').value = data.localFileLocation || '';
     }
@@ -410,10 +412,9 @@ function gatherFormData() {
         data.accessKey = document.getElementById('aws3-access-key').value;
         data.awsRegion = document.getElementById('aws3-region').value;
     } else if (provider === 'azureADLS') {
-        data.clientId = document.getElementById('azureADLS-client-id').value;
-        data.clientSecret = document.getElementById('azureADLS-client-secret').value;
-        data.mobile = document.getElementById('azureADLS-mobile').value;
-        data.whatsapp = document.getElementById('azureADLS-whatsapp').value;
+        data.adlsAccountName = document.getElementById('azureADLS-account-name').value;
+        data.adlsAccountKey = document.getElementById('azureADLS-account-key').value;
+        data.adlsContainerName = document.getElementById('azureADLS-container-name').value;
     } else if(data.provider === 'serverLocalStorage') {
          data.localFileLocation = document.getElementById('local-file-location').value;
     }
@@ -556,6 +557,14 @@ function populateAdditionalProperties(properties) {
         container.appendChild(createPropertyRow());
     }
     updateAddButtonVisibility(container);
+}
+
+function loadAccountEndpoint(){
+if(document.getElementById('azureADLS-account-name')!=undefined && document.getElementById('azureADLS-account-endpoint')!=undefined){
+var accountName = document.getElementById('azureADLS-account-name').value;
+if(accountName!=undefined)
+ document.getElementById('azureADLS-account-endpoint').value =  "https://{ACCOUNT_NAME}.blob.core.windows.net".replace("{ACCOUNT_NAME}", accountName);
+}
 }
 
 </script>
