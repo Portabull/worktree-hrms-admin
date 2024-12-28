@@ -453,15 +453,6 @@ function populateStorageDetails(xhr, decryptedResponseObj) {
     loadAccountEndpoint();
 }
 
-
- window.addEventListener('pageshow', function(event) {
-        // Check if the page is loaded from the cache
-        if (event.persisted) {
-            stopLoader();
-        }
-    });
-
-
 function populateForm(data) {
     if (!data) return;
 
@@ -731,6 +722,14 @@ function showLocalFileName(fileName) {
     fileNameDiv.textContent = `Selected File: ${fileName}`;
     fileNameDiv.style.color = "green";
 }
+
+window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the cache
+        if (event.persisted) {
+            stopLoader();
+        }
+    });
+
 
 </script>
 

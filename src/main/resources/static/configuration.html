@@ -500,6 +500,12 @@
         <div class="settings-label">Storage</div>
     </div>
 
+    <!-- Vault Option -->
+    <div class="settings-option" data-alias="Vault Settings" onclick="gotoVaultSettings()" data-tooltip="Manage Vault">
+        <!-- Vault Icon -->
+        <i class="fas fa-vault"></i>
+        <div class="settings-label">Vault</div>
+    </div>
 
 
 </div>
@@ -595,6 +601,11 @@ loadProfilePhoto();
 function gotoStorageSettings(){
     startLoader();
   window.location.href = "storage-configuration";
+}
+
+function gotoVaultSettings(){
+    startLoader();
+  window.location.href = "vault-configuration";
 }
 </script>
 

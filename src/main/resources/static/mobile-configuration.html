@@ -536,6 +536,13 @@ function populateAdditionalProperties(properties) {
     updateAddButtonVisibility(container);
 }
 
+  window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the cache
+        if (event.persisted) {
+            stopLoader();
+        }
+    });
+
 </script>
 
 </body>

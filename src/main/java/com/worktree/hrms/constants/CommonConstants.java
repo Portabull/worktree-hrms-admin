@@ -48,6 +48,8 @@ public class CommonConstants {
         public static final String KEYSTORE_SETTINGS = "Keystore Settings";
 
         public static final String STORAGE_SETTINGS = "Storage Settings";
+
+        public static final String VAULT_SETTINGS = "Vault Settings";
     }
 
 }

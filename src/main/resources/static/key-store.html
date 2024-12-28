@@ -282,6 +282,196 @@
             100% { transform: rotate(360deg); }
         }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* popup starts */
+
+ /* Reset and basic styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+
+        /* Popup styling */
+        .popup {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            animation: fadeIn 0.3s ease;
+            position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        /* Header styling */
+        .popup-header {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #333;
+        }
+
+        /* Close button */
+        .popup-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s;
+        }
+        .popup-close:hover {
+            color: #ff4d4d;
+        }
+
+        /* Certificate boxes */
+        .cert-box {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #ffffff;
+            transition: box-shadow 0.3s;
+        }
+
+        .cert-box:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .cert-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cert-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .cert-desc {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .cert-linked-indicator {
+            color: #28a745;
+            font-size: 13px;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        .cert-link-btn {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .cert-link-btn i {
+            font-size: 18px;
+        }
+
+        .cert-link-btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        /* Download button */
+        .download-btn {
+            display: block;
+            margin: 25px auto;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 14px 22px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .download-btn:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        /* Keyframes for fade-in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scrollbar Styling */
+        .popup::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .popup::-webkit-scrollbar-thumb {
+            background: #cccccc;
+            border-radius: 4px;
+        }
+
+        .popup::-webkit-scrollbar-thumb:hover {
+            background: #999999;
+        }
+
+        /* popup ends */
     </style>
 </head>
 <body>
@@ -379,10 +569,65 @@
     </div>
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Popup Structure -->
+    <div class="overlay" id="popup-overlay">
+        <div class="popup" id="popup">
+            <!-- Close Button -->
+            <button class="popup-close" onclick="closePopup()">&times;</button>
+
+            <!-- Popup Header -->
+            <div class="popup-header">Certificate Linking</div>
+
+            <!-- Certificate Boxes -->
+            <div class="cert-box">
+                <div class="cert-info">
+                    <div class="cert-title">Link Cert to hrms-auth and hrms</div>
+                    <div class="cert-desc">Connectivity between hrms and auth some description</div>
+                    <div class="cert-linked-indicator">Already linked</div>
+                </div>
+                <button class="cert-link-btn" id="link-btn-1" onclick="linkCert('hrms-auth', this)">
+                    <i class="fas fa-link"></i> Link
+                </button>
+            </div>
+
+            <div class="cert-box">
+                <div class="cert-info">
+                    <div class="cert-title">Link Cert to hrms</div>
+                    <div class="cert-desc">Connectivity between hrms and auth some description</div>
+                    <div class="cert-linked-indicator">Already linked</div>
+                </div>
+                <button class="cert-link-btn" id="link-btn-2" onclick="linkCert('hrms', this)">
+                    <i class="fas fa-link"></i> Link
+                </button>
+            </div>
+
+            <!-- Download Button -->
+            <button class="download-btn" onclick="generateKeyStore()">Download</button>
+        </div>
+    </div>
+
+
+
 </div>
 <script src="js/security.js"></script>
 <script src="js/worktree.js"></script>
 <script>
+var isPopupOpened = false;
 
         function populateForm(data) {
 
@@ -416,18 +661,50 @@
         }
 
         document.getElementById('submit').addEventListener('click', async function () {
-            const formData = gatherFormData();
+
+            if(isPopupOpened){
+                return;
+            }
+
+            validateKeyStore();
+        });
+
+         function validateKeyStore() {
+          const formData = gatherFormData();
+           try {
+             startLoader();
+             dynamicXhrApi('POST',BASE_URL + 'api/validate/keystore' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken(),'featureType':'Keystore Settings' }, formData, afterValidateKeyStore);
+            } catch (error) {
+                console.error('Error saving form:', error);
+                alert('Failed to save form data');
+            }
+         }
+
+         function afterValidateKeyStore(xhr, decryptedResponse) {
+                stopLoader();
+
+    if (xhr.status !== 200) {
+        showErrorMessage("Error:", decryptedResponse.message, false);
+        return;
+    }
+
+            openPopup();
+         }
+
+        function generateKeyStore() {
+          const formData = gatherFormData();
             try {
-startLoader();
+             startLoader();
              dynamicXhrApi('POST',BASE_URL + 'api/generate/keystore' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken(),'featureType':'Keystore Settings' }, formData, afterGenerate);
             } catch (error) {
                 console.error('Error saving form:', error);
                 alert('Failed to save form data');
             }
-        });
+        }
 
         function afterGenerate(xhr, decryptedResponse) {
     stopLoader();
+    closePopup();
 
     if (xhr.status !== 200) {
         showErrorMessage("Error:", decryptedResponse.message, false);
@@ -619,6 +896,55 @@ document.addEventListener('keydown', function(event) {
 
 });
 
+init();
+
+function init(){
+closePopup();
+}
+
+ function closePopup() {
+        isPopupOpened = false;
+        document.getElementById('popup-overlay').style.display = 'none';
+    }
+
+    function openPopup() {
+
+        isPopupOpened = true;
+
+        document.getElementById('popup-overlay').style.display = '';
+    }
+
+
+function linkCert(certName, button){
+     var formData = gatherFormData();
+     formData.certificateName = certName;
+
+             try {
+             startLoader();
+             dynamicXhrApi('POST',BASE_URL + 'api/link/generated-keystore' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken(),'featureType':'Keystore Settings' }, formData, afterLink);
+            } catch (error) {
+                console.error('Error saving form:', error);
+                alert('Failed to save form data');
+            }
+}
+
+function afterLink(xhr, decryptedResponse) {
+ stopLoader();
+    closePopup();
+
+    if (xhr.status !== 200) {
+        showErrorMessage("Error:", decryptedResponse.message, false);
+        return;
+    }
+
+    showErrorMessage("OK", "Certificate Linked Successfully ", false);
+}
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closePopup();
+    }
+});
 
     </script>
 </body>
