@@ -6,9 +6,15 @@ import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.blob.models.BlobStorageException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.auth.oauth2.ServiceAccountCredentials;
+import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageException;
+import com.google.cloud.storage.StorageOptions;
 import com.worktree.hrms.constants.CommonConstants;
 import com.worktree.hrms.exceptions.BadRequestException;
 import com.worktree.hrms.service.TestConfigService;
+import com.worktree.hrms.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +25,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
-import java.io.File;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -48,6 +54,7 @@ public class TestConfigServiceImpl implements TestConfigService {
                     validateADLS(payload);
                     break;
                 case "gcs":
+                    validateGCPStorage(payload);
                     break;
                 case "serverlocalstorage":
                     validateFileStorageConfig(payload);
@@ -61,7 +68,6 @@ public class TestConfigServiceImpl implements TestConfigService {
             throw new BadRequestException(CommonConstants.INTERNAL_SERVER_ERROR);
         }
     }
-
 
     private void validateADLS(Map<String, Object> payload) {
         String adlsAccountName = payload.get("adlsAccountName").toString();
@@ -125,6 +131,58 @@ public class TestConfigServiceImpl implements TestConfigService {
             throw new BadRequestException(CommonConstants.INTERNAL_SERVER_ERROR);
         }
     }
+
+    private void validateGCPStorage(Map<String, Object> payload) {
+        File file = null;
+        try {
+            String gcpProjectId = payload.get("gcpProjectId").toString();
+            String gcpBucketName = payload.get("gcpBucketName").toString();
+            String gcpCredFile = payload.get("gcpCredFile").toString();
+            file = FileUtils.convertToFile(gcpCredFile, payload.get("gcpCredFileName").toString());
+
+            try (InputStream inputStream = new FileInputStream(file)) {
+                // Step 1: Initialize GCP Storage client using provided credentials
+                StorageOptions storageOptions = StorageOptions.newBuilder()
+                        .setProjectId(gcpProjectId)
+                        .setCredentials(ServiceAccountCredentials.fromStream(inputStream))
+                        .build();
+
+                Storage storage = storageOptions.getService();
+
+                // Step 2: Check if the bucket exists
+                Bucket bucket = storage.get(gcpBucketName);
+                if (bucket == null) {
+                    throw new BadRequestException("Bucket does not exist. Please create this bucket or try another.");
+                }
+            }
+        } catch (FileNotFoundException e) {
+            logger.error("Credentials file not found: ", e);
+            throw new BadRequestException("Invalid credentials file path. Please check the provided path and try again.");
+        } catch (StorageException e) {
+            logger.error("GCP Storage exception occurred: ", e);
+            int statusCode = e.getCode();
+            String errorMessage = e.getMessage();
+            switch (statusCode) {
+                case 401:
+                    throw new BadRequestException("Unauthorized: Please check your credentials file or permissions.");
+                case 403:
+                    throw new BadRequestException("Forbidden: You do not have permission to access this bucket.");
+                case 404:
+                    throw new BadRequestException("Not Found: The specified bucket name is incorrect.");
+                default:
+                    throw new BadRequestException(errorMessage);
+            }
+        } catch (IOException e) {
+            logger.error("IOException occurred: ", e);
+            throw new BadRequestException("Error reading the credentials file. Please check and try again.");
+        } catch (Exception e) {
+            logger.error("Exception occurred: ", e);
+            throw new BadRequestException(CommonConstants.INTERNAL_SERVER_ERROR);
+        } finally {
+            logger.info("File Deleted : {}", file != null ? file.delete() : null);
+        }
+    }
+
 
     private boolean isHostReachable(String host, int timeoutMs) {
         try (Socket socket = new Socket()) {

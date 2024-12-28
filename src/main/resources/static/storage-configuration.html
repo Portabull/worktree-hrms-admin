@@ -235,6 +235,77 @@
                 padding: 8px 15px;
             }
         }
+
+.file-upload {
+  position: relative;
+  width: 100%;
+  height: 150px;
+  border: 2px dashed #007bff;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: 0.3s;
+  background-color: #f9f9f9;
+}
+
+.file-upload:hover {
+  border-color: #0056b3;
+  background-color: #f0f8ff;
+}
+
+.file-upload input[type="file"] {
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.file-upload span {
+  font-size: 16px;
+  color: #007bff;
+}
+
+.file-name {
+  font-size: 14px;
+  color: #555;
+  margin-top: 5px;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.btn.btn-export {
+  background: #6c757d;
+  color: white;
+}
+
+.btn.btn-import {
+  background: #28a745;
+  color: white;
+}
+
+.btn.btn-submit {
+  background: #007bff;
+  color: white;
+}
+
+.btn:hover {
+  opacity: 0.8;
+}
     </style>
 </head>
 <body>
@@ -307,6 +378,26 @@
 
     </div>
 
+
+    <div id="gcs-fields" class="hidden">
+
+      <label for="gcs-project-id">Project Id</label>
+      <input type="text" id="gcs-project-id" placeholder="Enter Google Project Id">
+
+      <label for="gcs-bucket-name">Bucket Name</label>
+      <input type="text" id="gcs-bucket-name" placeholder="Enter Google Bucket Name">
+
+<!--    <div class="form-group">-->
+      <label>Choose Credentials File</label>
+      <label class="file-upload">
+        <input type="file" id="fileInput" accept=".json" onchange="showFileName()" />
+        <span>Click to browse or drag and drop</span>
+      </label>
+      <div id="fileName" class="file-name"></div>
+<!--    </div>-->
+    </div>
+
+
     <div id="propertiesContainer">
       <div class="accordion">
         <div class="accordion-header" onclick="toggleAccordion(this)">
@@ -340,6 +431,8 @@
 <script src="js/security.js"></script>
 <script src="js/worktree.js"></script>
 <script>
+var fileInputCacheBase64;
+var fileInputCacheBase64FileName;
   document.addEventListener('DOMContentLoaded', fetchConfig);
 
 function fetchConfig() {
@@ -374,6 +467,13 @@ function populateForm(data) {
         document.getElementById('azureADLS-container-name').value = data.adlsContainerName || '';
     } else if(data.provider === 'serverLocalStorage') {
         document.getElementById('local-file-location').value = data.localFileLocation || '';
+    }else if(data.provider === 'gcs') {
+        document.getElementById('gcs-project-id').value = data.gcpProjectId || '';
+        document.getElementById('gcs-bucket-name').value = data.gcpBucketName || '';
+        fileInputCacheBase64 = data.gcpCredFile;
+        fileInputCacheBase64FileName = data.gcpCredFileName;
+        if(data.gcpCredFileName!=undefined && data.gcpCredFileName!='')
+            showLocalFileName(data.gcpCredFileName);
     }
     toggleFields(data.provider);
     populateAdditionalProperties(data.additionalProperties || []);
@@ -383,6 +483,7 @@ function toggleFields(provider) {
     document.getElementById('aws3-fields').classList.toggle('hidden', provider !== 'aws3');
     document.getElementById('azureADLS-fields').classList.toggle('hidden', provider !== 'azureADLS');
     document.getElementById('serverLocalStorage-fields').classList.toggle('hidden', provider !== 'serverLocalStorage');
+     document.getElementById('gcs-fields').classList.toggle('hidden', provider !== 'gcs');
 }
 
 document.getElementById('provider').addEventListener('change', (e) => {
@@ -417,6 +518,11 @@ function gatherFormData() {
         data.adlsContainerName = document.getElementById('azureADLS-container-name').value;
     } else if(data.provider === 'serverLocalStorage') {
          data.localFileLocation = document.getElementById('local-file-location').value;
+    }else if(data.provider === 'gcs') {
+      data.gcpProjectId = document.getElementById('gcs-project-id').value;
+      data.gcpBucketName = document.getElementById('gcs-bucket-name').value;
+      data.gcpCredFile = fileInputCacheBase64;
+      data.gcpCredFileName = fileInputCacheBase64FileName;
     }
     data.additionalProperties = gatherAdditionalProperties();
     return data;
@@ -565,6 +671,55 @@ var accountName = document.getElementById('azureADLS-account-name').value;
 if(accountName!=undefined)
  document.getElementById('azureADLS-account-endpoint').value =  "https://{ACCOUNT_NAME}.blob.core.windows.net".replace("{ACCOUNT_NAME}", accountName);
 }
+}
+
+function showFileName() {
+  const fileInput = document.getElementById("fileInput");
+  const fileNameDiv = document.getElementById("fileName");
+
+  if (fileInput.files.length > 0) {
+    // Get the name of the selected file
+    const fileName = fileInput.files[0].name;
+
+      const fileExtension = fileName.split('.').pop().toLowerCase();
+
+      if (fileExtension === "json") {
+   fileInputCacheBase64FileName = fileName;
+    // Display the file name
+    fileNameDiv.textContent = `Selected File: ${fileName}`;
+
+     const reader = new FileReader();
+
+    reader.onloadend = function () {
+      // When the file is read, store the Base64 string in the cache variable
+      fileInputCacheBase64 = reader.result;
+      console.log("File read as Base64:", fileInputCacheBase64); // You can see the Base64 string in the console
+    };
+
+     reader.readAsDataURL(fileInput.files[0]);
+     fileNameDiv.style.color = "green";
+      }else{
+        // Reset the input and show an error message if the file is not a JSON
+        fileInput.value = ""; // Clear the input
+        fileNameDiv.textContent = "Please upload a valid JSON file!";
+        fileNameDiv.style.color = "red"; // Optional: Show error indication
+      }
+  } else {
+
+  if(fileInputCacheBase64FileName!=undefined){
+ fileNameDiv.textContent = `Selected File: ${fileInputCacheBase64FileName}`;
+  }else{
+    // Clear the file name if no file is selected
+    fileNameDiv.textContent = "";
+  }
+
+  }
+}
+
+function showLocalFileName(fileName) {
+  const fileNameDiv = document.getElementById("fileName");
+    fileNameDiv.textContent = `Selected File: ${fileName}`;
+    fileNameDiv.style.color = "green";
 }
 
 </script>
