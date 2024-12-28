@@ -172,6 +172,8 @@ public class TestConfigServiceImpl implements TestConfigService {
                 default:
                     throw new BadRequestException(errorMessage);
             }
+        } catch (BadRequestException e) {
+            throw e;
         } catch (IOException e) {
             logger.error("IOException occurred: ", e);
             throw new BadRequestException("Error reading the credentials file. Please check and try again.");
