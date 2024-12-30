@@ -19,6 +19,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Override
     public Map<String, Object> saveEmailConfiguration(Map<String, Object> payload) {
+        testConfigService.validateEmailConfiguration(payload);
         return configurationDao.saveEmailConfiguration(payload);
     }
 

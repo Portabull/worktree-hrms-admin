@@ -5,7 +5,6 @@ import com.azure.core.http.policy.*;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.blob.models.BlobStorageException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
@@ -15,10 +14,18 @@ import com.worktree.hrms.constants.CommonConstants;
 import com.worktree.hrms.exceptions.BadRequestException;
 import com.worktree.hrms.service.TestConfigService;
 import com.worktree.hrms.utils.FileUtils;
+import jakarta.mail.MessagingException;
+import jakarta.mail.NoSuchProviderException;
+import jakarta.mail.internet.MimeMessage;
+import org.eclipse.angus.mail.util.MailConnectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailAuthenticationException;
+import org.springframework.mail.MailSendException;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -34,14 +41,86 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 @Service
 public class TestConfigServiceImpl implements TestConfigService {
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     private final Logger logger = LoggerFactory.getLogger(TestConfigServiceImpl.class);
+
+    public void validateEmailConfiguration(Map<String, Object> payload) {
+        try {
+            String emailHost = payload.get("emailHost").toString();
+            int emailPort = Integer.parseInt(payload.get("emailPort").toString());
+            String username = payload.get("username").toString();
+            String password = payload.get("password").toString();
+            String fromEmail = payload.get("emailFrom").toString();
+
+            // Update JavaMailSender properties dynamically
+            Properties mailProperties = new Properties();
+            mailProperties.put("mail.smtp.host", emailHost);
+            mailProperties.put("mail.smtp.port", emailPort);
+            mailProperties.put("mail.smtp.auth", !username.isEmpty() && !password.isEmpty());
+            mailProperties.put("mail.smtp.starttls.enable", true);
+            mailProperties.put("mail.smtp.connectiontimeout", 30000);
+
+            // Apply proxy settings if provided
+            String smtpProxy = getSMTPProxy(emailHost);
+            if (smtpProxy != null) {
+                mailProperties.put("mail.smtp.proxy.host", smtpProxy);
+            }
+
+            // Additional properties
+            if (payload.containsKey("additionalProperties")) {
+                List<?> additionalProperties = (List<?>) payload.get("additionalProperties");
+                for (Object addProperty : additionalProperties) {
+                    Map<?, ?> propertyMap = (Map<?, ?>) addProperty;
+                    mailProperties.put(propertyMap.get("name").toString(), propertyMap.get("value").toString());
+                }
+            }
+
+            // Create a custom JavaMailSender
+            JavaMailSenderImpl customMailSender = new JavaMailSenderImpl();
+            customMailSender.setHost(emailHost);
+            customMailSender.setPort(emailPort);
+            if (!username.isEmpty() && !password.isEmpty()) {
+                customMailSender.setUsername(username);
+                customMailSender.setPassword(password);
+            }
+            customMailSender.setJavaMailProperties(mailProperties);
+
+            // Create and send email
+            MimeMessage message = customMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setFrom(!fromEmail.isEmpty() ? fromEmail : username);
+            helper.setTo(!fromEmail.isEmpty() ? fromEmail : username);
+            helper.setSubject("Test Mail from Worktree");
+            helper.setText("<p>This is a Test Mail</p>", true);
+
+            // Send email
+            customMailSender.send(message);
+
+        } catch (MessagingException me) {
+            logger.error("Error occurred while testing SMTP: {}", me);
+            throw new BadRequestException(me.getMessage().split(":")[0]);
+        } catch (MailAuthenticationException e) {
+            logger.error("Error occurred while testing SMTP: {}", e);
+            throw new BadRequestException(e.getMessage().split(":")[0]);
+        } catch (MailSendException e) {
+            logger.error("Exception occurred", e);
+            if (e.getCause() instanceof MailConnectException) {
+                throw new BadRequestException("Couldn't connect to smtp server please check the host and port");
+            } else if (e.getCause() instanceof NoSuchProviderException) {
+                throw new BadRequestException("No Such provider. Please enter the valid provider and try again.");
+            }
+
+            throw new BadRequestException("Invalid Details please enter right details");
+        } catch (Exception e) {
+            logger.error("Exception occurred", e);
+            throw new BadRequestException(CommonConstants.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     public void validateStorageConfiguration(Map<String, Object> payload) {
         try {
@@ -257,5 +336,46 @@ public class TestConfigServiceImpl implements TestConfigService {
             throw new BadRequestException("Invalid details entered. Please provide the correct secret access key and region.");
         }
     }
+
+    public static String getSMTPProxy(String domain) {
+        String proxySettings = null;
+        String httpProxyHost = System.getProperty("http.proxyHost");
+        String httpProxyPort = System.getProperty("http.proxyPort");
+        String httpsProxyHost = System.getProperty("https.proxyHost");
+        String httpsProxyPort = System.getProperty("https.proxyPort");
+        if (!StringUtils.isEmpty(httpProxyHost) && !StringUtils.isEmpty(httpProxyPort) && !isNonProxyHost(domain, System.getProperty("http.nonProxyHosts"))) {
+            proxySettings = httpProxyHost + ":" + httpProxyPort;
+        } else if (!StringUtils.isEmpty(httpsProxyHost) && !StringUtils.isEmpty(httpsProxyPort) && !isNonProxyHost(domain, System.getProperty("https.nonProxyHosts"))) {
+            proxySettings = httpsProxyHost + ":" + httpsProxyPort;
+        }
+
+        return proxySettings;
+    }
+
+
+    private static boolean isNonProxyHost(String domain, String nonProxyHosts) {
+        if (StringUtils.isEmpty(nonProxyHosts)) {
+            return false;
+        } else {
+            String[] patterns = nonProxyHosts.split("\\|");
+            String[] var3 = patterns;
+            int var4 = patterns.length;
+
+            for (int var5 = 0; var5 < var4; ++var5) {
+                String pattern = var3[var5];
+                if (pattern.startsWith("*.")) {
+                    String suffix = pattern.substring(1);
+                    if (domain.toLowerCase().endsWith(suffix.toLowerCase())) {
+                        return true;
+                    }
+                } else if (domain.equalsIgnoreCase(pattern)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
 }
 

@@ -414,7 +414,13 @@ startLoader();
         function afterSave(xhr,decryptedResponse){
          stopLoader();
 
-        showErrorMessage("OK",'Configuration saved successfully',false);
+         if(xhr.status==200){
+          showErrorMessage("OK",'Configuration saved successfully',false);
+         }else{
+             showErrorMessage("Bad Request",decryptedResponse.message,true);
+         }
+
+
         }
 
         function gatherFormData() {
