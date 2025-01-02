@@ -115,6 +115,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        response.setHeader("Access-Control-Allow-Origin","https://worktree-hrms.shop");
         if (request.getRequestURI().startsWith("/api")) {
             int statusCode = HttpServletResponse.SC_UNAUTHORIZED;
             final String token = request.getHeader(HttpHeaders.AUTHORIZATION);
