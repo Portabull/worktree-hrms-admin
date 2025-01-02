@@ -19,21 +19,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Value("${ui.version}")
     private String uiVersion;
 
-
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/**")
-                        .allowedOrigins("https://localhost:8080", "https://worktree-hrms.shop")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
-                        .allowCredentials(true);
-            }
-        };
-    }
-
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         System.out.println("Version : " + uiVersion);
