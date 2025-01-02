@@ -427,21 +427,25 @@ window.location.href="log";
     var readMore9875 = document.getElementById("readMore9875");
     var errorFooter9875 = document.getElementById("errorFooter9875");
 
+    if(uniqueOkayBtn9875!=undefined)   {
     // When the user clicks on the Okay button, close the modal
-    uniqueOkayBtn9875.onclick = function() {
-      uniqueModal9875.style.display = "none";
-      stopLoader();
-    }
+       uniqueOkayBtn9875.onclick = function() {
+         uniqueModal9875.style.display = "none";
+         stopLoader();
+       }
+   }
 
+    if(readMore9875!=undefined){
     // Toggle message expansion on "Read more" click
-    readMore9875.onclick = function() {
-      if (errorFooter9875.classList.contains("message-container-expanded9875")) {
-        errorFooter9875.classList.remove("message-container-expanded9875");
-        readMore9875.innerText = "Read more";
-      } else {
-        errorFooter9875.classList.add("message-container-expanded9875");
-        readMore9875.innerText = "Read less";
-      }
+        readMore9875.onclick = function() {
+          if (errorFooter9875.classList.contains("message-container-expanded9875")) {
+            errorFooter9875.classList.remove("message-container-expanded9875");
+            readMore9875.innerText = "Read more";
+          } else {
+            errorFooter9875.classList.add("message-container-expanded9875");
+            readMore9875.innerText = "Read less";
+          }
+        }
     }
 
     // Function to open the error modal and set header and footer messages, with optional shake
