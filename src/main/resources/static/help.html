@@ -227,10 +227,88 @@
 }
 
 /* loader css ends */
+
+/* Internet GUI starts*/
+   .error-container-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #f0f4f8, #d9e8fc);
+            color: #333;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .error-container {
+            text-align: center;
+            padding: 30px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s ease-in-out;
+            width: 80%;
+            max-width: 600px;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .error-icon {
+            margin-bottom: 20px;
+        }
+        .error-icon img {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+        }
+        .error-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .error-message {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .retry-button {
+            padding: 12px 25px;
+            font-size: 18px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        .retry-button:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+
+/* Internet GUI ends*/
     </style>
 </head>
 <body oncontextmenu="return false;">
-
+<div id="internet_container_id" hidden>
+<div class="error-container-wrapper" >
+    <div class="error-container" >
+        <div class="error-icon">
+            <img src="https://s5.ezgif.com/tmp/ezgif-5-b5b98918b6.gif" alt="Internet Error">
+        </div>
+        <div class="error-title">Uh-Oh!</div>
+        <div class="error-message">Slow or no internet connection.<br>Please check your internet settings and try again.</div>
+        <button class="retry-button" onclick="retry()">Retry</button>
+    </div>
+</div>
+</div>
 
 
 <div id="loader" class="loader-overlay">
@@ -251,7 +329,7 @@
 </div>
 
 <!-- Content -->
-<div class="content">
+<div class="content" id="main_content_area">
     <h1 id="contentHeader">Loading...</h1>
     <div id="sections">
         <!-- Dynamic Sections will be inserted here -->
@@ -282,6 +360,8 @@ const typeValue = new URL(window.location.href).searchParams.get("t");
                 document.getElementById('contentHeader').textContent = decryptedResponseObj.mainBarHeader;
          populateSidebar(decryptedResponseObj.mainArea);
                 populateSections(decryptedResponseObj.mainArea);
+
+
         }
 
         function populateSidebar(data) {
@@ -383,6 +463,51 @@ function stopLoader() {
     document.getElementById('loader').style.visibility = 'hidden';
     document.body.style.pointerEvents = 'auto'; // Re-enable interaction with the screen
 }
+
+
+function showErrorMessage(header, message, boolenVal){
+if('Unreachable' == header){
+
+        document.getElementById('menuButton').style.display = 'none';
+          document.getElementById('sidebar').classList.remove('open');
+
+
+
+            document.getElementById('sidebarHeader').hidden  = true;
+                document.getElementById('contentHeader').hidden  = true;
+                document.getElementById('main_content_area').hidden  = true;
+
+
+ const container = document.getElementById("internet_container_id");
+    container.hidden = false; // Unhides the div
+
+
+<!--                document.getElementById('sidebarHeader').style.visibility = 'visible';-->
+}
+}
+
+function retry(){
+<!-- document.getElementById('menuButton').style.display = 'block';-->
+<!--document.getElementById('sidebar').classList.add('open');-->
+
+<!-- document.getElementById('sidebarHeader').style.visibility  = 'block';-->
+<!--                document.getElementById('contentHeader').style.visibility  = 'block';-->
+<!--                document.getElementById('main_content_area').style.visibility  = 'block';-->
+
+
+  const container = document.getElementById("internet_container_id");
+    container.hidden = true; // Hides the div
+
+
+ document.getElementById('sidebarHeader').hidden  = false;
+                document.getElementById('contentHeader').hidden  = false;
+                document.getElementById('main_content_area').hidden  = false;
+
+init();
+
+}
+
+
     </script>
 </body>
 </html>

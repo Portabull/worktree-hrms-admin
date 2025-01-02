@@ -219,7 +219,7 @@ public class HelpController {
 //        headers.setETag("\"" + etag + "\"");
 //
 //        // Set Cache-Control and Last-Modified
-//        headers.setCacheControl(CacheControl.maxAge(10, TimeUnit.MINUTES).cachePublic());
+        headers.setCacheControl(CacheControl.maxAge(10, TimeUnit.MINUTES).cachePublic());
 //
 //        headers.setLastModified(lastModified);
 //
