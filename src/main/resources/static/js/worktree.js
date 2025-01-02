@@ -865,3 +865,7 @@ searchDropdownMenu.innerHTML = innerHtmlContent;
 }
 }
 
+function goToHelp(type){
+          window.open("help?t=" + type, "_blank");
+}
+

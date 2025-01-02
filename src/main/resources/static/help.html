@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Troubleshooting Login Issues</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9fafc;
+        }
+
+        /* Menu Button for Mobile */
+        .menu-button {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: #37475a;
+            color: white;
+            font-size: 14px;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1001;
+            transition: background-color 0.3s ease;
+        }
+
+        .menu-button:hover {
+            background-color: #232f3e;
+        }
+
+        /* Close Button in Sidebar */
+        .close-button {
+            display: block;
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .close-button:hover {
+            background-color: #c9302c;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 280px;
+            background-color: #232f3e;
+            color: #fff;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            padding: 20px;
+            z-index: 1000;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .sidebar h2 {
+            font-size: 18px;
+            font-weight: bold;
+            color: #d1d5db;
+            margin-bottom: 20px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar ul li a {
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 10px 15px;
+            display: block;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #37475a;
+        }
+
+        /* Content Area Styling */
+        .content {
+            margin-left: 300px;
+            padding: 20px 40px;
+        }
+
+        .content h1 {
+            font-size: 28px;
+            color: #37475a;
+            margin-bottom: 20px;
+        }
+
+        .content p {
+            color: #606f7b;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* Section Styles */
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            font-size: 22px;
+            color: #37475a;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #e4e7eb;
+            padding-bottom: 5px;
+        }
+
+        .section ul {
+            list-style: disc;
+            margin-left: 20px;
+        }
+
+        .section ul li {
+            margin: 5px 0;
+            color: #606f7b;
+            font-size: 14px;
+        }
+
+        /* Responsive Styling */
+        @media (max-width: 768px) {
+            .menu-button {
+                display: block;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .content {
+                margin-left: 0;
+                padding-top: 70px;
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .section h2 {
+                font-size: 20px;
+            }
+
+            .content h1 {
+                font-size: 24px;
+            }
+
+            .section ul li {
+                font-size: 13px;
+            }
+        }
+
+
+ /* loader css starts */
+
+
+ /* Rotate animation for the loader */
+    .loading {
+      animation: rotate 1s linear infinite;
+    }
+
+    /* Keyframes for the rotating animation */
+    @keyframes rotate {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+
+
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    visibility: hidden; /* Hide loader by default */
+}
+
+.loader {
+    border: 8px solid #f3f3f3; /* Light gray */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* loader css ends */
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+
+
+<div id="loader" class="loader-overlay">
+    <div class="loader"></div>
+</div>
+
+
+<!-- Menu Button for Mobile -->
+<button class="menu-button" id="menuButton" onclick="openSidebar()">☰ Menu</button>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <button class="close-button" onclick="closeSidebar()">Close</button>
+    <h2 id="sidebarHeader">Loading</h2>
+    <ul id="menuItems">
+        <!-- Dynamic Links will be inserted here -->
+    </ul>
+</div>
+
+<!-- Content -->
+<div class="content">
+    <h1 id="contentHeader">Loading...</h1>
+    <div id="sections">
+        <!-- Dynamic Sections will be inserted here -->
+    </div>
+</div>
+<script src="js/security.js"></script>
+<script src="js/worktree.js"></script>
+<script>
+
+
+
+
+
+       async function fetchData() {
+            startLoader();
+
+
+const typeValue = new URL(window.location.href).searchParams.get("t");
+
+            dynamicXhrApi('GET', BASE_URL + 'api/help-docs?type=' + typeValue, { 'Content-Type': 'application/json','If-None-Match':'etag-value','If-Modified-Since':getISTTimestamp()}, undefined, afterFetchData);
+
+        }
+
+
+        function afterFetchData(xhr,decryptedResponseObj){
+        stopLoader();
+           document.getElementById('sidebarHeader').textContent = decryptedResponseObj.sideBarHeader;
+                document.getElementById('contentHeader').textContent = decryptedResponseObj.mainBarHeader;
+         populateSidebar(decryptedResponseObj.mainArea);
+                populateSections(decryptedResponseObj.mainArea);
+        }
+
+        function populateSidebar(data) {
+            const menuItems = document.getElementById('menuItems');
+            menuItems.innerHTML = '';
+
+            data.forEach(item => {
+                const li = document.createElement('li');
+                const link = document.createElement('a');
+                link.href = `#${item.id}`;
+                link.textContent = item.title;
+                link.onclick = event => navigateToSection(event, `#${item.id}`);
+                li.appendChild(link);
+                menuItems.appendChild(li);
+            });
+        }
+
+        function populateSections(data) {
+            const sections = document.getElementById('sections');
+            sections.innerHTML = '';
+
+            data.forEach(item => {
+                const section = document.createElement('div');
+                section.classList.add('section');
+                section.id = item.id;
+
+                const heading = document.createElement('h2');
+                heading.textContent = item.title;
+
+                const content = document.createElement('p');
+                content.textContent = item.description;
+
+                section.appendChild(heading);
+                section.appendChild(content);
+
+                if (item.steps) {
+                    const ul = document.createElement('ul');
+                    item.steps.forEach(step => {
+                        const li = document.createElement('li');
+                        li.textContent = step;
+                        ul.appendChild(li);
+                    });
+                    section.appendChild(ul);
+                }
+
+                sections.appendChild(section);
+            });
+        }
+
+        function openSidebar() {
+            document.getElementById('sidebar').classList.add('open');
+            document.getElementById('menuButton').style.display = 'none';
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('menuButton').style.display = 'block';
+        }
+
+        function navigateToSection(event, sectionId) {
+            event.preventDefault();
+            document.querySelector(sectionId).scrollIntoView({ behavior: 'smooth' });
+            if (window.innerWidth < 768) {
+                closeSidebar();
+            }
+        }
+
+        async function init() {
+            const screenWidth = window.innerWidth;
+            if (screenWidth > 768) openSidebar();
+            await fetchData();
+        }
+
+        window.onload = init;
+        window.onresize = () => {
+            const screenWidth = window.innerWidth;
+            if (screenWidth > 768) {
+                openSidebar();
+            } else {
+                closeSidebar();
+            }
+        };
+
+
+
+function startLoader() {
+    document.getElementById('loader').style.visibility = 'visible';
+    document.body.style.pointerEvents = 'none'; // Disable interaction with the screen
+}
+
+window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the cache
+        if (event.persisted) {
+            stopLoader();
+        }
+    });
+
+function stopLoader() {
+    document.getElementById('loader').style.visibility = 'hidden';
+    document.body.style.pointerEvents = 'auto'; // Re-enable interaction with the screen
+}
+    </script>
+</body>
+</html>
