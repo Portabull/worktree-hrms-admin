@@ -361,6 +361,11 @@ const typeValue = new URL(window.location.href).searchParams.get("t");
          populateSidebar(decryptedResponseObj.mainArea);
                 populateSections(decryptedResponseObj.mainArea);
 
+            const viewValue = new URL(window.location.href).searchParams.get("v");
+
+            if(viewValue!=undefined){
+                 navigateToSection(undefined, '#' + viewValue);
+            }
 
         }
 
@@ -422,7 +427,11 @@ const typeValue = new URL(window.location.href).searchParams.get("t");
         }
 
         function navigateToSection(event, sectionId) {
-            event.preventDefault();
+
+            if(event!=undefined){
+             event.preventDefault();
+             }
+
             document.querySelector(sectionId).scrollIntoView({ behavior: 'smooth' });
             if (window.innerWidth < 768) {
                 closeSidebar();

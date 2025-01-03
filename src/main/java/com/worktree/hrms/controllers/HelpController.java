@@ -108,6 +108,91 @@ public class HelpController {
 //    }
 //]
 
+
+    String conf = "[\n" +
+            "    {\n" +
+            "        \"id\": \"email\",\n" +
+            "        \"title\": \"Email Configuration\",\n" +
+            "        \"description\": \"Configure the email properties required for sending emails from the system. This includes setting up the email host, port, credentials, and additional properties to ensure proper email functionality.\",\n" +
+            "        \"steps\": [\n" +
+            "            \"Navigate to the Email section by clicking the 'Email' icon on the settings dashboard.\",\n" +
+            "            \"Fill in the required fields:\\n- **Email Host**: The SMTP server address (e.g., email-smtp.us-east-2.amazonaws.com).\\n- **Email Port**: The port number (e.g., 587 for TLS or 465 for SSL).\\n- **Username**: The username for your email provider.\\n- **Password**: The password associated with the email username.\",\n" +
+            "            \"Enter the 'Email From' address that will appear as the sender of the emails.\",\n" +
+            "            \"Specify additional properties to fine-tune the SMTP settings. Common properties include:\\n  - mail.transport.protocol: Set to 'smtp'.\\n  - mail.smtp.auth: Set to 'true' to enable authentication.\\n  - mail.smtp.starttls.enable: Set to 'true' to enable TLS.\\n  - mail.debug: Set to 'true' for debugging purposes.\",\n" +
+            "            \"Optionally, use the 'Export' button to save the configuration or 'Import' button to upload an existing configuration file.\",\n" +
+            "            \"Click the 'Submit' button to save the configuration.\"\n" +
+            "        ]\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": \"mobile\",\n" +
+            "        \"title\": \"Mobile Configuration\",\n" +
+            "        \"description\": \"Set up mobile messaging providers like Twilio or TextLocal to enable SMS or WhatsApp communication.\",\n" +
+            "        \"steps\": [\n" +
+            "            \"Navigate to the Mobile section by clicking the 'Mobile' icon on the settings dashboard.\",\n" +
+            "            \"Select the mobile provider (e.g., Twilio, TextLocal) from the dropdown menu.\",\n" +
+            "            \"Fill in the required fields:\\n- **Account SID**: Enter your Account SID provided by the mobile provider.\\n- **Auth Token**: Enter the authentication token.\\n- **Mobile Number**: Provide the primary mobile number.\\n- **WhatsApp Mobile Number**: Specify the WhatsApp-enabled mobile number.\",\n" +
+            "            \"Optionally, add additional properties like custom parameters using the 'Additional Properties' section.\",\n" +
+            "            \"Use the 'Export' button to save the configuration or the 'Import' button to upload an existing configuration.\",\n" +
+            "            \"Click the 'Submit' button to save the configuration.\"\n" +
+            "        ]\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": \"ai\",\n" +
+            "        \"title\": \"AI Configuration\",\n" +
+            "        \"description\": \"Configure AI services like OpenAI or Azure AI to integrate machine learning capabilities.\",\n" +
+            "        \"steps\": [\n" +
+            "            \"Navigate to the AI section by clicking the 'AI' icon on the settings dashboard.\",\n" +
+            "            \"Select the AI provider (e.g., OpenAI, Azure AI) from the dropdown menu.\",\n" +
+            "            \"For OpenAI:\\n- **AI Key**: Enter your API key.\\n- **Model**: Specify the model name (e.g., gpt-4.0).\\n- **Version**: Provide the version if applicable.\",\n" +
+            "            \"For Azure AI:\\n- **Endpoint**: Enter the Azure AI endpoint.\\n- **Model**: Specify the model name.\\n- **Version**: Provide the version.\\n- **Deployment Name**: Enter the deployment name for Azure AI.\",\n" +
+            "            \"Use the 'Export' button to save the configuration or the 'Import' button to upload an existing configuration.\",\n" +
+            "            \"Click the 'Submit' button to save the configuration.\"\n" +
+            "        ]\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": \"coupons\",\n" +
+            "        \"title\": \"Coupons Management\",\n" +
+            "        \"description\": \"Manage discount coupons by adding, editing, or filtering coupon codes.\",\n" +
+            "        \"steps\": [\n" +
+            "            \"Navigate to the Coupons section by clicking the 'Coupons' icon on the settings dashboard.\",\n" +
+            "            \"To add a coupon:\\n- Click the 'Add Coupon' button.\\n- Provide details such as the coupon code, discount percentage, and status.\\n- Click 'Save' to add the coupon.\",\n" +
+            "            \"To edit a coupon:\\n- Click on a coupon in the table.\\n- Modify details such as the discount percentage and status in the popup.\\n- Click 'Save' to update the coupon.\",\n" +
+            "            \"Use the filter box to search for specific coupon codes.\",\n" +
+            "            \"The table displays details such as Coupon Code, Discount Percentage, Created Date, and Created By.\"\n" +
+            "        ]\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": \"keystore\",\n" +
+            "        \"title\": \"Keystore Configuration\",\n" +
+            "        \"description\": \"Configure and manage keystore properties for secure communication and certificate linking.\",\n" +
+            "        \"steps\": [\n" +
+            "            \"Navigate to the Keystore section by clicking the 'Keystore' icon on the settings dashboard.\",\n" +
+            "            \"Fill in the required fields:\\n- **Algorithm**: Select the algorithm (e.g., RSA).\\n- **Alias Name**: Enter a unique alias name.\\n- **Key Size**: Specify the key size (e.g., 2048).\\n- **Validity (Days)**: Enter the validity period in days.\\n- **Keystore Password**: Provide a secure password for the keystore.\\n- **Common Name (CN)**: Specify the common name.\\n- **Organization Unit (OU)**: Enter the organizational unit.\\n- **Organization (O)**: Provide the organization name.\\n- **Locality (L)**: Specify the locality.\\n- **State (S)**: Enter the state.\\n- **Country Code (C)**: Provide the country code.\",\n" +
+            "            \"Optionally, add additional properties in the 'Additional Properties' section.\",\n" +
+            "            \"Click the 'Generate' button to create the keystore.\",\n" +
+            "            \"To link a certificate:\\n- Click 'Link Cert' in the Certificate Linking popup.\\n- Download the linked certificate if required.\"\n" +
+            "        ]\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"id\": \"storage\",\n" +
+            "        \"title\": \"Storage Configuration\",\n" +
+            "        \"description\": \"Configure storage settings for AWS S3, Google Cloud Storage, Azure ADLS, or Server Local Storage.\",\n" +
+            "        \"steps\": [\n" +
+            "            \"Navigate to the Storage section by clicking the 'Storage' icon on the settings dashboard.\",\n" +
+            "            \"Select the storage provider (e.g., AWS S3, Google Cloud Storage, Azure ADLS, or Server Local Storage) from the dropdown menu.\",\n" +
+            "            \"For AWS S3:\\n- **AWS Access Key**: Enter the access key.\\n- **AWS Secret Key**: Enter the secret key.\\n- **AWS Bucket Name**: Provide the S3 bucket name.\\n- **AWS Region**: Specify the AWS region.\",\n" +
+            "            \"For Google Cloud Storage:\\n- **Project ID**: Enter the project ID.\\n- **Bucket Name**: Provide the bucket name.\\n- **Credentials File**: Upload the credentials JSON file.\",\n" +
+            "            \"For Azure ADLS:\\n- **Account Endpoint**: Provide the Azure Blob Storage endpoint.\\n- **Account Name**: Enter the account name.\\n- **Account Key/SAS Token**: Provide the key or token.\\n- **Container Name**: Specify the container name.\",\n" +
+            "            \"For Server Local Storage:\\n- **File Location**: Provide the file location (e.g., c:/admin/files/).\",\n" +
+            "            \"Optionally, add additional properties using the 'Additional Properties' section.\",\n" +
+            "            \"Use the 'Export' button to save the configuration or the 'Import' button to upload an existing configuration.\",\n" +
+            "            \"Click the 'Submit' button to save the configuration.\"\n" +
+            "        ]\n" +
+            "    }\n" +
+            "]";
+
+
+
     String a = "[\n" +
             "    {\n" +
             "        \"id\": \"internet\",\n" +
@@ -212,6 +297,13 @@ public class HelpController {
         response.put("sideBarHeader", "Login Troubleshoot");
         response.put("mainBarHeader", "Troubleshooting Login Issues");
         response.put("mainArea", objectMapper.readValue(a, List.class));
+
+
+        if(type.equalsIgnoreCase("conf")){
+            response.put("mainArea", objectMapper.readValue(conf, List.class));
+            response.put("sideBarHeader", "Storage Configuration");
+            response.put("mainBarHeader", "Storage Configuration Guide");
+        }
 
         // Generate ETag
 //        String etag = Integer.toHexString(response.hashCode());
