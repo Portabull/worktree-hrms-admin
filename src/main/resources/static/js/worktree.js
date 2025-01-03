@@ -865,7 +865,14 @@ searchDropdownMenu.innerHTML = innerHtmlContent;
 }
 }
 
-function goToHelp(type){
-          window.open("help?t=" + type, "_blank");
+function goToHelp(type,view){
+var params = '';
+if(view!=undefined){
+params = '?t=' + type + '&v=' + view;
+}else{
+params = '?t=' + type;
+}
+
+          window.open("help" + params , "_blank");
 }
 
