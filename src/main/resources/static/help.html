@@ -395,6 +395,7 @@ const typeValue = new URL(window.location.href).searchParams.get("t");
 
                 const heading = document.createElement('h2');
                 heading.textContent = item.title;
+                heading.id = item.id + 'h2tag';
 
                 const content = document.createElement('p');
                 content.textContent = item.description;
@@ -436,7 +437,35 @@ const typeValue = new URL(window.location.href).searchParams.get("t");
             if (window.innerWidth < 768) {
                 closeSidebar();
             }
+
+            highlightHeadingById(sectionId+'h2tag');
         }
+
+        function highlightHeadingById(headingId) {
+        headingId = headingId.substring(1);
+    // Get the <h2> element by its id
+    const heading = document.getElementById(headingId);
+
+    if (heading) {
+        // Store the original style to revert later
+        const originalColor = heading.style.color || '';  // Text color
+        const originalBackgroundColor = heading.style.backgroundColor || '';  // Background color
+
+        // Highlight the <h2> (change color and background)
+       heading.style.backgroundColor = '#FFFF00'; // Yellow background
+heading.style.color = '#000000'; // Black text
+
+
+        // Revert back after 1 seconds (3000 milliseconds)
+        setTimeout(() => {
+            heading.style.color = originalColor;  // Revert text color
+            heading.style.backgroundColor = originalBackgroundColor;  // Revert background color
+        }, 1000);  // 1 seconds
+    } else {
+        console.log(`Element with ID ${headingId} not found.`);
+    }
+}
+
 
         async function init() {
             const screenWidth = window.innerWidth;
