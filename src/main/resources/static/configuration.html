@@ -103,18 +103,20 @@
 
         /* Settings container styling */
         .settings-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 20px;
-            padding: 20px;
-            max-width: 1000px;
-            width: 100%;
-            margin: 80px auto;
-            background: #ffffff;
-            border-radius: 15px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-            animation: fadeIn 0.6s ease;
-        }
+    position: relative; /* Make it the reference point for absolute positioning */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    max-width: 1000px;
+    width: 100%;
+    margin: 80px auto;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    animation: fadeIn 0.6s ease;
+}
+
 
         /* Keyframe animations */
         @keyframes fadeIn {
@@ -348,9 +350,41 @@
 }
 
 /* Sidebar ends */
+
+
+
+.help-icon {
+    position: absolute; /* Position relative to .settings-container */
+    top: 10px; /* Adjust to fit your design */
+    right: 10px; /* Adjust to fit your design */
+    width: 30px;
+    height: 30px;
+    background-color: #4dabf7;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 10; /* Ensure it appears above other content */
+}
+
+.help-icon:hover {
+    background-color: #228be6;
+    transform: scale(1.1);
+}
+
+
+
+
+
     </style>
 </head>
 <body oncontextmenu="return false;">
+
 
 
 
@@ -426,8 +460,13 @@
         <span>Configuration</span>
     </div>
 </div>
+
 <!-- Settings Options -->
 <div class="settings-container" id="settingsContainer">
+    <div class="help-icon" id="helpIcon" onclick="goToHelp('conf')">
+        <i class="fas fa-question"></i>
+    </div>
+
     <div class="settings-option" data-alias="Email Settings" onclick="gotoemailsettings()" data-tooltip="Manage your email settings">
         <i class="fas fa-envelope"></i>
         <div class="settings-label">Email</div>
@@ -607,6 +646,17 @@ function gotoVaultSettings(){
     startLoader();
   window.location.href = "vault-configuration";
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const helpIcon = document.getElementById('helpIcon');
+    if (helpIcon) {
+        helpIcon.style.display = 'flex'; // Ensure it is visible
+        helpIcon.hidden = false;
+    } else {
+        console.error('Help icon element not found in DOM.');
+    }
+});
+
 </script>
 
 </body>
