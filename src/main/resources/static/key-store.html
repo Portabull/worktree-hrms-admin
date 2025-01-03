@@ -502,24 +502,6 @@
 <body>
 
 
-<!-- confirmation Popup Modal -->
-<div id="popupOverlay-45654754" class="overlay-45654754">
-    <div class="popup-45654754">
-        <div class="popup-header-45654754">
-            <h2>Confirm Your Action</h2>
-        </div>
-        <div class="popup-content-45654754">
-            <p>
-                You are about to perform an important action. Are you sure you want to proceed?
-                If not, simply cancel to go back.
-            </p>
-        </div>
-        <div class="popup-actions-45654754">
-            <button class="btn-45654754 cancel-btn-45654754" onclick="closePopup45654754()">Cancel</button>
-            <button class="btn-45654754 proceed-btn-45654754" onclick="proceedAction45654754()">Proceed</button>
-        </div>
-    </div>
-</div>
 
 
 <!-- Error Popup Modal -->
@@ -649,7 +631,7 @@
                     <div class="cert-desc">Connectivity between hrms and auth some description</div>
                     <div class="cert-linked-indicator">Already linked</div>
                 </div>
-                <button class="cert-link-btn" id="link-btn-1" onclick="showPopup45654754({description: "Are you sure you want to delete this record? This action cannot be undone.",cancelButtonName: "No, Go Back",proceedButtonName: "Yes, Delete"});">
+                <button class="cert-link-btn" id="link-btn-1" onclick="linkCert('hrms-auth', this)">
                     <i class="fas fa-link"></i> Link
                 </button>
             </div>
@@ -660,7 +642,7 @@
                     <div class="cert-desc">Connectivity between hrms and auth some description</div>
                     <div class="cert-linked-indicator">Already linked</div>
                 </div>
-                <button class="cert-link-btn" id="link-btn-2" onclick="showPopup45654754('hrms', this)">
+                <button class="cert-link-btn" id="link-btn-2" onclick="linkCert('hrms', this)">
                     <i class="fas fa-link"></i> Link
                 </button>
             </div>
