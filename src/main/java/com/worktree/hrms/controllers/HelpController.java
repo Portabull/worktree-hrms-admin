@@ -173,6 +173,25 @@ public class HelpController {
             "            \"To link a certificate:\\n- Click 'Link Cert' in the Certificate Linking popup.\\n- Download the linked certificate if required.\"\n" +
             "        ]\n" +
             "    },\n" +
+
+            "    {\n" +
+            "        \"id\": \"proxy\",\n" +
+            "        \"title\": \"Proxy Configuration\",\n" +
+            "        \"description\": \"Configure and manage proxy settings to control and secure outbound API requests through a proxy server.\",\n" +
+            "        \"steps\": [\n" +
+            "            \"Navigate to the Proxy Configuration section by clicking the 'Proxy' icon on the settings dashboard.\",\n" +
+            "            \"Enable or disable proxy usage by toggling the 'Enable Proxy' option. When enabled, all outbound API requests will be routed through the configured proxy server for enhanced security and monitoring.\",\n" +
+            "            \"Fill in the required fields for HTTP Proxy configuration:\\n- **HTTP Host**: Specify the hostname or IP address of the HTTP proxy server.\\n- **HTTP Port**: Enter the port number of the HTTP proxy server.\\n- **HTTP Username**: Provide the username for authentication with the proxy server (if applicable).\\n- **HTTP Password**: Provide the password for authentication with the proxy server (if applicable).\",\n" +
+            "            \"For HTTPS Proxy configuration, you can select the 'Use same as HTTP' option or provide separate details for HTTPS Host, Port, Username, and Password.\",\n" +
+            "            \"Understand the benefits of using a proxy:\\n- **Security**: Adds an additional layer of protection by masking the server's IP address and filtering traffic.\\n- **Monitoring**: Allows administrators to monitor, log, and control outbound requests effectively.\\n- **Compliance**: Helps enforce company policies for internet usage and data access.\",\n" +
+            "            \"Optionally, configure advanced settings, such as bypassing the proxy for specific URLs or IP ranges in the 'Advanced Configuration' section.\",\n" +
+            "            \"Test the proxy configuration by saving the settings. The system will automatically validate the connection to the proxy server before completing the save. If any error occurs during the validation, an error message will be displayed, and the settings will not be saved until the issue is resolved.\",\n" +
+            "            \"Ensure that the proxy server is reachable from the application server. If the proxy server is down or unreachable, all outbound API requests will fail. This setup provides administrators the ability to turn off or force-stop internet access on the server by disabling the proxy or making it unreachable.\",\n" +
+            "            \"Click the 'Save' button to apply the proxy configuration. Changes will take effect immediately for all outbound API requests.\",\n" +
+            "            \"To disable proxy usage, simply toggle off the 'Enable Proxy' option. This will revert to direct API communication without routing through the proxy server.\"\n" +
+            "        ]\n" +
+            "    },\n" +
+
             "    {\n" +
             "        \"id\": \"storage\",\n" +
             "        \"title\": \"Storage Configuration\",\n" +
