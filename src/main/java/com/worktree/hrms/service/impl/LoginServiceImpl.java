@@ -1,7 +1,9 @@
 package com.worktree.hrms.service.impl;
 
 import com.worktree.hrms.config.TestConfig;
+import com.worktree.hrms.dao.CommonDao;
 import com.worktree.hrms.dao.UserDao;
+import com.worktree.hrms.exceptions.PaymentRequiredException;
 import com.worktree.hrms.service.LoginService;
 import com.worktree.hrms.utils.EncryptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,9 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private CommonDao commonDao;
+
     @Override
     public Map<String, Object> login(Map<String, String> payload) {
         Map<String, Object> response = new HashMap<>();
@@ -26,9 +31,17 @@ public class LoginServiceImpl implements LoginService {
         password = EncryptionUtils.decrypt(password);
         Long userId = userDao.existsUserNamePassword(userName, password);
         if (userId != null) {
+            boolean licenseVerified = true;
+            try {
+                commonDao.validLicense();
+            } catch (PaymentRequiredException e) {
+                response.put("statusCode", "402");
+                licenseVerified = false;
+            }
+
             response.put("status", "SUCCESS");
             String jwt = UUID.randomUUID() + "" + new Date().getTime();
-            userDao.saveRandomToken(userId, jwt);
+            userDao.saveRandomToken(userId, jwt, licenseVerified);
             response.put("jwt", jwt);
             Map<String, String> userProfileInfo = userDao.getUserProfileInfo(userName);
             response.put("userDisplayName", userProfileInfo.get("displayName"));

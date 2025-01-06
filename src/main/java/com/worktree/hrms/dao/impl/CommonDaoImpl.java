@@ -1,9 +1,11 @@
 package com.worktree.hrms.dao.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worktree.hrms.constants.CommonConstants;
 import com.worktree.hrms.dao.CommonDao;
 import com.worktree.hrms.entity.CouponEntity;
 import com.worktree.hrms.exceptions.ForbiddenException;
+import com.worktree.hrms.exceptions.PaymentRequiredException;
 import com.worktree.hrms.utils.DateUtils;
 import com.worktree.hrms.utils.HibernateUtils;
 import com.worktree.hrms.utils.RequestHelper;
@@ -95,5 +97,22 @@ public class CommonDaoImpl implements CommonDao {
         return CommonConstants.SUCCESS_RESPONSE;
     }
 
+    @Override
+    public void validLicense() {
+        try (Session session = hibernateUtils.getSession()) {
+            List<String> licences = session.createQuery("SELECT licence FROM Licence").list();
+            if (!CollectionUtils.isEmpty(licences)) {
+                Map<String, Object> response = new ObjectMapper().readValue(licences.get(0), Map.class);
+
+                if (DateUtils.isDateExceeded(response.get("licenceValidTill").toString(), "dd-MM-yyyy")) {
+                    throw new PaymentRequiredException("Licence file expired");
+                }
+            } else {
+                throw new PaymentRequiredException("Licence file expired");
+            }
+        } catch (Exception e) {
+            throw new PaymentRequiredException("Licence file expired");
+        }
+    }
 
 }

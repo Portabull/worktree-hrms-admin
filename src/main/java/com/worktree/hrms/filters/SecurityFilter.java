@@ -75,7 +75,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worktree.hrms.filters.wrapper.EncryptedHttpRequestWrapper;
 import com.worktree.hrms.filters.wrapper.EncryptedHttpResponseWrapper;
 import com.worktree.hrms.utils.HibernateUtils;
-import com.worktree.hrms.utils.TokenFileUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -103,9 +102,6 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Lazy
     private HibernateUtils hibernateUtils;
 
-    @Autowired
-    private TokenFileUtils tokenFileUtils;
-
     private List<String> skipEndPoints;
 
     @Value("${skip.filters.endpoints}")
@@ -121,19 +117,19 @@ public class SecurityFilter extends OncePerRequestFilter {
 
             if (skipEndPoints.stream().noneMatch(endPoint -> endPoint.equalsIgnoreCase(request.getRequestURI()))) {
                 if (token != null && !token.isEmpty()) {
-                    // 1. Check token in the file cache (with file lock for reading)
-                    if (tokenFileUtils.isTokenInFileCache(token)) {
-                        statusCode = HttpServletResponse.SC_OK;
-                    } else {
-                        // 2. If not found in file, query the database
-                        try (Session session = hibernateUtils.getSession()) {
-                            Long tokenCount = (Long) session.createQuery("SELECT COUNT(*) FROM UserTokenEntity WHERE jwt=:jwt")
-                                    .setParameter("jwt", token)
-                                    .uniqueResult();
-                            if (tokenCount != null && tokenCount > 0) {
+                    try (Session session = hibernateUtils.getSession()) {
+                        Object[] obj = (Object[]) session.createQuery("SELECT licenseVerified,userID FROM UserTokenEntity WHERE jwt=:jwt")
+                                .setParameter("jwt", token)
+                                .uniqueResult();
+                        if (obj != null) {
+                            if (!Boolean.valueOf(String.valueOf(obj[0]))) {
+                                if (!request.getRequestURI().equalsIgnoreCase("/api/licence")) {
+                                    statusCode = HttpServletResponse.SC_PAYMENT_REQUIRED;
+                                } else {
+                                    statusCode = HttpServletResponse.SC_OK;
+                                }
+                            } else {
                                 statusCode = HttpServletResponse.SC_OK;
-                                // 3. Add token to file cache if found in database (synchronized with file lock)
-                                tokenFileUtils.addTokenToFileCache(token);
                             }
                         }
                     }
@@ -144,6 +140,15 @@ public class SecurityFilter extends OncePerRequestFilter {
 
             if (statusCode == HttpServletResponse.SC_UNAUTHORIZED) {
                 populateUnAuthorized(response);
+                return;
+            } else if (statusCode == HttpServletResponse.SC_PAYMENT_REQUIRED) {
+                Map<String, Object> errorDetails = new HashMap<>();
+                errorDetails.put("message", "Licence Expired");
+                errorDetails.put("status", "FAILED");
+
+                response.setStatus(HttpServletResponse.SC_PAYMENT_REQUIRED);
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                new ObjectMapper().writeValue(response.getWriter(), errorDetails);
                 return;
             }
 

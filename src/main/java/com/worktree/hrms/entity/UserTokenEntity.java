@@ -29,6 +29,9 @@ public class UserTokenEntity {
     @Column(name = "device_details", length = 700)
     private String deviceDetails;
 
+    @Column(name = "license_verified")
+    private Boolean licenseVerified;
+
     public Long getTokenId() {
         return tokenId;
     }
@@ -75,5 +78,13 @@ public class UserTokenEntity {
 
     public void setDeviceDetails(String deviceDetails) {
         this.deviceDetails = deviceDetails;
+    }
+
+    public Boolean getLicenseVerified() {
+        return licenseVerified;
+    }
+
+    public void setLicenseVerified(Boolean licenseVerified) {
+        this.licenseVerified = licenseVerified;
     }
 }

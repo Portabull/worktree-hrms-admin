@@ -57,6 +57,11 @@ function dynamicXhrApi(method, url, headers, requestBody, callback, isFileUpload
                 return;
             }
 
+            if(xhr.status == 402){
+                window.location.href="license";
+                return;
+            }
+
             if(xhr.status == 401 && !url.endsWith("/api/login")) {
                removeCurrentUserCache();
                gotohome();
@@ -876,3 +881,34 @@ params = '?t=' + type;
           window.open("help" + params , "_blank");
 }
 
+function openConfirmationPopUP({
+    description = "You are about to perform an important action. Are you sure you want to proceed?",
+    cancelButtonName = "Cancel",
+    proceedButtonName = "Proceed",
+    onCancel = (payload) => closePopup45654754(),
+    onProceed = (payload) => {
+        alert('Proceeding with the action!');
+        closePopup45654754();
+    },
+    payload = null // Default to null if not provided
+} = {}) {
+    // Update the description text
+    document.querySelector("#popupOverlay-45654754 .popup-content-45654754 p").innerText = description;
+
+    // Update the Cancel button text and attach callback
+    const cancelButton = document.querySelector("#popupOverlay-45654754 .cancel-btn-45654754");
+    cancelButton.innerText = cancelButtonName;
+    cancelButton.onclick = () => onCancel(payload ?? {}); // Fallback to an empty object if payload is null
+
+    // Update the Proceed button text and attach callback
+    const proceedButton = document.querySelector("#popupOverlay-45654754 .proceed-btn-45654754");
+    proceedButton.innerText = proceedButtonName;
+    proceedButton.onclick = () => onProceed(payload ?? {}); // Fallback to an empty object if payload is null
+
+    // Show the popup
+    document.getElementById('popupOverlay-45654754').classList.add('show-45654754');
+}
+
+function closePopup45654754() {
+    document.getElementById('popupOverlay-45654754').classList.remove('show-45654754');
+}

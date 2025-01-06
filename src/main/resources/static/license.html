@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/common-style.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>License Registration</title>
     <style>
         * {
@@ -155,46 +159,333 @@
                 font-size: 0.9rem;
             }
         }
+
+
+
+
+
+         /* loader css starts */
+
+
+ /* Rotate animation for the loader */
+    .loading {
+      animation: rotate 1s linear infinite;
+    }
+
+    /* Keyframes for the rotating animation */
+    @keyframes rotate {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+
+
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    visibility: hidden; /* Hide loader by default */
+}
+
+.loader {
+    border: 8px solid #f3f3f3; /* Light gray */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* loader css ends */
+
+
+
+
+
+
+
+
+    /* Overlay for dimming background */
+    .modal-overlay9801245 {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: 999;
+        display: none;
+        animation: fadeIn9801245 0.3s ease;
+    }
+
+    /* Modal box styling */
+    .modal-box9801245 {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 400px;
+        background: white;
+        color: #333;
+        border-radius: 10px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        padding: 20px;
+        text-align: center;
+        animation: slideIn9801245 0.3s ease;
+        overflow: hidden; /* Hide overflowing content initially */
+        max-height: 300px; /* Set initial height */
+    }
+
+    /* Expanded modal box for long text */
+    .modal-box-expanded9801245 {
+        max-height: 70vh; /* Allow scrolling when expanded */
+        overflow-y: auto;
+    }
+
+    /* Header */
+    #errorHeader9801245 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        color: #ff4d4d; /* Red for emphasis */
+        font-weight: bold;
+    }
+
+    /* Message */
+    .modal-message9801245 {
+        font-size: 1rem;
+        margin-bottom: 20px;
+        line-height: 1.5;
+        color: #555;
+        max-height: 150px; /* Limit height for long text */
+        overflow: hidden; /* Hide overflow initially */
+        text-overflow: ellipsis;
+    }
+
+    /* Buttons container */
+    #readMore9801245 {
+        font-size: 0.9rem;
+        color: #007bff;
+        text-decoration: none;
+        cursor: pointer;
+        transition: color 0.2s;
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    #readMore9801245:hover {
+        color: #0056b3;
+    }
+
+    /* Okay button */
+    #okayBtn9801245 {
+        background: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    #okayBtn9801245:hover {
+        background: #45a049;
+    }
+
+    /* Animations */
+    @keyframes fadeIn9801245 {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideIn9801245 {
+        from {
+            transform: translate(-50%, -60%);
+            opacity: 0;
+        }
+        to {
+            transform: translate(-50%, -50%);
+            opacity: 1;
+        }
+    }
+
+
     </style>
 </head>
 <body>
-    <h1>License Registration</h1>
-    <div class="cards">
-        <!-- Trial User Card -->
-        <div class="card">
-            <img src="https://img.icons8.com/ios-filled/70/ffffff/clock.png" alt="Trial User">
-            <h2>Trial User</h2>
-            <p>For Trial License, please contact <br><a href="mailto:contact@worktree.com" style="color: #4caf50; text-decoration: none;">contact@worktree.com</a></p>
-        </div>
 
-        <!-- Licensed User Card -->
-        <div class="card" onclick="triggerFileUpload()">
-            <img src="https://img.icons8.com/ios-filled/70/ffffff/key.png" alt="Licensed User">
-            <h2>Licensed User</h2>
-            <p>Already have a License Key? <br>Click below to activate it.</p>
-            <button onclick="triggerFileUpload(event)">Activate License Key</button>
-            <input type="file" id="fileInput" style="display: none;" onchange="handleFileUpload(event)">
-        </div>
+
+<!-- Error Popup Modal -->
+<div id="uniqueErrorModal9875">
+    <div class="unique-modal-content9875" id="modalContent9875">
+        <h2 id="errorHeader9875">Error Occurred</h2>
+        <p id="errorFooter9875" class="message-container9875">An unexpected error has occurred. Please try again later.</p>
+        <span class="read-more9875" id="readMore9875">Read more</span>
+        <button id="uniqueOkayBtn9875">Okay</button>
     </div>
-    <footer>
-        Copyright © 2024 Worktree Inc. All rights reserved.
-    </footer>
-    <script>
-        function triggerFileUpload(event) {
-            if (event) {
-                // Prevent triggering the card's onclick event
-                event.stopPropagation();
-            }
-            document.getElementById("fileInput").click();
-        }
+</div>
 
-        function handleFileUpload(event) {
-            const file = event.target.files[0];
-            if (file) {
-                alert(`File uploaded: ${file.name}`);
-                // Add additional file handling logic here
-            }
+<!-- Improved Error Popup Modal -->
+<div id="errorModal9801245" style="display: none;">
+    <div class="modal-overlay9801245" id="modalOverlay9801245"></div>
+    <div class="modal-box9801245">
+        <h2 id="errorHeader9801245">Error</h2>
+        <p id="errorMessage9801245" class="modal-message9801245">
+            Please enable location access in your browser by clicking the lock icon next to the URL, selecting 'Site settings,' and allowing location. If the issue persists, contact support for further assistance. This is an example of a long error message to test the "Read More" functionality.
+        </p>
+        <a href="#" id="readMore9801245" style="display: none;" onclick="expandErrorPopup9801245(event)">Read more</a>
+        <button id="okayBtn9801245" onclick="closeErrorPopup9801245()">Okay</button>
+    </div>
+</div>
+
+
+
+
+<div id="loader" class="loader-overlay">
+    <div class="loader"></div>
+</div>
+
+
+
+<h1>License Registration</h1>
+<div class="cards">
+    <!-- Trial User Card -->
+    <div class="card">
+        <img src="https://img.icons8.com/ios-filled/70/ffffff/clock.png" alt="Trial User">
+        <h2>Trial User</h2>
+        <p>For Trial License, please contact <br><a href="mailto:contact@worktree.com" style="color: #4caf50; text-decoration: none;">contact@worktree.com</a></p>
+    </div>
+
+    <!-- Licensed User Card -->
+    <div class="card" onclick="triggerFileUpload()">
+        <img src="https://img.icons8.com/ios-filled/70/ffffff/key.png" alt="Licensed User">
+        <h2>Licensed User</h2>
+        <p>Already have a License Key? <br>Click below to activate it.</p>
+        <button onclick="triggerFileUpload(event)">Activate License Key</button>
+        <input type="file" id="fileInput" style="display: none;" onchange="handleFileUpload(event)">
+    </div>
+</div>
+<footer>
+    Copyright © 2024 Worktree Inc. All rights reserved.
+</footer>
+<script src="js/security.js"></script>
+<script src="js/worktree.js"></script>
+<script>
+        function triggerFileUpload(event) {
+    if (event) {
+        // Prevent triggering the card's onclick event
+        event.stopPropagation();
+    }
+    const fileInput = document.getElementById("fileInput");
+    fileInput.value = ""; // Reset the file input value before triggering
+    fileInput.click();
+}
+
+function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+
+startLoader();
+        // Call dynamicXhrApi to upload the file
+        dynamicXhrApi(
+            "POST", // HTTP method
+            BASE_URL + "api/licence", // Replace with your upload endpoint
+            { Authorization: getCurrentToken() }, // Headers, if needed
+            formData, // FormData with the file
+            function (response, decryptedResponseObj) {
+                if (response.status >= 200 && response.status < 300) {
+                       gotohome();
+                } else {
+                    stopLoader();
+                   showErrorPopup9801245("Error Occurred", decryptedResponseObj.message, true);
+                }
+            },
+            true // Indicate that this is a file upload
+        );
+    }
+}
+
+
+
+function startLoader() {
+    document.getElementById('loader').style.visibility = 'visible';
+    document.body.style.pointerEvents = 'none'; // Disable interaction with the screen
+}
+
+window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the cache
+        if (event.persisted) {
+            stopLoader();
         }
+    });
+
+function stopLoader() {
+    document.getElementById('loader').style.visibility = 'hidden';
+    document.body.style.pointerEvents = 'auto'; // Re-enable interaction with the screen
+}
+
+
+
+
+function showErrorPopup9801245(headerText, messageText, showReadMore = false) {
+    // Set header and message
+    document.getElementById("errorHeader9801245").innerHTML = headerText;
+    document.getElementById("errorMessage9801245").innerHTML = messageText;
+
+    // Check if the message is long and toggle "Read More"
+    const messageElement = document.getElementById("errorMessage9801245");
+    if (messageElement.scrollHeight > messageElement.clientHeight) {
+        document.getElementById("readMore9801245").style.display = "block";
+    } else {
+        document.getElementById("readMore9801245").style.display = "none";
+    }
+
+    // Show modal and overlay
+    document.getElementById("modalOverlay9801245").style.display = "block";
+    document.getElementById("errorModal9801245").style.display = "block";
+}
+
+function expandErrorPopup9801245(event) {
+    event.preventDefault();
+    const modalBox = document.querySelector(".modal-box9801245");
+    modalBox.classList.add("modal-box-expanded9801245");
+    document.getElementById("readMore9801245").style.display = "none"; // Hide "Read More"
+}
+
+function closeErrorPopup9801245() {
+    // Hide modal and overlay
+    document.getElementById("modalOverlay9801245").style.display = "none";
+    document.getElementById("errorModal9801245").style.display = "none";
+
+    // Reset modal size
+    const modalBox = document.querySelector(".modal-box9801245");
+    modalBox.classList.remove("modal-box-expanded9801245");
+}
+
+
+
+
     </script>
 </body>
 </html>

@@ -11,7 +11,6 @@ import com.worktree.hrms.exceptions.ForbiddenException;
 import com.worktree.hrms.utils.DateUtils;
 import com.worktree.hrms.utils.HibernateUtils;
 import com.worktree.hrms.utils.RequestHelper;
-import com.worktree.hrms.utils.TokenFileUtils;
 import jakarta.persistence.RollbackException;
 import jakarta.transaction.Transactional;
 import org.hibernate.Session;
@@ -28,13 +27,8 @@ import java.util.stream.Collectors;
 @Repository
 public class UserDaoImpl implements UserDao {
 
-
     @Autowired
     private HibernateUtils hibernateUtils;
-
-    @Autowired
-    private TokenFileUtils tokenFileUtils;
-
     @Autowired
     private DateUtils dateUtils;
 
@@ -47,15 +41,15 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void saveRandomToken(Long userId, String jwt) {
+    public void saveRandomToken(Long userId, String jwt, boolean licenseVerified) {
         UserTokenEntity entity = new UserTokenEntity();
         entity.setJwt(jwt);
         entity.setUserID(userId);
         entity.setDate(dateUtils.getCurrentDate());
         entity.setLocation(RequestHelper.getHeader("latlong"));
         entity.setDeviceDetails(RequestHelper.getHeader("dd"));
+        entity.setLicenseVerified(licenseVerified);
         hibernateUtils.saveOrUpdateEntity(entity);
-        tokenFileUtils.addTokenToFileCache(jwt);
     }
 
     @Override
@@ -100,7 +94,6 @@ public class UserDaoImpl implements UserDao {
             session.createQuery("DELETE FROM UserTokenEntity WHERE jwt IN (:token)")
                     .setParameter("token", authorizationTokens).executeUpdate();
             transaction.commit();
-            tokenFileUtils.removeTokenFromFileCache(authorizationToken);
         } catch (Exception e) {
             if (transaction != null) {
                 transaction.rollback();

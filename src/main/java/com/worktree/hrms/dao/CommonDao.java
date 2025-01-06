@@ -12,4 +12,6 @@ public interface CommonDao {
 
     Map<String, Object> saveCoupon(Map<String, Object> payload);
 
+    void validLicense();
+
 }

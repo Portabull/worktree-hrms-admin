@@ -7,7 +7,7 @@ public interface UserDao {
 
     Long existsUserNamePassword(String userName, String password);
 
-    void saveRandomToken(Long userId, String jwt);
+    void saveRandomToken(Long userId, String jwt, boolean licenseVerified);
 
     public Map<String, String> getUserProfileInfo(String userName);
 
