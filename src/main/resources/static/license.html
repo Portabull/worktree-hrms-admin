@@ -501,7 +501,13 @@ function closeErrorPopup9801245() {
     modalBox.classList.remove("modal-box-expanded9801245");
 }
 
-
+init();
+function init(){
+ var token =   getCurrentTokenWithoutRedirect();
+ if(token==undefined){
+  window.location.href = "login";
+ }
+}
 
 
     </script>
