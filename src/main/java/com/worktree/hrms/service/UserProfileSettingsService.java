@@ -12,7 +12,7 @@ public interface UserProfileSettingsService {
 
     Map<String, Object> uploadProfiePic(String s);
 
-    Map<String, Object> getUsers(Integer page);
+    Map<String, Object> getUsers(Integer page, String searchText);
 
     Map<String, Object> saveUser(Map<String, Object> payload);
 

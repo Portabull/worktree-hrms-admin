@@ -991,32 +991,42 @@ function stopLoader() {
     document.addEventListener('DOMContentLoaded', init);
 
 
-
-
-    function filterUsers() {
+ function filterUsers() {
         const filterValue = document.getElementById('searchInput').value.toLowerCase();
-        const filteredUsers = users.filter(user => user.userName.toLowerCase().includes(filterValue));
-        const tableBody = document.getElementById('userTableBody');
-        tableBody.innerHTML = '';
-        filteredUsers.forEach(user => {
 
-            var isDeleteDisabled = user.userName == window.localStorage.getItem(userNameLS) ? "disabled" : "";
+  const tableBody = document.getElementById('userTableBody');
+ tableBody.innerHTML = '';
 
-           const row = document.createElement('tr');
-        row.innerHTML = `
-            <td data-label="SNO">${user.sNo}</td>
-            <td data-label="User Name">${user.userName}</td>
-            <td data-label="Display Name">${user.displayName}</td>
-            <td data-label="Email">${user.email}</td>
-            <td data-label="Mobile Number">${user.mobile}</td>
-            <td data-label="Is Admin">${user.isAdmin ? 'Yes' : 'No'}</td>
-            <td data-label="Action"><button ${isDeleteDisabled} onclick="deleteUser(${user.userId}); event.stopPropagation();">Delete</button></td>
-        `;
-        row.onclick = () => openUserForm(user); // Set click event for row to open popup
-        tableBody.appendChild(row);
+ users = [];
 
-        });
-    }
+dynamicXhrApi('GET',BASE_URL + 'api/users?page=0&searchText=' + filterValue,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined, afterPageLoad);
+}
+
+
+<!--    function filterUsers() {-->
+<!--        const filterValue = document.getElementById('searchInput').value.toLowerCase();-->
+<!--        const filteredUsers = users.filter(user => user.userName.toLowerCase().includes(filterValue));-->
+<!--        const tableBody = document.getElementById('userTableBody');-->
+<!--        tableBody.innerHTML = '';-->
+<!--        filteredUsers.forEach(user => {-->
+
+<!--            var isDeleteDisabled = user.userName == window.localStorage.getItem(userNameLS) ? "disabled" : "";-->
+
+<!--           const row = document.createElement('tr');-->
+<!--        row.innerHTML = `-->
+<!--            <td data-label="SNO">${user.sNo}</td>-->
+<!--            <td data-label="User Name">${user.userName}</td>-->
+<!--            <td data-label="Display Name">${user.displayName}</td>-->
+<!--            <td data-label="Email">${user.email}</td>-->
+<!--            <td data-label="Mobile Number">${user.mobile}</td>-->
+<!--            <td data-label="Is Admin">${user.isAdmin ? 'Yes' : 'No'}</td>-->
+<!--            <td data-label="Action"><button ${isDeleteDisabled} onclick="deleteUser(${user.userId}); event.stopPropagation();">Delete</button></td>-->
+<!--        `;-->
+<!--        row.onclick = () => openUserForm(user); // Set click event for row to open popup-->
+<!--        tableBody.appendChild(row);-->
+
+<!--        });-->
+<!--    }-->
 
     function updateSelectedFeaturesText() {
   const selectedOptions = Array.from(document.querySelectorAll('#featuresOptions input:checked'));

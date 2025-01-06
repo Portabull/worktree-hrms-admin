@@ -15,7 +15,7 @@ public interface UserDao {
 
     Map<String, Object> logout(String token);
 
-    Map<String, Object> getUsers(Integer page);
+    Map<String, Object> getUsers(Integer page, String searchText);
 
     Map<String, Object> saveUser(Map<String, Object> payload);
 

@@ -16,6 +16,7 @@ import jakarta.transaction.Transactional;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
@@ -103,7 +104,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public Map<String, Object> getUsers(Integer page) {
+    public Map<String, Object> getUsers(Integer page, String searchText) {
         int fetchSize = 25;
         if (page == null) {
             page = 0;
@@ -120,9 +121,21 @@ public class UserDaoImpl implements UserDao {
             throw new ForbiddenException(CommonConstants.ACCESS_DENIED);
         }
 
+        StringBuilder queryBuilder = new StringBuilder("FROM UserEntity");
+
+        if (searchText != null && !searchText.trim().isEmpty()) {
+            queryBuilder.append(" WHERE userName LIKE :searchText");
+        }
+
         try (Session session = hibernateUtils.getSession()) {
-            users = session.createQuery("FROM UserEntity")
-                    .setFirstResult(firstResult) // Set the offset
+            Query query = session.createQuery(queryBuilder.toString());
+
+            if (searchText != null && !searchText.trim().isEmpty()) {
+                // Set the searchText parameter
+                query.setParameter("searchText", "%" + searchText + "%");
+            }
+
+            users = query.setFirstResult(firstResult) // Set the offset
                     .setMaxResults(fetchSize)    // Set the fetch size
                     .list();
             features = session.createQuery("FROM FeatureEntity")
