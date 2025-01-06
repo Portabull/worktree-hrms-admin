@@ -381,7 +381,7 @@
         <h2>Licensed User</h2>
         <p>Already have a License Key? <br>Click below to activate it.</p>
         <button onclick="triggerFileUpload(event)">Activate License Key</button>
-        <input type="file" id="fileInput" style="display: none;" onchange="handleFileUpload(event)">
+        <input type="file" id="fileInput" style="display: none;" accept=".txt" onchange="handleFileUpload(event)">
     </div>
 </div>
 <footer>
@@ -403,6 +403,24 @@
 function handleFileUpload(event) {
     const file = event.target.files[0];
     if (file) {
+
+
+       const fileExtension = file.name.split('.').pop().toLowerCase();
+        if (fileExtension !== 'txt') {
+            stopLoader();
+              showErrorPopup9801245("Invalid File Type","Please upload a .txt file only.", true);
+            return;
+        }
+
+        // Check file size (less than 10MB)
+        const maxFileSize = 10 * 1024 * 1024; // 10MB in bytes
+        if (file.size > maxFileSize) {
+            stopLoader();
+             showErrorPopup9801245("File Too Large","The file size must be less than 10MB.", true);
+            return;
+        }
+
+
         const formData = new FormData();
         formData.append("file", file);
 
