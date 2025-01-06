@@ -998,7 +998,7 @@ function stopLoader() {
  tableBody.innerHTML = '';
 
  users = [];
-
+startLoader();
 dynamicXhrApi('GET',BASE_URL + 'api/users?page=0&searchText=' + filterValue,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined, afterPageLoad);
 }
 
