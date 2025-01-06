@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proxy Configuration</title>
+    <link rel="stylesheet" href="css/common-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e9edf5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+                user-select: none; /* Prevent text selection */
+    -webkit-user-select: none; /* For Safari */
+    -moz-user-select: none; /* For Firefox */
+    -ms-user-select: none; /* For IE and Edge */
+        }
+
+        .container {
+            position: relative;
+            background: #ffffff;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background-color: #5a6268;
+        }
+
+        h2 {
+            text-align: center;
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .accordion {
+            margin-top: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            cursor: pointer;
+            font-weight: bold;
+            color: #333;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .accordion-header:hover {
+            background: #e9ecef;
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 15px;
+            background-color: #ffffff;
+        }
+
+        .accordion-content.active {
+            display: block;
+        }
+
+        .property-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .property-row input {
+            flex: 1;
+            padding: 10px;
+            font-size: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .property-row button {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: none;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .property-row .add-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .property-row .add-btn:hover {
+            background-color: #218838;
+        }
+
+        .property-row .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .property-row .delete-btn:hover {
+            background-color: #a71d2a;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+.submit-section {
+    text-align: center;
+    margin-top: 20px;
+    position: relative;
+}
+
+.separator {
+    height: 4px; /* Thickness of the line */
+    background-color: #d6d6d6; /* Cement color */
+    width: 100%; /* Full width */
+    margin-bottom: 10px; /* Space between line and button */
+    border-radius: 2px; /* Rounded ends */
+}
+
+#submit {
+    background-color: #007bff; /* Same blue as Import/Export buttons */
+    color: white;
+    border: none;
+    padding: 10px 20px; /* Consistent padding */
+    border-radius: 50px; /* Fully rounded button */
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+#submit:hover {
+    background-color: #0056b3; /* Darker blue for hover effect */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+}
+
+
+
+
+
+
+
+
+
+
+#export, #import {
+    background-color: #007bff; /* Brighter blue color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 50px; /* Rounded buttons */
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Smooth transitions */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+#export:hover, #import:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow on hover */
+}
+
+#export i, #import i {
+    font-size: 18px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ /* Loader Styles */
+        .loader-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader-overlay.active {
+            display: flex;
+        }
+
+
+          .spinner {
+            border: 8px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 8px solid #3498db;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+
+
+
+.help-icon {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 30px; /* Match the exact size in your image */
+    height: 30px;
+    background-color: #4dabf7; /* Use the blue color from your image */
+    color: white; /* White question mark */
+    border-radius: 50%; /* Circular shape */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px; /* Adjust the question mark size */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+.help-icon:hover {
+    background-color: #228be6; /* Slightly darker blue on hover */
+    transform: scale(1.1); /* Slight zoom effect on hover */
+}
+
+    </style>
+</head>
+<body>
+
+<!-- Error Popup Modal -->
+<div id="uniqueErrorModal9875">
+    <div class="unique-modal-content9875" id="modalContent9875">
+        <h2 id="errorHeader9875">Error Occurred</h2>
+        <p id="errorFooter9875" class="message-container9875">An unexpected error has occurred. Please try again later.</p>
+        <span class="read-more9875" id="readMore9875">Read more</span>
+        <button id="uniqueOkayBtn9875">Okay</button>
+    </div>
+</div>
+
+
+
+<!-- Loader Overlay -->
+<div class="loader-overlay" id="loader">
+    <div class="spinner"></div>
+</div>
+
+<div class="container">
+    <button class="back-btn" onclick="goBack()">Back</button>
+    <div class="help-icon" onclick="goToHelp('conf','proxy')">
+        <i class="fas fa-question"></i>
+    </div>
+
+    <h2>Proxy Configuration</h2>
+
+    <!-- HTTP Configuration Accordion -->
+    <div class="accordion">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>HTTP Configuration</span>
+            <i class="fas fa-plus"></i>
+        </div>
+        <div class="accordion-content">
+            <label for="proxyHttpHost">HTTP Host</label>
+            <input type="text" id="proxyHttpHost" placeholder="Enter HTTP Host">
+
+            <label for="proxyHttpPort">HTTP Port</label>
+            <input type="text" id="proxyHttpPort" placeholder="Enter HTTP Port">
+
+            <label for="proxyHttpUserName">HTTP Username</label>
+            <input type="text" id="proxyHttpUserName" placeholder="Enter HTTP Username">
+
+            <label for="proxyHttpPassword">HTTP Password</label>
+            <input type="password" id="proxyHttpPassword" placeholder="Enter HTTP Password">
+
+
+            <div class="checkbox-row" style="display: flex; align-items: center;">
+                <input type="checkbox" id="useSameAsHttp" onchange="toggleHttpsFields(this)">
+                <label for="useSameAsHttp" style="margin: 0;">Use same as HTTP</label>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- HTTPS Configuration Accordion -->
+    <div class="accordion">
+        <div class="accordion-header" onclick="toggleAccordion(this)">
+            <span>HTTPS Configuration</span>
+            <i class="fas fa-plus"></i>
+        </div>
+        <div class="accordion-content">
+            <label for="proxyHttpsHost">HTTPS Host</label>
+            <input type="text" id="proxyHttpsHost" placeholder="Enter HTTPS Host">
+
+            <label for="proxyHttpsPort">HTTPS Port</label>
+            <input type="text" id="proxyHttpsPort" placeholder="Enter HTTPS Port">
+
+            <label for="proxyHttpsUserName">HTTPS Username</label>
+            <input type="text" id="proxyHttpsUserName" placeholder="Enter HTTPS Username">
+
+            <label for="proxyHttpsPassword">HTTPS Password</label>
+            <input type="password" id="proxyHttpsPassword" placeholder="Enter HTTPS Password">
+        </div>
+    </div>
+
+
+
+        <div class="settings-option" data-alias="Enable Proxy" data-tooltip="Enable or disable proxy settings" style="display: flex; align-items: center; padding: 10px; background-color: #fff; border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); margin: 10px;">
+            <i class="fas fa-plug" style="margin-right: 10px; font-size: 20px;"></i> <!-- Example icon for proxy settings -->
+            <div class="settings-label" style="flex-grow: 1; font-size: 16px; font-weight: bold; color: #333;">Enable Proxy</div>
+            <div class="checkbox-container" style="display: flex; align-items: center; margin-left: 10px;">
+                <label class="checkbox-label" style="display: inline-flex; align-items: center; cursor: pointer; font-size: 16px;">
+                    <input type="checkbox" id="proxyCheckbox" onclick="toggleProxy()" style="opacity: 0; position: absolute;">
+                    <span class="checkbox-custom" style="width: 24px; height: 24px; border: 2px solid #ccc; border-radius: 4px; display: inline-block; transition: all 0.3s ease; position: relative; background-color: white;">
+        <!-- The checkmark will be toggled using JS -->
+    </span>
+
+                </label>
+            </div>
+        </div>
+
+
+    <!-- New Import and Export Buttons -->
+    <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+        <button id="export" onclick="exportData()">Export <i class="fas fa-download"></i></button>
+        <input type="file" id="importFile" style="display: none;" onchange="importData(event)">
+        <button id="import" onclick="document.getElementById('importFile').click()">Import <i class="fas fa-upload"></i></button>
+    </div>
+
+    <!-- Cement Line Separator and Submit Button Section -->
+    <div class="submit-section">
+        <div class="separator"></div>
+        <button id="submit">Submit <i class="fas fa-paper-plane"></i></button>
+    </div>
+</div>
+
+<script src="js/security.js"></script>
+<script src="js/worktree.js"></script>
+<script>
+
+        document.addEventListener('DOMContentLoaded', fetchProxyConfig);
+
+        function fetchProxyConfig() {
+        startLoader();
+             dynamicXhrApi('GET',BASE_URL + 'api/proxy/config' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken(),'featureType':'Proxy Settings' },undefined, fetchFormData);
+        }
+
+         function fetchFormData(xhr,decryptedResponseObj) {
+            try {
+            stopLoader();
+                populateForm(decryptedResponseObj);
+            } catch (error) {
+                console.error('Error fetching form:', error);
+            }
+        }
+
+        function populateForm(data) {
+
+            if(data==null || data==undefined){
+            return;
+            }
+
+            document.getElementById('proxyHttpHost').value = data.proxyHttpHost || '';
+            document.getElementById('proxyHttpPort').value = data.proxyHttpPort || '';
+             document.getElementById('proxyHttpsHost').value = data.proxyHttpsHost || '';
+            document.getElementById('proxyHttpsPort').value = data.proxyHttpsPort || '';
+
+            document.getElementById('proxyHttpsUserName').value = data.proxyHttpsUserName || '';
+            document.getElementById('proxyHttpUserName').value = data.proxyHttpUserName || '';
+            document.getElementById('proxyHttpsPassword').value = data.proxyHttpsPassword || '';
+            document.getElementById('proxyHttpPassword').value = data.proxyHttpPassword || '';
+
+            if(document.getElementById('proxyHttpHost').value == document.getElementById('proxyHttpsHost').value &&
+            document.getElementById('proxyHttpPort').value == document.getElementById('proxyHttpsPort').value &&
+            document.getElementById('proxyHttpUserName').value == document.getElementById('proxyHttpsUserName').value &&
+            document.getElementById('proxyHttpPassword').value == document.getElementById('proxyHttpsPassword').value){
+            document.getElementById('useSameAsHttp').checked = true;
+            }else{
+            document.getElementById('useSameAsHttp').checked = false;
+            }
+
+
+    var checkbox = document.getElementById('proxyCheckbox');
+            checkbox.checked = data.proxyHttpEnabled;
+            toggleProxy();
+
+        }
+
+        document.getElementById('submit').addEventListener('click', async function () {
+            const formData = gatherFormData();
+            try {
+                startLoader();
+                if(document.getElementById('useSameAsHttp').checked){
+                    populateHttpValsToHttps();
+                }
+             dynamicXhrApi('POST',BASE_URL + 'api/proxy/config' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken(),'featureType':'Proxy Settings' },formData, afterSave);
+
+            } catch (error) {
+                console.error('Error saving form:', error);
+                alert('Failed to save form data');
+            }
+        });
+
+        function afterSave(xhr,decryptedResponse){
+         stopLoader();
+
+         if(xhr.status==200){
+          showErrorMessage("OK",'Configuration saved successfully',false);
+         }else{
+             showErrorMessage("Bad Request",decryptedResponse.message,true);
+         }
+
+
+        }
+
+        function gatherFormData() {
+            const formData = {
+                proxyHttpsHost: document.getElementById('proxyHttpsHost').value,
+                proxyHttpsPort: document.getElementById('proxyHttpsPort').value,
+                proxyHttpsUserName: document.getElementById('proxyHttpsUserName').value,
+                proxyHttpsPassword: document.getElementById('proxyHttpsPassword').value,
+                proxyHttpHost: document.getElementById('proxyHttpHost').value,
+                proxyHttpPort: document.getElementById('proxyHttpPort').value,
+                proxyHttpUserName: document.getElementById('proxyHttpUserName').value,
+                proxyHttpPassword: document.getElementById('proxyHttpPassword').value,
+                proxyHttpEnabled: document.getElementById('proxyCheckbox').checked
+            };
+
+
+            return formData;
+        }
+
+        function toggleAccordion(header) {
+            const content = header.nextElementSibling;
+            content.classList.toggle('active');
+            const icon = header.querySelector('i');
+            icon.classList.toggle('fa-plus');
+            icon.classList.toggle('fa-minus');
+        }
+
+        function addPropertyRow(button) {
+            const container = button.closest('.accordion-content');
+            const newRow = createPropertyRow();
+            container.appendChild(newRow);
+            updateAddButtonVisibility(container);
+        }
+
+        function deletePropertyRow(button) {
+            const row = button.parentElement;
+            const container = row.closest('.accordion-content');
+            row.remove();
+            if (container.querySelectorAll('.property-row').length === 0) container.appendChild(createPropertyRow());
+            updateAddButtonVisibility(container);
+        }
+
+        function createPropertyRow() {
+            const row = document.createElement('div');
+            row.className = 'property-row';
+            row.innerHTML = `
+                <input type="text" placeholder="Property Name">
+                <input type="text" placeholder="Value">
+                <button class="delete-btn" onclick="deletePropertyRow(this)"><i class="fas fa-trash"></i></button>
+                <button class="add-btn" onclick="addPropertyRow(this)"><i class="fas fa-plus"></i></button>
+            `;
+            return row;
+        }
+
+        function updateAddButtonVisibility(container) {
+            const rows = container.querySelectorAll('.property-row');
+            rows.forEach((row, index) => {
+                row.querySelector('.add-btn').style.display = index === rows.length - 1 ? 'inline-flex' : 'none';
+            });
+        }
+
+        function goBack() {
+        startLoader();
+           gotoconfiguration();
+        }
+
+
+ // Start Loader
+    function startLoader() {
+        document.getElementById('loader').classList.add('active');
+        document.body.classList.add('disabled-screen');  // Disable entire screen
+    }
+
+    // Stop Loader
+    function stopLoader() {
+        document.getElementById('loader').classList.remove('active');
+        document.body.classList.remove('disabled-screen');  // Re-enable the screen
+    }
+
+
+ window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the cache
+        if (event.persisted) {
+            stopLoader();
+        }
+    });
+
+
+    function exportData() {
+    const formData = gatherFormData();
+    const blob = new Blob([JSON.stringify(formData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'proxy-config.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+     showErrorMessage("OK",'Data exported successfully!',false);
+}
+
+function importData(event) {
+    startLoader();
+    const file = event.target.files[0];
+    if (!file){
+      stopLoader();
+         return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+
+            const importedData = JSON.parse(e.target.result);
+            populateForm(importedData);
+              stopLoader();
+             showErrorMessage("OK",'Data imported successfully!',false);
+        } catch (error) {
+          stopLoader();
+            console.error('Invalid JSON file:', error);
+            resetFileInput();
+            showErrorMessage("Bad Request",'Failed to import data. Please upload a valid JSON file.',true);
+        }
+    };
+    reader.readAsText(file);
+}
+
+
+function resetFileInput() {
+    const importFileInput = document.getElementById('importFile');
+    importFileInput.value = ''; // Reset the input value to allow re-upload
+}
+
+
+document.addEventListener('keydown', function(event) {
+
+    var a = uniqueModal9875.style.display;
+
+   if(event.key === 'Enter' && uniqueModal9875.style.display == 'none'){
+          event.preventDefault(); // Prevent default form submission behavior
+        document.getElementById('submit').click(); // Trigger the Submit button
+    }
+
+       if(event.key == 'Enter'){
+            uniqueModal9875.style.display = "none";
+            return;
+    }
+
+});
+
+ function toggleHttpsFields(checkbox) {
+        // Get the checkbox's value (true or false)
+        var isChecked = checkbox.checked;
+
+        console.log("Checkbox value: " + isChecked); // This will print 'true' or 'false' based on checkbox state
+
+        // You can now perform any action based on the value
+        if (isChecked) {
+           populateHttpValsToHttps();
+        } else {
+            // If checkbox is unchecked, you can disable functionality
+            console.log("Use same as HTTP is unchecked!");
+        }
+    }
+
+    function populateHttpValsToHttps() {
+    document.getElementById('proxyHttpsHost').value = document.getElementById('proxyHttpHost').value;
+           document.getElementById('proxyHttpsPort').value = document.getElementById('proxyHttpPort').value;
+           document.getElementById('proxyHttpsUserName').value = document.getElementById('proxyHttpUserName').value;
+           document.getElementById('proxyHttpsPassword').value = document.getElementById('proxyHttpPassword').value;
+    }
+
+function toggleProxy() {
+        var checkbox = document.getElementById('proxyCheckbox');
+        var checkboxCustom = checkbox.nextElementSibling;
+
+        // Check if the checkbox is checked
+        if (checkbox.checked) {
+            checkboxCustom.style.backgroundColor = "#4CAF50"; // Green for enabled
+            checkboxCustom.innerHTML = '<i class="fas fa-check" style="color: white; position: absolute; top: 2px; left: 4px;"></i>';
+        } else {
+            checkboxCustom.style.backgroundColor = "white"; // Default (unchecked)
+            checkboxCustom.innerHTML = '';
+        }
+    }
+
+    </script>
+</body>
+</html>

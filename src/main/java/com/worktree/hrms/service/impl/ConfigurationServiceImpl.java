@@ -30,6 +30,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Override
     public Map<String, Object> saveAIConfiguration(Map<String, Object> payload) {
+        testConfigService.validateAIConfiguration(payload);
         return configurationDao.saveAIConfiguration(payload);
     }
 
@@ -57,5 +58,16 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Override
     public Map<String, Object> getStorageConfiguration() {
         return configurationDao.getStorageConfiguration();
+    }
+
+    @Override
+    public Map<String, Object> saveProxyConfiguration(Map<String, Object> payload) {
+        testConfigService.validateProxyConfiguration(payload);
+        return configurationDao.saveProxyConfiguration(payload);
+    }
+
+    @Override
+    public Map<String, Object> getProxyConfiguration() {
+        return configurationDao.getProxyConfiguration();
     }
 }

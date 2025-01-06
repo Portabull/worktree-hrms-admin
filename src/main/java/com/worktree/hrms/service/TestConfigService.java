@@ -8,4 +8,7 @@ public interface TestConfigService {
 
     void validateStorageConfiguration(Map<String, Object> payload);
 
+    void validateAIConfiguration(Map<String, Object> payload);
+
+    void validateProxyConfiguration(Map<String, Object> payload);
 }

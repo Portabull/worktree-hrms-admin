@@ -21,4 +21,9 @@ public interface ConfigurationService {
     Map<String, Object> saveStorageConfiguration(Map<String, Object> payload);
 
     Map<String, Object> getStorageConfiguration();
+
+    Map<String, Object> saveProxyConfiguration(Map<String, Object> payload);
+
+    Map<String, Object> getProxyConfiguration();
+
 }

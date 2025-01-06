@@ -34,6 +34,8 @@ public class CommonConstants {
 
         public static final String STORAGE_CONFIG = "STORAGE_CONFIG";
 
+        public static final String PROXY_CONFIG = "PROXY_CONFIG";
+
     }
 
     public class Features {
@@ -50,6 +52,8 @@ public class CommonConstants {
         public static final String STORAGE_SETTINGS = "Storage Settings";
 
         public static final String VAULT_SETTINGS = "Vault Settings";
+
+        public static final String PROXY_SETTINGS = "Proxy Settings";
     }
 
 }

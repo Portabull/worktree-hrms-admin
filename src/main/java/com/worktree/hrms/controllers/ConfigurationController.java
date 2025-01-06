@@ -64,4 +64,16 @@ public class ConfigurationController {
         return new ResponseEntity<>(configurationService.getStorageConfiguration(), HttpStatus.OK);
     }
 
+    @Feature
+    @PostMapping("proxy/config")
+    public ResponseEntity<Map<String, Object>> saveProxyConfiguration(@RequestBody Map<String, Object> payload) {
+        return new ResponseEntity<>(configurationService.saveProxyConfiguration(payload), HttpStatus.OK);
+    }
+
+    @Feature
+    @GetMapping("proxy/config")
+    public ResponseEntity<Map<String, Object>> getProxyConfiguration() {
+        return new ResponseEntity<>(configurationService.getProxyConfiguration(), HttpStatus.OK);
+    }
+
 }

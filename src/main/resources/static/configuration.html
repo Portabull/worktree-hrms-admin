@@ -546,6 +546,11 @@
         <div class="settings-label">Vault</div>
     </div>
 
+    <!-- Proxy Settings Option -->
+    <div class="settings-option" data-alias="Proxy Settings" onclick="gotoProxySettings()" data-tooltip="Configure your proxy settings">
+        <i class="fas fa-server"></i>
+        <div class="settings-label">Proxy</div>
+    </div>
 
 </div>
 <script src="js/security.js"></script>
@@ -640,6 +645,11 @@ loadProfilePhoto();
 function gotoStorageSettings(){
     startLoader();
   window.location.href = "storage-configuration";
+}
+
+function gotoProxySettings() {
+    startLoader();
+  window.location.href = "proxy-configuration";
 }
 
 function gotoVaultSettings(){

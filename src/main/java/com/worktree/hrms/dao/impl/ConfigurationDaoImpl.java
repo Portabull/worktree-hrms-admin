@@ -167,6 +167,54 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
         }
     }
 
+    @Override
+    public Map<String, Object> saveProxyConfiguration(Map<String, Object> payload) {
+        try {
+            ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class,
+                    SERVER_CONFIG_NAME, CommonConstants.ServerConfig.PROXY_CONFIG);
+            if (serverConfig == null) {
+                serverConfig = new ServerConfigEntity();
+            }
+            serverConfig.setServerConfigName(CommonConstants.ServerConfig.PROXY_CONFIG);
+            serverConfig.setServerConfiguration(objectMapper.writeValueAsString(payload));
+            hibernateUtils.saveOrUpdateEntity(serverConfig);
+        } catch (Exception e) {
+            throw new BadRequestException(CommonConstants.INTERNAL_SERVER_ERROR);
+        }
+        return CommonConstants.SUCCESS_RESPONSE;
+    }
+
+    @Override
+    public Map<String, Object> getProxyConfiguration() {
+        try {
+            ServerConfigEntity serverConfig = hibernateUtils.findEntityByCriteria(ServerConfigEntity.class,
+                    SERVER_CONFIG_NAME, CommonConstants.ServerConfig.PROXY_CONFIG);
+            if (serverConfig == null) {
+                return getEmptyProxyResponse();
+            } else {
+                return objectMapper.readValue(serverConfig.getServerConfiguration(),
+                        new TypeReference<>() {
+                        });
+            }
+        } catch (Exception e) {
+            return getEmptyProxyResponse();
+        }
+    }
+
+    private Map<String, Object> getEmptyProxyResponse() {
+        Map<String, Object> emptyProxyResponse = new HashMap<>();
+        emptyProxyResponse.put("proxyHttpsHost", "");
+        emptyProxyResponse.put("proxyHttpsPort", "");
+        emptyProxyResponse.put("proxyHttpsUserName", "");
+        emptyProxyResponse.put("proxyHttpsPassword", "");
+        emptyProxyResponse.put("proxyHttpHost", "");
+        emptyProxyResponse.put("proxyHttpPort", "");
+        emptyProxyResponse.put("proxyHttpUserName", "");
+        emptyProxyResponse.put("proxyHttpPassword", "");
+        emptyProxyResponse.put("proxyHttpEnabled", false);
+        return emptyProxyResponse;
+    }
+
     private Map<String, Object> getEmptyStorageResponse() {
         Map<String, Object> emptyMobileResponse = new HashMap<>();
         emptyMobileResponse.put("provider", "aws3");

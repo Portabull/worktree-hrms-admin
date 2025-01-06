@@ -5,6 +5,7 @@ import com.azure.core.http.policy.*;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.blob.models.BlobStorageException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
@@ -12,6 +13,7 @@ import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 import com.worktree.hrms.constants.CommonConstants;
 import com.worktree.hrms.exceptions.BadRequestException;
+import com.worktree.hrms.exceptions.HttpClientException;
 import com.worktree.hrms.service.TestConfigService;
 import com.worktree.hrms.utils.FileUtils;
 import jakarta.mail.MessagingException;
@@ -20,12 +22,17 @@ import jakarta.mail.internet.MimeMessage;
 import org.eclipse.angus.mail.util.MailConnectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -39,14 +46,18 @@ import java.net.UnknownHostException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 @Service
 public class TestConfigServiceImpl implements TestConfigService {
 
     private final Logger logger = LoggerFactory.getLogger(TestConfigServiceImpl.class);
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public void validateEmailConfiguration(Map<String, Object> payload) {
         try {
@@ -148,6 +159,90 @@ public class TestConfigServiceImpl implements TestConfigService {
         }
     }
 
+    @Override
+    public void validateAIConfiguration(Map<String, Object> payload) {
+        String provider = payload.get("provider").toString().toLowerCase();
+        switch (provider) {
+            case "openai":
+                validateOpenAI(payload);
+                break;
+            case "azureai":
+                validateAzureOpenAI(payload);
+                break;
+            default:
+                throw new BadRequestException("Invalid Provider");
+        }
+
+    }
+
+    @Override
+    public void validateProxyConfiguration(Map<String, Object> payload) {
+        try {
+            String proxyHttpsHost = payload.get("proxyHttpsHost").toString();
+            String proxyHttpsPort = payload.get("proxyHttpsPort").toString();
+
+            if (!isHostReachable(proxyHttpsHost, Integer.valueOf(proxyHttpsPort), 5000)) {
+                throw new BadRequestException("Unable to connect to https host " + proxyHttpsHost + " and port " + proxyHttpsPort
+                        + ".Please check the proxy connectivity and try again");
+            }
+
+            String proxyHttpHost = payload.get("proxyHttpHost").toString();
+            String proxyHttpPort = payload.get("proxyHttpPort").toString();
+
+            if (!isHostReachable(proxyHttpHost, Integer.valueOf(proxyHttpPort), 5000)) {
+                throw new BadRequestException("Unable to connect to http host " + proxyHttpHost + " and port " + proxyHttpPort
+                        + ".Please check the proxy connectivity and try again");
+            }
+        } catch (NumberFormatException e) {
+            throw new BadRequestException("Port number must and should be in number.");
+        }
+    }
+
+    private void validateAzureOpenAI(Map<String, Object> payload) {
+    }
+
+    private void validateOpenAI(Map<String, Object> payload) {
+        try {
+            String key = payload.get("key").toString();
+            String model = payload.get("model").toString();
+            String version = payload.get("version").toString();
+
+            // Prepare the request body
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("model", model);
+
+            // Add the 'messages' parameter
+            List<Map<String, String>> messages = new ArrayList<>();
+            messages.add(Map.of("role", "user", "content", "test"));
+            requestBody.put("messages", messages);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(key);
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            // Send the POST request
+            String response = restTemplate.postForObject(
+                    "https://api.openai.com/v1/chat/completions",
+                    new HttpEntity<>(requestBody, headers),
+                    String.class
+            );
+
+            // Parse the response
+            Map<String, Object> responseMap = objectMapper.readValue(response, Map.class);
+
+            // Extract the "choices" field and the first choice's "message"
+            var choices = (List<Map<String, Object>>) responseMap.get("choices");
+            var message = (Map<String, String>) choices.get(0).get("message");
+            logger.info("Response from OpenAI: {}", message.get("content"));
+        } catch (HttpClientException e) {
+            throw new BadRequestException(CommonConstants.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            logger.error("Exception Occurred :: ", e);
+            throw new BadRequestException(CommonConstants.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
     private void validateADLS(Map<String, Object> payload) {
         String adlsAccountName = payload.get("adlsAccountName").toString();
         String adlsContainerName = payload.get("adlsContainerName").toString();
@@ -159,7 +254,7 @@ public class TestConfigServiceImpl implements TestConfigService {
         String endpoint = "https://" + host;
 
         // Step 1: Validate the account name using DNS
-        if (!isHostReachable(host, 2000)) {
+        if (!isHostReachable(host, 443, 2000)) {
             throw new BadRequestException("Invalid account name please check and try after sometime.");
         }
 
@@ -265,9 +360,9 @@ public class TestConfigServiceImpl implements TestConfigService {
     }
 
 
-    private boolean isHostReachable(String host, int timeoutMs) {
+    private boolean isHostReachable(String host, int port, int timeoutMs) {
         try (Socket socket = new Socket()) {
-            socket.connect(new InetSocketAddress(host, 443), timeoutMs); // Check HTTPS port
+            socket.connect(new InetSocketAddress(host, port), timeoutMs); // Check HTTPS port
             return true;
         } catch (Exception e) {
             return false;
