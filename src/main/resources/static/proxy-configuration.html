@@ -423,7 +423,7 @@
 
         function fetchProxyConfig() {
         startLoader();
-             dynamicXhrApi('GET',BASE_URL + 'api/proxy/config' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken(),'featureType':'Proxy Settings' },undefined, fetchFormData);
+             dynamicXhrApi('GET',BASE_URL + 'api/proxy/config' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined, fetchFormData);
         }
 
          function fetchFormData(xhr,decryptedResponseObj) {
@@ -474,7 +474,7 @@
                 if(document.getElementById('useSameAsHttp').checked){
                     populateHttpValsToHttps();
                 }
-             dynamicXhrApi('POST',BASE_URL + 'api/proxy/config' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken(),'featureType':'Proxy Settings' },formData, afterSave);
+             dynamicXhrApi('POST',BASE_URL + 'api/proxy/config' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken()},formData, afterSave);
 
             } catch (error) {
                 console.error('Error saving form:', error);

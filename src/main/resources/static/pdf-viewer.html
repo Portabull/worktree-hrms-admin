@@ -214,8 +214,7 @@ startLoader();
                 method: 'POST', // Use POST if you need a request body
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': getCurrentToken(),
-                    'featureType':'Payslip Settings'
+                    'Authorization': getCurrentToken()
                 },
                 body: window.localStorage.getItem('position')
             });

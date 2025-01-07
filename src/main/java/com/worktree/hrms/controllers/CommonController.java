@@ -1,6 +1,7 @@
 package com.worktree.hrms.controllers;
 
 import com.worktree.hrms.annotations.Feature;
+import com.worktree.hrms.constants.CommonConstants;
 import com.worktree.hrms.service.CommonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,13 +17,13 @@ public class CommonController {
     @Autowired
     private CommonService commonService;
 
-    @Feature
+    @Feature(feature = CommonConstants.Features.COUPON_SETTINGS)
     @GetMapping("coupons")
     public ResponseEntity<Map<String, Object>> getCoupons() {
         return new ResponseEntity<>(commonService.getCoupons(), HttpStatus.OK);
     }
 
-    @Feature
+    @Feature(feature = CommonConstants.Features.COUPON_SETTINGS)
     @PostMapping("coupon")
     public ResponseEntity<Map<String, Object>> saveCoupon(@RequestBody Map<String, Object> payload) {
         return new ResponseEntity<>(commonService.saveCoupon(payload), HttpStatus.OK);

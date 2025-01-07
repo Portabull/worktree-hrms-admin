@@ -361,7 +361,7 @@ function fetchConfig() {
     dynamicXhrApi(
         'GET',
         BASE_URL + 'api/mobile/config',
-        { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': getCurrentToken() ,'featureType':'Mobile Settings'},
+        { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': getCurrentToken()},
         undefined,
         populateMobileDetails
     );
@@ -407,7 +407,7 @@ document.getElementById('mobileProviderForm').addEventListener('submit', (e) => 
     dynamicXhrApi(
         'POST',
         BASE_URL + 'api/mobile/config',
-        { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': getCurrentToken() ,'featureType':'Mobile Settings'},
+        { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': getCurrentToken()},
         formData,
         handleSaveResponse
     );

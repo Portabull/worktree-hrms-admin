@@ -469,7 +469,7 @@ function fetchConfig() {
     dynamicXhrApi(
         'GET',
         BASE_URL + 'api/storage/config',
-        { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': getCurrentToken() ,'featureType':'Storage Settings'},
+        { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': getCurrentToken()},
         undefined,
         populateStorageDetails
     );
@@ -535,7 +535,7 @@ document.getElementById('storageProviderForm').addEventListener('submit', (e) =>
     dynamicXhrApi(
         'POST',
         BASE_URL + 'api/storage/config',
-        { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': getCurrentToken() ,'featureType':'Storage Settings'},
+        { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': getCurrentToken()},
         formData,
         handleSaveResponse
     );

@@ -704,7 +704,7 @@ var isPopupOpened = false;
           const formData = gatherFormData();
            try {
              startLoader();
-             dynamicXhrApi('POST',BASE_URL + 'api/validate/keystore' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken(),'featureType':'Keystore Settings' }, formData, afterValidateKeyStore);
+             dynamicXhrApi('POST',BASE_URL + 'api/validate/keystore' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken()}, formData, afterValidateKeyStore);
             } catch (error) {
                 console.error('Error saving form:', error);
                 alert('Failed to save form data');
@@ -726,7 +726,7 @@ var isPopupOpened = false;
           const formData = gatherFormData();
             try {
              startLoader();
-             dynamicXhrApi('POST',BASE_URL + 'api/generate/keystore' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken(),'featureType':'Keystore Settings' }, formData, afterGenerate);
+             dynamicXhrApi('POST',BASE_URL + 'api/generate/keystore' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken()}, formData, afterGenerate);
             } catch (error) {
                 console.error('Error saving form:', error);
                 alert('Failed to save form data');
@@ -952,7 +952,7 @@ function linkCert(certName, button){
 
              try {
              startLoader();
-             dynamicXhrApi('POST',BASE_URL + 'api/link/generated-keystore' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken(),'featureType':'Keystore Settings' }, formData, afterLink);
+             dynamicXhrApi('POST',BASE_URL + 'api/link/generated-keystore' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken()}, formData, afterLink);
             } catch (error) {
                 console.error('Error saving form:', error);
                 alert('Failed to save form data');

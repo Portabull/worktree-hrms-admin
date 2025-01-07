@@ -660,7 +660,7 @@ function createNewUser() {
   };
 
 startLoader();
- dynamicXhrApi('POST', BASE_URL + 'api/coupon', { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': getCurrentToken(),'featureType':'Coupon Settings' }, newCoupon, function afterSaveOP(xhr,decryptedResponse){
+ dynamicXhrApi('POST', BASE_URL + 'api/coupon', { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': getCurrentToken()}, newCoupon, function afterSaveOP(xhr,decryptedResponse){
 
 
       if(xhr.status==400){
@@ -697,7 +697,7 @@ function filterUsers() {
 function init(){
 loadProfilePhoto();
     startLoader();
-        dynamicXhrApi('GET',BASE_URL + 'api/coupons',{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken(),'featureType':'Coupon Settings' }
+        dynamicXhrApi('GET',BASE_URL + 'api/coupons',{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken()}
         ,undefined, function loadInfo(xhr,decryptedResponse){
 
         if(xhr.status == 403){

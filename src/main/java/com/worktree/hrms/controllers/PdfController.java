@@ -1,6 +1,7 @@
 package com.worktree.hrms.controllers;
 
 import com.worktree.hrms.annotations.Feature;
+import com.worktree.hrms.constants.CommonConstants;
 import com.worktree.hrms.exceptions.BadRequestException;
 import org.apache.pdfbox.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -115,7 +116,7 @@ public class PdfController {
 
     Logger logger = LoggerFactory.getLogger(PdfController.class);
 
-    @Feature
+    @Feature(feature = CommonConstants.Features.PAYSLIP_SETTINGS)
     @PostMapping("/generate")
     public ResponseEntity<InputStreamResource> generate(@RequestBody Map<String, Object> payload) {
         validatePayload(payload);

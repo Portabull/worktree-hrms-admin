@@ -24,7 +24,7 @@ public class KeyStoreController {
 
     private final static Logger logger = LoggerFactory.getLogger(KeyStoreController.class);
 
-    @Feature
+    @Feature(feature = CommonConstants.Features.KEYSTORE_SETTINGS)
     @PostMapping("/generate/keystore")
     public ResponseEntity<?> generateKeystore(@RequestBody Map<String, Object> request) {
 
@@ -105,7 +105,7 @@ public class KeyStoreController {
         }
     }
 
-    @Feature
+    @Feature(feature = CommonConstants.Features.KEYSTORE_SETTINGS)
     @PostMapping("/validate/keystore")
     public ResponseEntity<?> validateKeystore(@RequestBody Map<String, Object> request) {
 
@@ -174,7 +174,7 @@ public class KeyStoreController {
     }
 
 
-    @Feature
+    @Feature(feature = CommonConstants.Features.KEYSTORE_SETTINGS)
     @PostMapping("/link/generated-keystore")
     public ResponseEntity<?> generateKeyStoreLink(@RequestBody Map<String, Object> request) {
 

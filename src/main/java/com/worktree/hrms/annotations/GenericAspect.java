@@ -30,7 +30,8 @@ public class GenericAspect {
 
     @Around("@annotation(Feature)")
     public Object validateFeature(ProceedingJoinPoint joinPoint) throws Throwable {
-        commonDao.userHasFeature(RequestHelper.getHeader("featureType"));
+        Feature feature = ((MethodSignature) joinPoint.getSignature()).getMethod().getAnnotation(Feature.class);
+        commonDao.userHasFeature(feature.feature());
         return joinPoint.proceed();
     }
 

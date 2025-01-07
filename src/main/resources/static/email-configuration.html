@@ -392,7 +392,7 @@
 
         function fetchEmailConfig() {
         startLoader();
-             dynamicXhrApi('GET',BASE_URL + 'api/email/config' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken(),'featureType':'Email Settings' },undefined, fetchFormData);
+             dynamicXhrApi('GET',BASE_URL + 'api/email/config' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken()},undefined, fetchFormData);
         }
 
          function fetchFormData(xhr,decryptedResponseObj) {
@@ -433,7 +433,7 @@
             const formData = gatherFormData();
             try {
 startLoader();
-             dynamicXhrApi('POST',BASE_URL + 'api/email/config' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken(),'featureType':'Email Settings' },formData, afterSave);
+             dynamicXhrApi('POST',BASE_URL + 'api/email/config' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken()},formData, afterSave);
 
             } catch (error) {
                 console.error('Error saving form:', error);
