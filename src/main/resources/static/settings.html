@@ -881,7 +881,7 @@
         <div class="tab active" onclick="openTab(event, 'profile')">Profile</div>
         <div class="tab" onclick="openTab(event, 'security')">Security</div>
         <div class="tab" onclick="openTab(event, 'ui-settings')">Settings</div>
-        <div class="tab" id="accounts-tab" style="display: none;" onclick="openTab(event, 'accounts')">Accounts</div>
+        <div class="tab" id="accounts-tab" style="display: none;" onclick="openTab(event, 'accounts')">Other Settings</div>
     </div>
 
     <!-- Tab Content -->
@@ -972,7 +972,8 @@
 
     <!-- Accounts Tab Content -->
     <div id="accounts" class="tab-content">
-        <button class="edit-btn"onclick="redirectToAddViewUsers()">Add/View Accounts</button>
+
+        <div style="display: flex; gap: 20px;">     <!-- Accounts Button -->     <div style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 180px; height: 60px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; color: white; background: linear-gradient(90deg, rgb(0, 123, 255), rgb(0, 86, 179)); box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 8px; transition: transform 0.2s, box-shadow 0.2s; transform: scale(1);" onclick="redirectToAddViewUsers()" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0px 6px 12px rgba(0, 0, 0, 0.3)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0px 4px 8px rgba(0, 0, 0, 0.2)';">       <i class="fas fa-user-circle" style="font-size: 22px;"></i>       <span>Accounts</span>     </div>      <!-- Help Documentation Button -->     <div style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 180px; height: 60px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; color: white; background: linear-gradient(90deg, rgb(40, 167, 69), rgb(30, 126, 52)); box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 8px; transition: transform 0.2s, box-shadow 0.2s; transform: scale(1);" onclick="redirectToHelpDocs()" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0px 6px 12px rgba(0, 0, 0, 0.3)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0px 4px 8px rgba(0, 0, 0, 0.2)';">       <i class="fas fa-question-circle" style="font-size: 22px;"></i>       <span>Help</span>     </div>   </div>
     </div>
 </div>
 
@@ -1331,7 +1332,9 @@ selectedColor = Object.keys(colorOptions).find(key => colorOptions[key] === colo
  }
 }
 }
-
+function redirectToHelpDocs(){
+      window.location.href = "config-help";
+}
 
 </script>
 

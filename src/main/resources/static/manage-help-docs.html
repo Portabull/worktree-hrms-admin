@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/common-style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Help Page</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8fafc;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input, textarea {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            width: 100%;
+            transition: border-color 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        input:focus, textarea:focus {
+            border-color: #4caf50;
+        }
+
+        .sections-container {
+            margin-top: 20px;
+        }
+
+        .section-card {
+            margin-top: 15px;
+            padding: 20px;
+            border: 1px solid #e6e6e6;
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .section-header h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+
+        .collapse-icon {
+            font-size: 18px;
+            color: #4caf50;
+        }
+
+        .section-content {
+            display: none;
+            padding: 15px;
+        }
+
+        .steps-container {
+            margin-top: 15px;
+        }
+
+        .step-input {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .step-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .step-input button {
+            margin-left: 10px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .step-input button:hover {
+            background-color: #d32f2f;
+        }
+
+        button {
+            font-size: 14px;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        .add-step-btn {
+            background-color: #4caf50;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .add-step-btn:hover {
+            background-color: #388e3c;
+        }
+
+        .delete-section-btn {
+            background-color: #f44336;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .delete-section-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        .add-section-btn, .generate-json-btn {
+            background-color: #4caf50;
+            color: white;
+            margin-top: 20px;
+        }
+
+        .add-section-btn:hover {
+            background-color: #388e3c;
+        }
+
+        .generate-json-btn {
+            background-color: #2196f3;
+        }
+
+        .generate-json-btn:hover {
+            background-color: #1976d2;
+        }
+
+        .json-output {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #333;
+            white-space: pre-wrap;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            input, textarea, button {
+                font-size: 12px;
+            }
+        }
+
+.save-json-btn {
+    background-color: #673ab7;
+    color: white;
+    margin-top: 20px;
+}
+
+.save-json-btn:hover {
+    background-color: #512da8;
+}
+
+
+   .back-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background-color: #5a6268;
+        }
+
+
+   /* loader css starts */
+
+
+ /* Rotate animation for the loader */
+    .loading {
+      animation: rotate 1s linear infinite;
+    }
+
+    /* Keyframes for the rotating animation */
+    @keyframes rotate {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+
+
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    visibility: hidden; /* Hide loader by default */
+}
+
+.loader {
+    border: 8px solid #f3f3f3; /* Light gray */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* loader css ends */
+
+
+
+    </style>
+</head>
+<body>
+
+
+<!-- Error Popup Modal -->
+<div id="uniqueErrorModal9875">
+    <div class="unique-modal-content9875" id="modalContent9875">
+        <h2 id="errorHeader9875">Error Occurred</h2>
+        <p id="errorFooter9875" class="message-container9875">An unexpected error has occurred. Please try again later.</p>
+        <span class="read-more9875" id="readMore9875">Read more</span>
+        <button id="uniqueOkayBtn9875">Okay</button>
+    </div>
+</div>
+
+
+
+
+<div id="loader" class="loader-overlay">
+    <div class="loader"></div>
+</div>
+
+
+<div class="container">
+    <button class="back-btn" onclick="goBack()">Back</button>
+    <h1>Create Help Page</h1>
+    <div class="input-group">
+        <label for="sideBarHeader">Sidebar Header</label>
+        <input type="text" id="sideBarHeader" placeholder="Enter sidebar header">
+    </div>
+    <div class="input-group">
+        <label for="mainBarHeader">Main Bar Header(Unique Identifier)</label>
+        <input type="text" id="mainBarHeader" placeholder="Enter main bar header">
+    </div>
+
+    <div class="sections-container" id="sectionsContainer">
+        <!-- Dynamic Sections Will Be Added Here -->
+    </div>
+
+    <div class="button-container">
+        <button class="add-section-btn" onclick="addSection()">➕ Add Section</button>
+        <button class="generate-json-btn" onclick="generateJSON()">📄 Preview</button>
+        <button class="generate-json-btn" onclick="exportJSON()">📤 Export JSON</button>
+        <button class="generate-json-btn" onclick="importJSON()">📥 Import JSON</button>
+        <button class="save-json-btn" onclick="saveJSON()">💾 Save</button>
+    </div>
+
+    <input type="file" id="jsonFileInput" accept=".json" hidden onchange="handleFileImport(event)">
+    <div class="json-output" id="jsonOutput" hidden></div>
+</div>
+
+
+<script src="js/security.js"></script>
+<script src="js/worktree.js"></script>
+<script>
+    let sectionCount = 0;
+
+    function addSection() {
+        sectionCount++;
+        const sectionTemplate = `
+            <div class="section-card" id="section-${sectionCount}">
+                <div class="section-header" onclick="toggleSection(${sectionCount})">
+                    <h3 id="section-header-title-${sectionCount}">Section ${sectionCount}</h3>
+                    <span class="collapse-icon">+</span>
+                </div>
+                <div class="section-content" id="section-content-${sectionCount}">
+                    <label>Section Title</label>
+                    <input type="text" class="section-title" placeholder="Enter section title"
+                        oninput="updateSectionTitle(${sectionCount}, this.value)">
+
+                    <label>Section Description</label>
+                    <textarea class="section-description" rows="3" placeholder="Enter section description"></textarea>
+
+                    <div class="steps-container" id="steps-container-${sectionCount}">
+                        <!-- Steps will be added here -->
+                    </div>
+
+                    <button class="add-step-btn" onclick="addStep(${sectionCount})">➕ Add Step</button>
+                    <button class="delete-section-btn" onclick="deleteSection(${sectionCount})">🗑️ Delete Section</button>
+                </div>
+            </div>
+        `;
+        document.getElementById('sectionsContainer').insertAdjacentHTML('beforeend', sectionTemplate);
+    }
+
+    function updateSectionTitle(sectionId, title) {
+        const headerTitle = document.getElementById(`section-header-title-${sectionId}`);
+        if (title.trim() === '') {
+            headerTitle.textContent = `Section ${sectionId}`;
+        } else {
+            headerTitle.textContent = title;
+        }
+    }
+
+    function toggleSection(sectionId) {
+        const content = document.getElementById(`section-content-${sectionId}`);
+        const icon = document.querySelector(`#section-${sectionId} .collapse-icon`);
+        if (content.style.display === 'block') {
+            content.style.display = 'none';
+            icon.textContent = '+';
+        } else {
+            content.style.display = 'block';
+            icon.textContent = '-';
+        }
+    }
+
+    function addStep(sectionId) {
+        const stepsContainer = document.getElementById(`steps-container-${sectionId}`);
+        const stepTemplate = `
+            <div class="step-input">
+                <input type="text" class="step" placeholder="Enter step">
+                <button onclick="removeStep(this)">Remove</button>
+            </div>
+        `;
+        stepsContainer.insertAdjacentHTML('beforeend', stepTemplate);
+    }
+
+    function removeStep(button) {
+        button.parentElement.remove();
+    }
+
+    function deleteSection(sectionId) {
+        const section = document.getElementById(`section-${sectionId}`);
+        section.remove();
+    }
+
+    function generateJSON() {
+        const sideBarHeader = document.getElementById('sideBarHeader').value;
+        const mainBarHeader = document.getElementById('mainBarHeader').value;
+
+        const sections = Array.from(document.querySelectorAll('.section-card')).map(section => {
+            const sectionId = section.id.split('-')[1];
+            const title = section.querySelector('.section-title').value;
+            const description = section.querySelector('.section-description').value;
+            const steps = Array.from(section.querySelectorAll('.step'))
+                .map(input => input.value)
+                .filter(value => value.trim() !== '');
+
+            return { id: `section${sectionId}`, title, description, steps };
+        });
+
+        const jsonData = {
+            sideBarHeader,
+            mainBarHeader,
+            mainArea: sections
+        };
+
+
+window.localStorage.setItem('previewJsonResponse', JSON.stringify(jsonData));
+    window.open("help?t=preview" , "_blank");
+           }
+
+
+function goBack() {
+          window.location.href = "config-help";
+}
+
+
+function getCurrentJSONData(){
+
+ const sideBarHeader = document.getElementById('sideBarHeader').value;
+        const mainBarHeader = document.getElementById('mainBarHeader').value;
+
+        const sections = Array.from(document.querySelectorAll('.section-card')).map(section => {
+            const sectionId = section.id.split('-')[1];
+            const title = section.querySelector('.section-title').value;
+            const description = section.querySelector('.section-description').value;
+            const steps = Array.from(section.querySelectorAll('.step'))
+                .map(input => input.value)
+                .filter(value => value.trim() !== '');
+
+            return { id: `section${sectionId}`, title, description, steps };
+        });
+
+        const jsonData = {
+            sideBarHeader,
+            mainBarHeader,
+            mainArea: sections
+        };
+
+        return jsonData;
+        }
+
+  function exportJSON() {
+
+     var jsonData =  getCurrentJSONData();
+
+        const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: "application/json" });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'help-page.json';
+        link.click();
+    }
+
+    function importJSON() {
+        const fileInput = document.getElementById('jsonFileInput');
+        fileInput.click();
+    }
+
+    function handleFileImport(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const jsonData = JSON.parse(e.target.result);
+                    populateFromJSON(jsonData);
+                } catch (error) {
+                    alert("Invalid JSON file.");
+                }
+            };
+            reader.readAsText(file);
+        }
+    }
+
+    function populateFromJSON(jsonData) {
+        if (!jsonData || typeof jsonData !== 'object') {
+            alert("Invalid JSON data.");
+            return;
+        }
+
+        document.getElementById('sideBarHeader').value = jsonData.sideBarHeader || '';
+        document.getElementById('mainBarHeader').value = jsonData.mainBarHeader || '';
+
+        const sectionsContainer = document.getElementById('sectionsContainer');
+        sectionsContainer.innerHTML = ''; // Clear existing sections
+
+        (jsonData.mainArea || []).forEach((section, index) => {
+            addSection(); // Add a new section
+            const sectionElement = document.getElementById(`section-${index + 1}`);
+
+            if (sectionElement) {
+                sectionElement.querySelector('.section-title').value = section.title || '';
+                sectionElement.querySelector('.section-description').value = section.description || '';
+
+updateSectionTitle(index + 1,section.title);
+
+                const stepsContainer = sectionElement.querySelector(`#steps-container-${index + 1}`);
+                section.steps.forEach(step => {
+                    const stepTemplate = `
+                        <div class="step-input">
+                            <input type="text" class="step" value="${step}" placeholder="Enter step">
+                            <button onclick="removeStep(this)">Remove</button>
+                        </div>
+                    `;
+                    stepsContainer.insertAdjacentHTML('beforeend', stepTemplate);
+                });
+            }
+        });
+    }
+
+
+    init();
+
+    function init(){
+
+    var hid = new URL(window.location.href).searchParams.get("hid");
+    if(hid!=undefined){
+       startLoader();
+          dynamicXhrApi('GET',BASE_URL + 'api/help/config-docs?hid=' + hid  ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined, afterLoad);
+    }
+    }
+
+    function saveJSON(){
+    startLoader();
+ var jsonData =  getCurrentJSONData();
+
+    var hid = new URL(window.location.href).searchParams.get("hid");
+
+        var payload;
+
+        if(hid == undefined){
+        payload = {
+            title: jsonData.mainBarHeader,
+            configuration:  JSON.stringify(jsonData)
+        };
+        }else{
+        payload  = {
+            title: jsonData.mainBarHeader,
+            id: hid,
+            configuration:  JSON.stringify(jsonData)
+        };
+        }
+
+            dynamicXhrApi('POST',BASE_URL + 'api/help/config' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken()},payload, afterSave);
+
+
+    }
+
+    function afterSave(xhr,decryptedResponse){
+
+        stopLoader();
+
+        if(xhr.status!=200){
+               showErrorMessage("OK",decryptedResponse.message,false);
+            return;
+        }
+
+           var hid = new URL(window.location.href).searchParams.get("hid");
+         if(hid == undefined){
+const currentUrl = new URL(window.location.href);
+
+// Set the new value for the 'hid' parameter
+currentUrl.searchParams.set("hid", decryptedResponse.id);
+
+// Update the browser URL without reloading
+window.history.pushState({}, '', currentUrl);
+
+
+
+        showErrorMessage("OK",'Page Created Successfully',false);
+        }
+        else{
+        showErrorMessage("OK",'Page Updated Successfully',false);
+        }
+    }
+
+    function afterLoad(xhr,decryptedResponse){
+    stopLoader();
+         populateFromJSON(decryptedResponse);
+    }
+
+
+
+function startLoader() {
+    document.getElementById('loader').style.visibility = 'visible';
+    document.body.style.pointerEvents = 'none'; // Disable interaction with the screen
+}
+
+window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the cache
+        if (event.persisted) {
+            stopLoader();
+        }
+    });
+
+function stopLoader() {
+    document.getElementById('loader').style.visibility = 'hidden';
+    document.body.style.pointerEvents = 'auto'; // Re-enable interaction with the screen
+}
+</script>
+</body>
+</html>

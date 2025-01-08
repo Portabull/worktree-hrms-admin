@@ -349,6 +349,17 @@
 
 const typeValue = new URL(window.location.href).searchParams.get("t");
 
+            if(typeValue=='preview'){
+                  stopLoader();
+                  var decryptedResponseObj = JSON.parse(window.localStorage.getItem('previewJsonResponse'));
+                    document.getElementById('sidebarHeader').textContent = decryptedResponseObj.sideBarHeader;
+                document.getElementById('contentHeader').textContent = decryptedResponseObj.mainBarHeader;
+         populateSidebar(decryptedResponseObj.mainArea);
+                populateSections(decryptedResponseObj.mainArea);
+                return;
+            }
+
+
             dynamicXhrApi('GET', BASE_URL + 'api/help-docs?type=' + typeValue, { 'Content-Type': 'application/json','If-None-Match':'etag-value','If-Modified-Since':getISTTimestamp()}, undefined, afterFetchData);
 
         }

@@ -24,6 +24,12 @@
     -webkit-user-select: none; /* For Safari */
     -moz-user-select: none; /* For Firefox */
     -ms-user-select: none; /* For IE and Edge */
+     margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
         /* Navbar styling */
@@ -381,6 +387,96 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+ .container {
+            width: 90%;
+            max-width: 600px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            border: 2px solid #333;
+            background: white;
+            color: #333;
+            font-weight: bold;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .button:hover {
+            background: #333;
+            color: white;
+        }
+
+        .issues-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .issue-card {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: left;
+            position: relative;
+            transition: all 0.3s ease;
+               cursor: pointer;
+        }
+
+        .issue-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .issue-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin: 0 0 10px 0;
+        }
+
+        .issue-meta {
+            font-size: 0.9rem;
+            color: #666;
+            margin: 5px 0;
+        }
+
+        .issue-meta span {
+            font-weight: 700;
+            color: #333;
+        }
+
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -455,107 +551,46 @@
         <i class="fas fa-file-alt"></i>
         <span>Audit Logs</span>
     </div>
-    <div id="configurationButton" class="sidebar-item" onclick="gotoconfiguration()"  style="display: none; pointer-events: none; opacity: 0.5;"aria-disabled="true">
+    <div id="configurationButton" class="sidebar-item" onclick="gotoconfiguration()"  style="display: none;">
         <i class="fas fa-cog"></i>
         <span>Configuration</span>
     </div>
 </div>
 
-<!-- Settings Options -->
-<div class="settings-container" id="settingsContainer">
-    <div class="help-icon" id="helpIcon" onclick="goToHelp('U3RvcmFnZSBDb25maWd1cmF0aW9uIEd1aWRl')">
-        <i class="fas fa-question"></i>
-    </div>
-
-    <div class="settings-option" data-alias="Email Settings" onclick="gotoemailsettings()" data-tooltip="Manage your email settings">
-        <i class="fas fa-envelope"></i>
-        <div class="settings-label">Email</div>
-    </div>
-    <div class="settings-option active" data-alias="Activated Settings" data-tooltip="Currently active setting">
-        <i class="fas fa-check-circle"></i>
-        <div class="settings-label">Activated</div>
-    </div>
-    <div class="settings-option" data-alias="Mobile Settings" onclick="gotoMobilesettings()"  data-tooltip="Manage your mobile settings">
-        <i class="fas fa-mobile-alt"></i>
-        <div class="settings-label">Mobile</div>
-    </div>
-    <div class="settings-option" data-alias="AI Settings" onclick="gotoaisettings()" data-tooltip="Configure AI settings">
-        <i class="fas fa-robot"></i>
-        <div class="settings-label">AI</div>
-    </div>
-    <div class="settings-option" data-alias="Notification Settings" data-tooltip="Notification settings">
-        <i class="fas fa-bell"></i>
-        <div class="settings-label">Notifications</div>
-    </div>
-    <div class="settings-option" data-alias="Privacy Settings" data-tooltip="Privacy controls">
-        <i class="fas fa-user-shield"></i>
-        <div class="settings-label">Privacy</div>
-    </div>
-    <div class="settings-option" data-alias="Security Settings" data-tooltip="Security settings">
-        <i class="fas fa-shield-alt"></i>
-        <div class="settings-label">Security</div>
-    </div>
-    <div class="settings-option" data-alias="Language Settings" data-tooltip="Language preferences">
-        <i class="fas fa-globe"></i>
-        <div class="settings-label">Language</div>
-    </div>
-    <div class="settings-option" data-alias="System Settings" data-tooltip="System configurations">
-        <i class="fas fa-cogs"></i>
-        <div class="settings-label">System</div>
-    </div>
-    <div class="settings-option" data-alias="Network Settings" data-tooltip="Network settings">
-        <i class="fas fa-wifi"></i>
-        <div class="settings-label">Network</div>
-    </div>
-
-    <!-- Coupon option -->
-    <div class="settings-option" data-alias="Coupon Settings" onclick="gotoCouponSettings()" data-tooltip="Manage coupons">
-        <i class="fas fa-tags"></i>
-        <div class="settings-label">Coupons</div>
-    </div>
-
-    <!-- Payslip Generation Option -->
-    <div class="settings-option" data-alias="Payslip Settings" onclick="gotoPayslipSettings()" data-tooltip="Manage Payslips">
-        <!-- SVG Payslip Icon -->
-        <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4CAF50">
-            <path d="M19 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 18H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V8h10v4z"/>
-        </svg>
-        <div class="settings-label">Payslip</div>
-    </div>
-
-    <div class="settings-option" data-alias="Keystore Settings" onclick="gotoKeystoreSettings()" data-tooltip="Manage Keystore">
-        <!-- Keystore Icon -->
-        <i class="fas fa-key"></i>
-        <div class="settings-label">Keystore</div>
-    </div>
 
 
-
-
-
-
-    <div class="settings-option" data-alias="Storage Settings" onclick="gotoStorageSettings()" data-tooltip="Manage Storage">
-        <i class="fas fa-database"></i>
-        <div class="settings-label">Storage</div>
+<div class="container">
+    <br><br><br><br>
+    <div class="button-container">
+        <button class="button" onclick="resetIssues()">Reset</button>
+        <button class="button" onclick="addIssue()">Add</button>
     </div>
-
-    <!-- Vault Option -->
-    <div class="settings-option" data-alias="Vault Settings" onclick="gotoVaultSettings()" data-tooltip="Manage Vault">
-        <!-- Vault Icon -->
-        <i class="fas fa-vault"></i>
-        <div class="settings-label">Vault</div>
-    </div>
-
-    <!-- Proxy Settings Option -->
-    <div class="settings-option" data-alias="Proxy Settings" onclick="gotoProxySettings()" data-tooltip="Configure your proxy settings">
-        <i class="fas fa-server"></i>
-        <div class="settings-label">Proxy</div>
-    </div>
-
+    <div class="issues-container" id="issues-container"></div>
 </div>
+
+
+
 <script src="js/security.js"></script>
 <script src="js/worktree.js"></script>
 <script>
+
+function addIssue(){
+    startLoader();
+    window.location.href = "manage-help-docs";
+}
+
+function resetIssues(){
+    startLoader();
+      dynamicXhrApi('POST',BASE_URL + 'api/help/reset',{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined, afterReset);
+}
+
+
+function afterReset(){
+    stopLoader();
+    alert('Reset Successfully');
+       window.location.href = "config-help.html";
+}
+
     // Sidebar toggle function
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('active');
@@ -577,28 +612,7 @@
         }
     };
 
-    // JavaScript list with aliases for settings options
-    var requiredSettingsAliases =  getCurrentUserFeatures();
 
-    // Function to check settings based on aliases and hide if not present
-    function checkSettings() {
-
-       if(requiredSettingsAliases==undefined || requiredSettingsAliases.length==0){
-             gotohome();
-        }
-
-
-        const container = document.getElementById('settingsContainer');
-        const settingsOptions = container.getElementsByClassName('settings-option');
-
-        Array.from(settingsOptions).forEach(option => {
-            const alias = option.getAttribute('data-alias');
-            option.style.display = requiredSettingsAliases.includes(alias) ? 'flex' : 'none';
-        });
-    }
-
-    // Run the check on page load
-    checkSettings();
 
 
 function startLoader() {
@@ -618,21 +632,6 @@ function stopLoader() {
     document.body.style.pointerEvents = 'auto'; // Re-enable interaction with the screen
 }
 
-function gotoCouponSettings(){
-startLoader();
-  window.location.href = "manage-coupons";
-}
-
-function gotoPayslipSettings(){
-startLoader();
-  window.location.href = "pdf-cords";
-}
-
-function gotoKeystoreSettings(){
-startLoader();
-  window.location.href = "key-store";
-}
-
  window.addEventListener('pageshow', function(event) {
         // Check if the page is loaded from the cache
         if (event.persisted) {
@@ -640,33 +639,114 @@ startLoader();
         }
     });
 loadProfilePhoto();
+   var issues = [
+            {
+                id: 1,
+                title: "Login Troubleshoot Issues",
+                createdAt: "08/01/2025",
+                updatedAt: "02/01/2025",
+                updatedBy: "Sri Harsha Gangavelli"
+            },
+            {
+                id: 2,
+                title: "Configuration Issues",
+                createdAt: "07/01/2025",
+                updatedAt: "01/01/2025",
+                updatedBy: "Admin"
+            },
+            {
+                id: 3,
+                title: "Account Issues",
+                createdAt: "06/01/2025",
+                updatedAt: "30/12/2024",
+                updatedBy: "Support Team"
+            },
+            {
+                id: 4,
+                title: "Coups Issues",
+                createdAt: "05/01/2025",
+                updatedAt: "29/12/2024",
+                updatedBy: "User"
+            },  {
+                id: 4,
+                title: "Coups Issues",
+                createdAt: "05/01/2025",
+                updatedAt: "29/12/2024",
+                updatedBy: "User"
+            },  {
+                id: 4,
+                title: "Coups Issues",
+                createdAt: "05/01/2025",
+                updatedAt: "29/12/2024",
+                updatedBy: "User"
+            }
+        ];
+
+        function populateIssues() {
+            const container = document.getElementById("issues-container");
+            container.innerHTML = "";
+            issues.forEach(issue => {
+                const issueCard = document.createElement("div");
+                issueCard.classList.add("issue-card");
+
+                 // Add the onclick event with the issue.id
+                issueCard.onclick = () => openHelp(issue.id);
+
+                issueCard.innerHTML = `
+                    <div class="issue-title">${issue.title}</div>
+                    <div class="meta-row">
+                        <div class="issue-meta">Created At: <span>${issue.createdAt}</span></div>
+                        <div class="issue-meta">Last Updated Date: <span>${issue.updatedAt}</span></div>
+                    </div>
+                    <div class="issue-meta">Last Updated By: <span>${issue.updatedBy}</span></div>
+                `;
+
+                container.appendChild(issueCard);
+            });
+        }
+
+<!--        function resetIssues() {-->
+<!--            alert("Resetting issues...");-->
+<!--            // Additional reset logic can go here-->
+<!--        }-->
+
+<!--        function addIssue() {-->
+<!--            const newIssue = {-->
+<!--                id: issues.length + 1,-->
+<!--                title: `New Issue ${issues.length + 1}`,-->
+<!--                createdAt: new Date().toLocaleDateString(),-->
+<!--                updatedAt: new Date().toLocaleDateString(),-->
+<!--                updatedBy: "System"-->
+<!--            };-->
+<!--            issues.push(newIssue);-->
+<!--            populateIssues();-->
+<!--        }-->
+
+        // Populate issues on page load
 
 
-function gotoStorageSettings(){
-    startLoader();
-  window.location.href = "storage-configuration";
+
+
+        init();
+
+        function init(){
+        startLoader();
+          dynamicXhrApi('GET',BASE_URL + 'api/help/config' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined, afterFetchHelpConfig);
 }
 
-function gotoProxySettings() {
-    startLoader();
-  window.location.href = "proxy-configuration";
+function afterFetchHelpConfig(xhr,decryptedResponse){
+stopLoader();
+        issues = [];
+        issues = decryptedResponse;
+        populateIssues();
+
+        }
+
+
+function openHelp(id) {
+startLoader();
+    window.location.href = "manage-help-docs?hid=" + id;
 }
-
-function gotoVaultSettings(){
-    startLoader();
-  window.location.href = "vault-configuration";
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    const helpIcon = document.getElementById('helpIcon');
-    if (helpIcon) {
-        helpIcon.style.display = 'flex'; // Ensure it is visible
-        helpIcon.hidden = false;
-    } else {
-        console.error('Help icon element not found in DOM.');
-    }
-});
-
 </script>
 
 </body>

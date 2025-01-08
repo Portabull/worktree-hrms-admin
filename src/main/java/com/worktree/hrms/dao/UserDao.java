@@ -24,4 +24,6 @@ public interface UserDao {
     Map<String, Object> deleteUser(Long userId);
 
     List<String> getFeatures(String userName);
+
+    Long getCurrentLoggedInUserId();
 }

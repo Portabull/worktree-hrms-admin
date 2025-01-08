@@ -326,4 +326,15 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
+    @Override
+    public Long getCurrentLoggedInUserId() {
+        String currentToken = RequestHelper.getAuthorizationToken();
+        UserEntity userEntity;
+        try (Session session = hibernateUtils.getSession()) {
+            userEntity = (UserEntity) session.createQuery("FROM UserEntity WHERE userID = (SELECT userID FROM UserTokenEntity WHERE jwt = :token)")
+                    .setParameter("token", currentToken).uniqueResult();
+            return userEntity.getUserID();
+        }
+    }
+
 }
