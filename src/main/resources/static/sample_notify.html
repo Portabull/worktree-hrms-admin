@@ -3,70 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Background Notification</title>
+    <title>Background Notifications</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
-        }
-
         button {
             padding: 10px 20px;
             font-size: 16px;
-            background-color: #28a745;
             color: white;
+            background-color: #28a745;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
-
         button:hover {
             background-color: #218838;
         }
     </style>
 </head>
 <body>
-    <h1>Background Notifications</h1>
-    <button id="notifyButton">Schedule Notification</button>
-
-    <script>
-        // Register the service worker
+<h1>Background Notifications</h1>
+<button id="notifyButton">Schedule Notification</button>
+<script>
+        // Register the Service Worker
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('js/sw.js').then((registration) => {
-                console.log('Service Worker Registered:', registration);
-            }).catch((error) => {
-                console.error('Service Worker Registration Failed:', error);
-            });
+            console.log('[DEBUG] Service Worker supported in this browser.');
+
+            navigator.serviceWorker.register('js/sw.js', { scope: '/' })
+                .then((registration) => {
+                    console.log('[DEBUG] Service Worker registered successfully:', registration);
+                    console.log('[DEBUG] Service Worker scope:', registration.scope);
+                })
+                .catch((error) => {
+                    console.error('[DEBUG] Service Worker registration failed:', error);
+                });
+        } else {
+            console.error('[DEBUG] Service Workers are not supported in this browser.');
         }
 
         // Request Notification Permission
         function requestNotificationPermission() {
+            console.log('[DEBUG] Requesting notification permission...');
             if (Notification.permission === 'default') {
                 Notification.requestPermission().then((permission) => {
+                    console.log('[DEBUG] Notification permission response:', permission);
                     if (permission === 'granted') {
-                        console.log('Notification permission granted.');
+                        console.log('[DEBUG] Notification permission granted.');
                     } else {
-                        alert('Please enable notifications to use this feature.');
+                        console.log('[DEBUG] Notification permission denied.');
                     }
                 });
+            } else {
+                console.log('[DEBUG] Notification permission already set to:', Notification.permission);
             }
         }
 
-        // Schedule a delayed notification
-        document.getElementById('notifyButton').addEventListener('click', () => {
-            requestNotificationPermission();
-
-            // Send a message to the service worker to schedule the notification
-            if (navigator.serviceWorker.controller) {
-                navigator.serviceWorker.controller.postMessage({
-                    action: 'scheduleNotification',
-                    delay: 5000 // Delay in milliseconds (e.g., 5 seconds)
+        // Trigger a Notification
+        function showNotification() {
+            console.log('[DEBUG] Triggering a notification...');
+            navigator.serviceWorker.ready.then((registration) => {
+                console.log('[DEBUG] Service Worker is ready for notifications.');
+                registration.showNotification('Scheduled Notification', {
+                    body: 'This is a scheduled notification.',
+                    icon: '/icon.png', // Replace with your icon path
+                    badge: '/badge.png' // Replace with your badge path
                 });
+            }).catch((error) => {
+                console.error('[DEBUG] Error while showing notification:', error);
+            });
+        }
+
+        // Add Event Listener for Notification Button
+        document.getElementById('notifyButton').addEventListener('click', () => {
+            console.log('[DEBUG] Notify button clicked.');
+            if (Notification.permission === 'granted') {
+                showNotification();
+            } else if (Notification.permission === 'default') {
+                requestNotificationPermission();
             } else {
-                alert('Service Worker is not active.');
+                console.error('[DEBUG] Notifications are blocked. Enable them in browser settings.');
             }
         });
+
+        // Check if the Service Worker is Controlling the Page
+        if (navigator.serviceWorker.controller) {
+            console.log('[DEBUG] This page is controlled by a Service Worker:', navigator.serviceWorker.controller);
+        } else {
+            console.log('[DEBUG] No Service Worker controlling this page. Reloading...');
+            window.location.reload();
+        }
     </script>
 </body>
 </html>
