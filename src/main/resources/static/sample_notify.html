@@ -83,13 +83,13 @@
             }
         });
 
-        // Check if the Service Worker is Controlling the Page
-        if (navigator.serviceWorker.controller) {
-            console.log('[DEBUG] This page is controlled by a Service Worker:', navigator.serviceWorker.controller);
-        } else {
-            console.log('[DEBUG] No Service Worker controlling this page. Reloading...');
-            window.location.reload();
-        }
+       if (navigator.serviceWorker.controller) {
+    console.log('This page is controlled by a Service Worker.');
+} else {
+    console.log('No Service Worker controlling this page.');
+    console.log('The page may require a manual reload after the Service Worker is activated.');
+}
+
     </script>
 </body>
 </html>
