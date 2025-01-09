@@ -28,7 +28,7 @@
         if ('serviceWorker' in navigator) {
             console.log('[DEBUG] Service Worker supported in this browser.');
 
-            navigator.serviceWorker.register('js/sw.js', { scope: '/' })
+            navigator.serviceWorker.register('js/sw.js', { scope: '/js/' })
                 .then((registration) => {
                     console.log('[DEBUG] Service Worker registered successfully:', registration);
                     console.log('[DEBUG] Service Worker scope:', registration.scope);
