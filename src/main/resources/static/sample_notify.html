@@ -22,6 +22,7 @@
 <body>
 <h1>Background Notifications</h1>
 <button id="notifyButton">Schedule Notification</button>
+<button id="reloadButton">Reload Page</button>
 <script>
         // Register the Service Worker
         if ('serviceWorker' in navigator) {
@@ -31,6 +32,14 @@
                 .then((registration) => {
                     console.log('[DEBUG] Service Worker registered successfully:', registration);
                     console.log('[DEBUG] Service Worker scope:', registration.scope);
+
+                    // Check if the page is controlled by the Service Worker
+                    if (navigator.serviceWorker.controller) {
+                        console.log('[DEBUG] This page is controlled by a Service Worker.');
+                    } else {
+                        console.log('[DEBUG] No Service Worker controlling this page.');
+                        alert('Please reload the page to enable Service Worker functionality.');
+                    }
                 })
                 .catch((error) => {
                     console.error('[DEBUG] Service Worker registration failed:', error);
@@ -83,13 +92,11 @@
             }
         });
 
-       if (navigator.serviceWorker.controller) {
-    console.log('This page is controlled by a Service Worker.');
-} else {
-    console.log('No Service Worker controlling this page.');
-    console.log('The page may require a manual reload after the Service Worker is activated.');
-}
-
+        // Add Event Listener for Reload Button
+        document.getElementById('reloadButton').addEventListener('click', () => {
+            console.log('[DEBUG] Reload button clicked.');
+            window.location.reload();
+        });
     </script>
 </body>
 </html>
