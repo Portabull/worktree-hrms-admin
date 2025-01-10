@@ -1,5 +1,6 @@
 package com.worktree.hrms.handlers;
 
+import com.worktree.hrms.utils.EncryptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.TextMessage;
@@ -29,12 +30,11 @@ public class NotificationWebsocketHandler extends TextWebSocketHandler {
     }
 
     public void sendNotification(String message) {
-
         for (WebSocketSession session : sessions) {
-
             try {
                 log.info("sending to session -->" + session.getId());
-                session.sendMessage(new TextMessage(message));
+                String encryptedBody = EncryptionUtils.encrypt(message);
+                session.sendMessage(new TextMessage(encryptedBody));
             } catch (IOException e) {
                 log.error(e.getMessage());
             }

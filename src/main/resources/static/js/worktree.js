@@ -941,12 +941,13 @@ function connectWebSocket() {
 
     // Event listener for when a message is received from the server
     socket.addEventListener('message', (event) => {
-        console.log('Notification received:', event.data);
+//        console.log('Notification received:', event.data);
 
         // Example: Show error message or handle the notification
 //        showErrorMessage("ALERT", event.data, true);s
 
-        var notificationEvent = JSON.parse(event.data);
+
+        var notificationEvent = JSON.parse(_0x3c2b1a(event.data,sec_key_mech));
 
         showNotification7898789qw(notificationEvent.alert, notificationEvent.message,notificationEvent.type);
 
