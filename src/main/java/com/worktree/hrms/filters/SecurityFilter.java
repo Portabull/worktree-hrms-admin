@@ -113,7 +113,8 @@ public class SecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (request.getRequestURI().startsWith("/api")) {
             int statusCode = HttpServletResponse.SC_UNAUTHORIZED;
-            final String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+            final String token = "/api/ws/notification".equalsIgnoreCase(request.getRequestURI()) ? request.getParameter("token") :
+                    request.getHeader(HttpHeaders.AUTHORIZATION);
 
             if (skipEndPoints.stream().noneMatch(endPoint -> endPoint.equalsIgnoreCase(request.getRequestURI()))) {
                 if (token != null && !token.isEmpty()) {
@@ -152,7 +153,7 @@ public class SecurityFilter extends OncePerRequestFilter {
                 return;
             }
 
-            if (request.getHeader("X-ENCRYPT-ID") == null) {
+            if (!"/api/ws/notification".equalsIgnoreCase(request.getRequestURI()) && request.getHeader("X-ENCRYPT-ID") == null) {
 
                 if (request.getHeader("X-TOKEN_PACK_ID") == null) {
                     populateUnAuthorized(response);

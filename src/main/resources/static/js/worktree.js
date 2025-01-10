@@ -912,3 +912,102 @@ function openConfirmationPopUP({
 function closePopup45654754() {
     document.getElementById('popupOverlay-45654754').classList.remove('show-45654754');
 }
+
+
+
+
+
+//************************************
+
+
+// Define the WebSocket URL based on your backend endpoint
+const websocketUrl = "ws://" + new URL(window.location.href).hostname + ":" + new URL(window.location.href).port + "/api/ws/notification?token=" + getCurrentTokenWithoutRedirect(); // Replace with your server's URL
+
+let socket; // WebSocket instance
+let reconnectInterval = 1000; // Reconnection attempt interval in milliseconds
+
+// Function to establish a WebSocket connection
+function connectWebSocket() {
+    console.log("Attempting to connect to WebSocket...");
+
+    // Create a new WebSocket connection
+    socket = new WebSocket(websocketUrl);
+
+    // Event listener for when the WebSocket connection is successfully established
+    socket.addEventListener('open', (event) => {
+        console.log('WebSocket connection established:', event);
+    });
+
+    // Event listener for when a message is received from the server
+    socket.addEventListener('message', (event) => {
+        console.log('Notification received:', event.data);
+
+        // Example: Show error message or handle the notification
+//        showErrorMessage("ALERT", event.data, true);s
+
+        var notificationEvent = JSON.parse(event.data);
+
+        showNotification7898789qw(notificationEvent.alert, notificationEvent.message,notificationEvent.type);
+
+    });
+
+    // Event listener for when the WebSocket connection is closed
+    socket.addEventListener('close', (event) => {
+        console.log('WebSocket connection closed:', event);
+
+        // Attempt to reconnect after a delay
+        console.log(`Reconnecting in ${reconnectInterval / 1000} seconds...`);
+        setTimeout(connectWebSocket, reconnectInterval);
+    });
+
+    // Event listener for WebSocket errors
+    socket.addEventListener('error', (event) => {
+        console.error('WebSocket error:', event);
+    });
+}
+
+// Start the WebSocket connection
+connectWebSocket();
+
+
+function showNotification7898789qw(shortMessage, fullMessage, type) {
+    const container = document.getElementById('notification-container7898789qw');
+
+
+    const notification = document.createElement('div');
+    notification.className = `notification7898789qw ${type}`;
+    notification.onclick = () => openPopup7898789qw(shortMessage,fullMessage);
+
+    notification.innerHTML = `
+        <div class="icon7898789qw">🔔</div>
+        <div class="message7898789qw">${shortMessage}</div>
+    `;
+
+    container.appendChild(notification);
+
+
+
+    // Auto-remove notification after 5 seconds (optional)
+    setTimeout(() => {
+        notification.remove();
+    }, 5000);
+}
+
+
+        function openPopup7898789qw(shortMessage,message) {
+            const popupContent = document.getElementById('popup-content7898789qw');
+            const popupOverlay = document.getElementById('popup-overlay7898789qw');
+
+              const title7898789qwHeader = document.getElementById('title7898789qwHeader');
+                           title7898789qwHeader.innerHTML = shortMessage;
+
+            popupContent.innerHTML = message;
+            popupOverlay.style.display = 'flex';
+
+
+        }
+
+        function closePopup7898789qw() {
+            const popupOverlay = document.getElementById('popup-overlay7898789qw');
+            popupOverlay.style.display = 'none';
+        }
