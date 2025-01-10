@@ -30,10 +30,10 @@ public class NotificationWebsocketHandler extends TextWebSocketHandler {
     }
 
     public void sendNotification(String message) {
+        String encryptedBody = EncryptionUtils.encrypt(message);
         for (WebSocketSession session : sessions) {
             try {
                 log.info("sending to session -->" + session.getId());
-                String encryptedBody = EncryptionUtils.encrypt(message);
                 session.sendMessage(new TextMessage(encryptedBody));
             } catch (IOException e) {
                 log.error(e.getMessage());
