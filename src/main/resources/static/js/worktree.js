@@ -921,7 +921,7 @@ function closePopup45654754() {
 
 
 // Define the WebSocket URL based on your backend endpoint
-const websocketUrl = "ws://" + new URL(window.location.href).hostname + ":" + new URL(window.location.href).port + "/api/ws/notification?token=" + getCurrentTokenWithoutRedirect(); // Replace with your server's URL
+const websocketUrl = "wss://" + new URL(window.location.href).hostname + ":" + new URL(window.location.href).port + "/api/ws/notification?token=" + getCurrentTokenWithoutRedirect(); // Replace with your server's URL
 
 let socket; // WebSocket instance
 let reconnectInterval = 1000; // Reconnection attempt interval in milliseconds
@@ -929,6 +929,7 @@ let reconnectInterval = 1000; // Reconnection attempt interval in milliseconds
 // Function to establish a WebSocket connection
 function connectWebSocket() {
     console.log("Attempting to connect to WebSocket...");
+    console.log(websocketUrl);
 
     // Create a new WebSocket connection
     socket = new WebSocket(websocketUrl);
