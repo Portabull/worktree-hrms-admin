@@ -951,6 +951,8 @@ function connectWebSocket() {
 
         showNotification7898789qw(notificationEvent.alert, notificationEvent.message,notificationEvent.type);
 
+        pushNotification12121121(notificationEvent.alert, notificationEvent.message,notificationEvent.type);
+
     });
 
     // Event listener for when the WebSocket connection is closed
@@ -971,6 +973,48 @@ function connectWebSocket() {
 // Start the WebSocket connection
 connectWebSocket();
 
+function pushNotification12121121(alert,message,type) {
+   // Check if Notifications API is supported
+            if (!('Notification' in window)) {
+                alert('This browser does not support desktop notifications.');
+                return;
+            }
+
+            // Check current permission status
+            if (Notification.permission === 'granted') {
+                // Show the notification
+                showNotification123456(alert,message,type);
+            } else if (Notification.permission !== 'denied') {
+                // Request permission
+                Notification.requestPermission().then(permission => {
+                    console.log('Notification permission:', permission);
+                    if (permission === 'granted') {
+                        showNotification123456(alert,message,type);
+                    } else {
+                        alert('Notification permission denied.');
+                    }
+                }).catch(error => {
+                    console.error('Permission request error:', error);
+                });
+            } else {
+                alert('Notification permission was previously denied. You can enable it in browser settings.');
+            }
+}
+
+
+ function showNotification123456(alert,message,type) {
+            const notification = new Notification(alert, {
+                body: message,
+                icon: 'https://worktree-hrms.shop/image/logo.png' // Replace with your desired icon URL
+            });
+
+            notification.onclick = () => {
+                console.log('Notification clicked!');
+                alert('You clicked the notification!');
+            };
+
+            console.log('Notification shown.');
+        }
 
 function showNotification7898789qw(shortMessage, fullMessage, type) {
     const container = document.getElementById('notification-container7898789qw');
