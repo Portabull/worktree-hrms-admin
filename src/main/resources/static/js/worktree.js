@@ -951,7 +951,7 @@ function connectWebSocket() {
 
         showNotification7898789qw(notificationEvent.alert, notificationEvent.message,notificationEvent.type);
 
-        pushNotification12121121(notificationEvent.alert, notificationEvent.message,notificationEvent.type);
+        pushNotification12121121(notificationEvent,handleNotificationOnclicks);
 
     });
 
@@ -970,10 +970,16 @@ function connectWebSocket() {
     });
 }
 
+function handleNotificationOnclicks(notificationEvent) {
+var alert = notificationEvent.alert;
+var message = notificationEvent.message;
+window.location.href = "home";
+}
+
 // Start the WebSocket connection
 connectWebSocket();
 
-function pushNotification12121121(alert,message,type) {
+function pushNotification12121121(notificationEvent,callback) {
    // Check if Notifications API is supported
             if (!('Notification' in window)) {
                 alert('This browser does not support desktop notifications.');
@@ -983,13 +989,13 @@ function pushNotification12121121(alert,message,type) {
             // Check current permission status
             if (Notification.permission === 'granted') {
                 // Show the notification
-                showNotification123456(alert,message,type);
+                showNotification123456(notificationEvent,callback);
             } else if (Notification.permission !== 'denied') {
                 // Request permission
                 Notification.requestPermission().then(permission => {
                     console.log('Notification permission:', permission);
                     if (permission === 'granted') {
-                        showNotification123456(alert,message,type);
+                        showNotification123456(notificationEvent,callback);
                     } else {
                         alert('Notification permission denied.');
                     }
@@ -1002,15 +1008,14 @@ function pushNotification12121121(alert,message,type) {
 }
 
 
- function showNotification123456(alert,message,type) {
-            const notification = new Notification(alert, {
-                body: message,
+ function showNotification123456(notificationEvent,callback) {
+            const notification = new Notification(notificationEvent.alert, {
+                body: notificationEvent.message,
                 icon: 'https://worktree-hrms.shop/image/logo.png' // Replace with your desired icon URL
             });
 
             notification.onclick = () => {
-                console.log('Notification clicked!');
-                alert('You clicked the notification!');
+               callback(notificationEvent);
             };
 
             console.log('Notification shown.');
