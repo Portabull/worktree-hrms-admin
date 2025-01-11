@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/common-style.css">
+    <link rel="stylesheet" href="css/common.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logs</title>
+    <!-- Add FontAwesome for Icons -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+                user-select: none; /* Prevent text selection */
+    -webkit-user-select: none; /* For Safari */
+    -moz-user-select: none; /* For Firefox */
+    -ms-user-select: none; /* For IE and Edge */
+        }
+
+        /* Loader Styles */
+        .loader-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 8px solid #3498db;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Disabled Screen */
+        .disabled-screen {
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar .menu-button {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .navbar .menu-button div {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar .profile {
+            position: relative;
+        }
+
+        .navbar .profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 60px; /* Position dropdown below profile icon */
+            right: 0;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            padding: 10px;
+            width: 180px; /* Increased width to prevent text overflow */
+        }
+
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            text-decoration: none;
+            color: black;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .dropdown-menu a i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f4f4f4;
+        }
+
+
+
+        /* Container styles for the log viewer */
+        .container {
+            max-width: 1200px;
+            margin: 100px auto; /* Adjusted margin to account for the navbar */
+            padding: 20px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .tab {
+            padding: 15px 30px;
+            margin: 0 10px;
+            border-radius: 30px;
+            cursor: pointer;
+            background-color: #e0e0e0;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            font-size: 18px;
+        }
+
+        .tab.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .tab:hover {
+            transform: scale(1.05);
+        }
+
+        .filter {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .filter input {
+            padding: 15px;
+            border-radius: 30px;
+            border: 1px solid #ddd;
+            width: 300px;
+            font-size: 16px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .filter input:focus {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            outline: none;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table thead {
+            background-color: #007bff;
+            color: white;
+        }
+
+        table th, table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        table tr:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination button {
+            padding: 10px 15px;
+            margin: 0 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .pagination button:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            width: 95%;
+            max-width: 1200px;
+            height: 85%;
+            overflow: hidden;
+            position: relative;
+            animation: zoomIn 0.5s ease-in-out;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #333;
+            font-size: 25px;
+            cursor: pointer;
+            z-index: 1001;
+            background-color: white;
+            padding: 5px 10px;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .popup-close:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .popup-content pre {
+            text-align: left;
+            overflow-y: auto;
+            height: calc(100% - 160px); /* Reduce height to make space for buttons */
+            margin: 20px 0;
+            font-size: 14px;
+            background-color: #f4f4f4;
+            padding: 15px;
+            border-radius: 10px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .popup-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+        }
+
+        .popup-buttons button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .popup-buttons button:hover {
+            background-color: #16a085;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+            .popup-content {
+                width: 95%;
+                height: 85%;
+            }
+            .tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            .tab {
+                margin-bottom: 15px;
+            }
+            .table-container {
+                overflow-x: initial;
+            }
+            table {
+                display: block;
+                width: 100%;
+            }
+            table thead {
+                display: none;
+            }
+            table tr {
+                display: block;
+                margin-bottom: 15px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                border-radius: 10px;
+                padding: 10px;
+                background-color: #ffffff;
+            }
+            table td {
+                display: flex;
+                justify-content: space-between;
+                padding: 10px;
+                font-size: 14px;
+                border-bottom: 1px solid #ddd;
+            }
+            table td:last-child {
+                border-bottom: none;
+            }
+            table td:before {
+                content: attr(data-label);
+                font-weight: bold;
+                color: #007bff;
+            }
+        }
+
+
+
+        .clickableRedirects {
+    color: #007bff; /* Color to indicate clickable text */
+    cursor: pointer; /* Show hand symbol */
+    transition: color 0.3s, font-weight 0.3s; /* Smooth transition for hover effects */
+}
+
+.clickableRedirects:hover {
+    color: #0056b3; /* Darker shade on hover */
+    font-weight: bold; /* Highlight by making it bold */
+    text-decoration: underline; /* Add underline for emphasis */
+}
+
+.active-page-redirect {
+    color: #6c757d; /* Grey color to indicate current page */
+    font-weight: bold; /* Bold to emphasize the active page */
+    cursor: default; /* No hand symbol to show it's not clickable */
+    text-decoration: none; /* No underline */
+}
+
+
+
+
+
+
+
+/* Sidebar starts */
+.sidebar {
+   position: fixed;
+    left: -300px;
+    top: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #343a40;
+    padding: 20px;
+    color: white;
+    transition: all 0.5s ease;
+    z-index: 1001;
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Hide horizontal scrolling */
+}
+
+/* Add a scrollbar only if content overflows */
+.sidebar::-webkit-scrollbar {
+    width: 6px; /* Adjust scrollbar width */
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.5); /* Scrollbar color */
+    border-radius: 10px; /* Rounded corners */
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.8); /* Hover color */
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.sidebar .sidebar-item {
+    color: white;
+    padding: 15px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar .sidebar-item:hover {
+    background-color: #50575d;
+}
+
+.sidebar .sidebar-item i {
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.sidebar .close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.sidebar .close-btn i {
+    margin-right: 10px;
+}
+
+.sidebar .close-btn:hover {
+    color: #ff5c5c;
+    transform: scale(1.1);
+    transition: all 0.3s ease;
+}
+
+/* Add animation to sidebar opening */
+.sidebar.active {
+    animation: slideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+    0% {
+        left: -300px;
+    }
+    100% {
+        left: 0;
+    }
+}
+
+/* Add bounce effect on item click */
+.sidebar .sidebar-item:active {
+    transform: scale(0.95);
+    transition: transform 0.1s;
+}
+
+/* Sidebar ends */
+    </style>
+</head>
+<body oncontextmenu="return false;"> <!-- Disable right click -->
+
+<!-- Notification Container Starts -->
+<div class="notification-container7898789qw" id="notification-container7898789qw"></div>
+
+<!-- Popup -->
+<div class="popup-overlay7898789qw" id="popup-overlay7898789qw">
+    <div class="popup7898789qw">
+        <div class="popup-header7898789qw">
+            <span class="title7898789qw" id="title7898789qwHeader">Notification Details</span>
+            <button class="close-btn7898789qw" onclick="closePopup7898789qw()">✖</button>
+        </div>
+        <div class="popup-content7898789qw" id="popup-content7898789qw">
+            <!-- Content dynamically added here -->
+        </div>
+    </div>
+</div>
+<!-- Notification Container Ends -->
+<!-- Error Popup Modal -->
+<div id="uniqueErrorModal9875">
+    <div class="unique-modal-content9875" id="modalContent9875">
+        <h2 id="errorHeader9875">Error Occurred</h2>
+        <p id="errorFooter9875" class="message-container9875">An unexpected error has occurred. Please try again later.</p>
+        <span class="read-more9875" id="readMore9875">Read more</span>
+        <button id="uniqueOkayBtn9875">Okay</button>
+    </div>
+</div>
+
+<!-- Loader Overlay -->
+<div class="loader-overlay" id="loader">
+    <div class="spinner"></div>
+</div>
+
+<!-- Navbar -->
+<div class="navbar">
+    <div class="menu-button" onclick="toggleSidebar()">
+        <div></div>
+        <span class="company-name"></span>
+    </div>
+
+
+    &nbsp;&nbsp;    &nbsp;&nbsp;
+    <div class="search-box-container-2123112">
+        <input type="text" class="search-box-2123112" id="searchInput-2123112" placeholder="Search any action or ask for help...">
+        <div class="dropdown-container-2123112" id="dropdownMenu-2123112">
+        </div>
+    </div>
+    &nbsp;&nbsp;
+
+    <div class="profile" id="profile-dropdown">
+        <img src="image/user-profile.jpeg" alt="Profile" onclick="toggleProfileDropdown()">
+        <div class="dropdown-menu" id="dropdown-menu">
+            <a href="#" onclick="openProfileSettings()"><i class="fas fa-cog"></i>Settings</a>
+            <a href="#" onclick="manageUserProfiles(startLoader)"><i class="fas fa-user"></i>Manage Profiles</a>
+            <a href="#" onclick="logout(startLoader,redirectafterlogout)"><i class="fas fa-sign-out-alt"></i>Logout</a>
+        </div>
+    </div>
+</div>
+
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <button class="close-btn" onclick="toggleSidebar()">
+        <i class="fas fa-times"></i>
+        <span>Close</span>
+    </button>
+    <div class="sidebar-item" onclick="gotohome()">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+    </div>
+    <div class="sidebar-item" onclick="manageTenants(startLoader)">
+        <i class="fas fa-users"></i>
+        <span>Manage Tenants</span>
+    </div>
+    <div class="sidebar-item" onclick="showReports()" style="pointer-events: none; opacity: 0.5;" aria-disabled="true">
+        <i class="fas fa-chart-bar"></i>
+        <span>Reports</span>
+    </div>
+    <div class="sidebar-item" onclick="showAuditLogs()">
+        <i class="fas fa-file-alt"></i>
+        <span>Audit Logs</span>
+    </div>
+    <div id="configurationButton" class="sidebar-item" onclick="gotoconfiguration()"  style="display: none;">
+        <i class="fas fa-cog"></i>
+        <span>Configuration</span>
+    </div>
+</div>
+
+<script>
+startLoader();
+
+    // Start Loader
+    function startLoader() {
+        document.getElementById('loader').classList.add('active');
+        document.body.classList.add('disabled-screen');  // Disable entire screen
+    }
+
+    // Stop Loader
+    function stopLoader() {
+        document.getElementById('loader').classList.remove('active');
+        document.body.classList.remove('disabled-screen');  // Re-enable the screen
+    }
+
+    // Example Usage (Simulate Loading)
+    function simulateLoading() {
+        startLoader();
+        setTimeout(() => {
+            stopLoader();
+            alert("Loading Complete");
+        }, 3000); // Simulate 3 seconds of loading
+    }
+
+    // Sidebar Toggle
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+    }
+
+    // Profile Dropdown
+    function toggleProfileDropdown() {
+        const dropdown = document.getElementById('dropdown-menu');
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Close dropdown when clicking outside
+    window.onclick = function(event) {
+        if (!event.target.matches('.profile img')) {
+            const dropdown = document.getElementById('dropdown-menu');
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            }
+        }
+    }
+
+
+    function openPopup(requestId) {
+        const log = logs[currentTab].find(log => log.requestId === requestId);
+        document.getElementById('logDetails').textContent = `Request ID: ${log.requestId}\nDisplay Message: ${log.displayMessage}\nSystem Message: ${log.systemMessage}\nDate: ${log.date}\nUser: ${log.userName}`;
+        document.getElementById('logPopup').style.display = 'flex';
+    }
+
+    function closePopup() {
+        document.getElementById('logPopup').style.display = 'none';
+    }
+
+
+
+
+
+
+stopLoader();
+
+
+init();
+
+function init(){
+getCurrentToken();
+   const profilePicBase64 = getCurrentProfileImageWithoutRedirect();
+      const profileBtn = document.querySelector('.profile img');
+            profileBtn.src = profilePicBase64;
+
+ var notificationId = new URL(window.location.href).searchParams.get("id");
+
+ var alert = window.localStorage.getItem(notificationId + 'alert');
+ var message = window.localStorage.getItem(notificationId + 'message');
+
+
+openPopup(alert,message)
+
+}
+
+ window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the cache
+        if (event.persisted) {
+            stopLoader();
+        }
+    });
+
+
+      function openPopup(shortMessage,message) {
+            const popupContent = document.getElementById('popup-content7898789qw');
+            const popupOverlay = document.getElementById('popup-overlay7898789qw');
+
+              const title7898789qwHeader = document.getElementById('title7898789qwHeader');
+                           title7898789qwHeader.innerHTML = shortMessage;
+
+            popupContent.innerHTML = message;
+            popupOverlay.style.display = 'flex';
+
+
+        }
+
+        function closePopup7898789qw() {
+            const popupOverlay = document.getElementById('popup-overlay7898789qw');
+            popupOverlay.style.display = 'none';
+        }
+</script>
+
+</body>
+</html>

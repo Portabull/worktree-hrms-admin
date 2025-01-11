@@ -973,7 +973,12 @@ function connectWebSocket() {
 function handleNotificationOnclicks(notificationEvent) {
 var alert = notificationEvent.alert;
 var message = notificationEvent.message;
- window.open("home" , "_blank");
+
+var timestamp = getISTTimestamp();
+ window.localStorage.setItem(timestamp + "alert",alert);
+ window.localStorage.setItem(timestamp + "message",message);
+
+ window.open("notification?id=" + timestamp, "_blank");
 }
 
 // Start the WebSocket connection
