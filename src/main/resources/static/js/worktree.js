@@ -973,7 +973,7 @@ function connectWebSocket() {
 function handleNotificationOnclicks(notificationEvent) {
 var alert = notificationEvent.alert;
 var message = notificationEvent.message;
-window.location.href = "home";
+ window.open("home" , "_blank");
 }
 
 // Start the WebSocket connection
