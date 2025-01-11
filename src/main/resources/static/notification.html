@@ -539,76 +539,14 @@
         </div>
     </div>
 </div>
-<!-- Notification Container Ends -->
-<!-- Error Popup Modal -->
-<div id="uniqueErrorModal9875">
-    <div class="unique-modal-content9875" id="modalContent9875">
-        <h2 id="errorHeader9875">Error Occurred</h2>
-        <p id="errorFooter9875" class="message-container9875">An unexpected error has occurred. Please try again later.</p>
-        <span class="read-more9875" id="readMore9875">Read more</span>
-        <button id="uniqueOkayBtn9875">Okay</button>
-    </div>
-</div>
+
 
 <!-- Loader Overlay -->
 <div class="loader-overlay" id="loader">
     <div class="spinner"></div>
 </div>
 
-<!-- Navbar -->
-<div class="navbar">
-    <div class="menu-button" onclick="toggleSidebar()">
-        <div></div>
-        <span class="company-name"></span>
-    </div>
 
-
-    &nbsp;&nbsp;    &nbsp;&nbsp;
-    <div class="search-box-container-2123112">
-        <input type="text" class="search-box-2123112" id="searchInput-2123112" placeholder="Search any action or ask for help...">
-        <div class="dropdown-container-2123112" id="dropdownMenu-2123112">
-        </div>
-    </div>
-    &nbsp;&nbsp;
-
-    <div class="profile" id="profile-dropdown">
-        <img src="image/user-profile.jpeg" alt="Profile" onclick="toggleProfileDropdown()">
-        <div class="dropdown-menu" id="dropdown-menu">
-            <a href="#" onclick="openProfileSettings()"><i class="fas fa-cog"></i>Settings</a>
-            <a href="#" onclick="manageUserProfiles(startLoader)"><i class="fas fa-user"></i>Manage Profiles</a>
-            <a href="#" onclick="logout(startLoader,redirectafterlogout)"><i class="fas fa-sign-out-alt"></i>Logout</a>
-        </div>
-    </div>
-</div>
-
-
-<!-- Sidebar -->
-<div class="sidebar" id="sidebar">
-    <button class="close-btn" onclick="toggleSidebar()">
-        <i class="fas fa-times"></i>
-        <span>Close</span>
-    </button>
-    <div class="sidebar-item" onclick="gotohome()">
-        <i class="fas fa-home"></i>
-        <span>Home</span>
-    </div>
-    <div class="sidebar-item" onclick="manageTenants(startLoader)">
-        <i class="fas fa-users"></i>
-        <span>Manage Tenants</span>
-    </div>
-    <div class="sidebar-item" onclick="showReports()" style="pointer-events: none; opacity: 0.5;" aria-disabled="true">
-        <i class="fas fa-chart-bar"></i>
-        <span>Reports</span>
-    </div>
-    <div class="sidebar-item" onclick="showAuditLogs()">
-        <i class="fas fa-file-alt"></i>
-        <span>Audit Logs</span>
-    </div>
-    <div id="configurationButton" class="sidebar-item" onclick="gotoconfiguration()"  style="display: none;">
-        <i class="fas fa-cog"></i>
-        <span>Configuration</span>
-    </div>
-</div>
 
 <script>
 startLoader();
@@ -677,10 +615,7 @@ stopLoader();
 init();
 
 function init(){
-getCurrentToken();
-   const profilePicBase64 = getCurrentProfileImageWithoutRedirect();
-      const profileBtn = document.querySelector('.profile img');
-            profileBtn.src = profilePicBase64;
+
 
  var notificationId = new URL(window.location.href).searchParams.get("id");
 
@@ -688,7 +623,11 @@ getCurrentToken();
  var message = window.localStorage.getItem(notificationId + 'message');
 
 
-openPopup(alert,message)
+window.localStorage.removeItem(notificationId + 'alert');
+window.localStorage.removeItem(notificationId + 'message');
+
+openPopup(alert,message);
+
 
 }
 
@@ -714,8 +653,7 @@ openPopup(alert,message)
         }
 
         function closePopup7898789qw() {
-            const popupOverlay = document.getElementById('popup-overlay7898789qw');
-            popupOverlay.style.display = 'none';
+          window.location.href="home";
         }
 </script>
 
