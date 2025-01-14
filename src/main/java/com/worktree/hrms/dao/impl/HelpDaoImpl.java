@@ -43,16 +43,17 @@ public class HelpDaoImpl implements HelpDao {
 
         List<Map<String, Object>> response = new ArrayList<>();
         try (Session session = hibernateUtils.getSession()) {
-            List<Object[]> dbResponse = session.createQuery("SELECT ue.userName,he.helpId,he.helpConfigName,he.createdDate,he.updatedDate FROM HelpEntity he LEFT JOIN UserEntity ue on (he.updatedBy=ue.userID)").list();
+            List<Object[]> dbResponse = session.createQuery("SELECT ue.displayName,he.helpId,he.helpConfigName,he.createdDate,he.updatedDate FROM HelpEntity he LEFT JOIN UserEntity ue on (he.updatedBy=ue.userID)").list();
 
             if (!CollectionUtils.isEmpty(dbResponse)) {
                 dbResponse.forEach(resp -> {
                     Map<String, Object> data = new HashMap<>();
-                    data.put("updatedBy", resp[0]);
+                    data.put("updatedBy", resp[0] != null ? resp[0].toString() : "N/A");
                     data.put("id", resp[1]);
                     data.put("title", resp[2]);
-                    data.put("createdAt", resp[3]);
-                    data.put("updatedAt", resp[4]);
+
+                    data.put("createdAt", dateUtils.format(DateUtils.DD_MM_YYYY_HH_MM, (Date) resp[3]));
+                    data.put("updatedAt", dateUtils.format(DateUtils.DD_MM_YYYY_HH_MM, (Date) resp[4]));
                     response.add(data);
                 });
             }

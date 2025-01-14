@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -17,6 +18,8 @@ import java.util.TimeZone;
 public class DateUtils {
 
     private final static Logger logger = LoggerFactory.getLogger(DateUtils.class);
+
+    public static final String DD_MM_YYYY_HH_MM = "dd/MM/yyyy HH:mm";
 
     //ist timezone
     private static final String ZONE_ID = "Asia/Kolkata";
@@ -50,4 +53,7 @@ public class DateUtils {
         }
     }
 
+    public String format(String pattern, Date date) {
+        return new SimpleDateFormat(pattern).format(date);
+    }
 }

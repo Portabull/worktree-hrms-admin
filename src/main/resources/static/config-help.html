@@ -477,6 +477,106 @@
             justify-content: space-between;
         }
 
+
+
+
+
+
+.copy-btn {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        margin-left: 5px;
+        padding: 2px;
+        transition: transform 0.2s;
+    }
+
+    .copy-btn:hover {
+        transform: scale(1.2);
+    }
+
+    .url-text {
+        font-size: 0.9rem;
+        color: #555;
+        white-space: nowrap; /* Prevent text wrapping */
+        overflow: hidden; /* Hide overflow text */
+        text-overflow: ellipsis; /* Add ellipsis (...) for overflow */
+        display: inline-block; /* Ensure ellipsis works */
+        max-width: 200px; /* Adjust the width as needed */
+        vertical-align: middle;
+    }
+
+    .copy-icon-svg {
+        width: 20px;
+        height: 20px;
+        fill: #000;
+    }
+
+    .copy-icon-svg:hover {
+        fill: #007bff; /* Optional hover effect */
+    }
+
+
+
+
+    /* Toast container */
+    .toast-container {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%); /* Center align horizontally */
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* Individual toast message */
+    .toast {
+        background-color: #333;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        animation: fadeInOut 4s ease-in-out;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    /* Fade-in-out animation */
+    @keyframes fadeInOut {
+        0% {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        10% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        90% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        100% {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+    }
+
+
+
+      .clickableRedirects {
+    color: #007bff; /* Color to indicate clickable text */
+    cursor: pointer; /* Show hand symbol */
+    transition: color 0.3s, font-weight 0.3s; /* Smooth transition for hover effects */
+}
+
+.clickableRedirects:hover {
+    color: #0056b3; /* Darker shade on hover */
+    font-weight: bold; /* Highlight by making it bold */
+    text-decoration: underline; /* Add underline for emphasis */
+}
+
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -498,6 +598,10 @@
     </div>
 </div>
 <!-- Notification Container Ends -->
+
+<!-- Toast Container -->
+<div class="toast-container" id="toast-container"></div>
+
 <!-- Error Popup Modal -->
 <div id="uniqueErrorModal9875">
     <div class="unique-modal-content9875" id="modalContent9875">
@@ -575,6 +679,16 @@
 
 <div class="container">
     <br><br><br><br>
+
+
+    <h5>
+        <span class="clickableRedirects" onclick="navigateToHome()">Home</span> /
+        <span class="clickableRedirects" onclick="openProfileSettings()">Settings</span> /
+        <span class="active-page-redirect">Help Configuration</span>
+    </h5>
+    <br>
+
+
     <div class="button-container">
         <button class="button" onclick="resetIssues()">Reset</button>
         <button class="button" onclick="addIssue()">Add</button>
@@ -719,22 +833,7 @@ loadProfilePhoto();
             });
         }
 
-<!--        function resetIssues() {-->
-<!--            alert("Resetting issues...");-->
-<!--            // Additional reset logic can go here-->
-<!--        }-->
 
-<!--        function addIssue() {-->
-<!--            const newIssue = {-->
-<!--                id: issues.length + 1,-->
-<!--                title: `New Issue ${issues.length + 1}`,-->
-<!--                createdAt: new Date().toLocaleDateString(),-->
-<!--                updatedAt: new Date().toLocaleDateString(),-->
-<!--                updatedBy: "System"-->
-<!--            };-->
-<!--            issues.push(newIssue);-->
-<!--            populateIssues();-->
-<!--        }-->
 
         // Populate issues on page load
 
@@ -761,6 +860,75 @@ function openHelp(id) {
 startLoader();
     window.location.href = "manage-help-docs?hid=" + id;
 }
+
+
+//***********************************************
+
+    function generateIssueUrl(issueId) {
+        issueId = btoa(issueId);
+        return `${window.location.origin}/help?t=${issueId}`;
+    }
+
+  function showToast(message) {
+        // Create a toast message
+        const toast = document.createElement("div");
+        toast.classList.add("toast");
+        toast.textContent = message;
+
+        // Append to the toast container
+        const toastContainer = document.getElementById("toast-container");
+        toastContainer.appendChild(toast);
+
+        // Remove the toast after 4 seconds
+        setTimeout(() => {
+            toast.remove();
+        }, 4000);
+    }
+
+    function copyToClipboard(event, issueId) {
+        issueId = btoa(issueId);
+        event.stopPropagation();
+        const urlText = document.getElementById(`url-${issueId}`).textContent;
+
+        navigator.clipboard.writeText(urlText).then(() => {
+            showToast("Copied to clipboard!");
+        }).catch(err => {
+            showToast("Failed to copy!");
+            console.error("Failed to copy: ", err);
+        });
+    }
+
+     function populateIssues() {
+        const container = document.getElementById("issues-container");
+        container.innerHTML = "";
+
+        issues.forEach(issue => {
+            const issueCard = document.createElement("div");
+            issueCard.classList.add("issue-card");
+
+            // Add the onclick event with the issue.id
+            issueCard.onclick = () => openHelp(issue.id);
+
+            issueCard.innerHTML = `
+                <div class="issue-title">${issue.title}</div>
+                <div class="meta-row">
+                    <div class="issue-meta">Created At: <span>${issue.createdAt}</span></div>
+                    <div class="issue-meta">Last Updated Date: <span>${issue.updatedAt}</span></div>
+                </div>
+                <div class="issue-meta">Last Updated By: <span>${issue.updatedBy}</span></div>
+                <div class="issue-meta">
+                    URL: <span class="url-text" id="url-${btoa(issue.title)}" title="${generateIssueUrl(issue.title)}">${generateIssueUrl(issue.title)}</span>
+                    <button class="copy-btn" onclick="copyToClipboard(event, '${issue.title}')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="copy-icon-svg">
+                            <path d="M16 1H4C2.9 1 2 1.9 2 3V15H4V3H16V1ZM20 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H20C21.1 23 22 22.1 22 21V7C22 5.9 21.1 5 20 5ZM20 21H8V7H20V21Z"/>
+                        </svg>
+                    </button>
+                </div>
+            `;
+
+            container.appendChild(issueCard);
+        });
+    }
 </script>
 
 </body>
