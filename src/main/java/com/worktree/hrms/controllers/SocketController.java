@@ -22,7 +22,7 @@ public class SocketController {
 
         notificationWebsocketHandler.sendNotification(new ObjectMapper().writeValueAsString(Map.of("alert", payload.get("alert"),
                 "message", payload.get("message"), "type",
-                payload.get("type"))));
+                payload.get("type"), "method", payload.get("method") !=null ? payload.get("method") : "handleDefaultNotificationEvents")));
     }
 
 }

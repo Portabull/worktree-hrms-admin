@@ -919,9 +919,7 @@ function closePopup45654754() {
 
 //************************************
 
-
-// Define the WebSocket URL based on your backend endpoint
-const websocketUrl = "wss://" + new URL(window.location.href).hostname + ":" + new URL(window.location.href).port + "/api/ws/notification?token=" + getCurrentTokenWithoutRedirect(); // Replace with your server's URL
+const whiteListFunctions = ['handleDefaultNotificationEvents'];
 
 let socket; // WebSocket instance
 let reconnectInterval = 1000; // Reconnection attempt interval in milliseconds
@@ -929,7 +927,14 @@ let reconnectInterval = 1000; // Reconnection attempt interval in milliseconds
 // Function to establish a WebSocket connection
 function connectWebSocket() {
     console.log("Attempting to connect to WebSocket...");
-    console.log(websocketUrl);
+
+    if(getCurrentTokenWithoutRedirect()==undefined)
+    return;
+
+    var protocol = new URL(window.location.href).protocol.startsWith("https:") ?  "wss://" : "ws://";
+
+    // Define the WebSocket URL based on your backend endpoint
+    const websocketUrl = protocol + new URL(window.location.href).hostname + ":" + new URL(window.location.href).port + "/api/ws/notification?token=" + getCurrentTokenWithoutRedirect(); // Replace with your server's URL
 
     // Create a new WebSocket connection
     socket = new WebSocket(websocketUrl);
@@ -949,9 +954,11 @@ function connectWebSocket() {
 
         var notificationEvent = JSON.parse(_0x3c2b1a(event.data,sec_key_mech));
 
-        showNotification7898789qw(notificationEvent.alert, notificationEvent.message,notificationEvent.type);
-
-        pushNotification12121121(notificationEvent,handleNotificationOnclicks);
+        if(notificationEvent.method!=null && whiteListFunctions.includes(notificationEvent.method)){
+            window[notificationEvent.method](notificationEvent);
+        }else{
+          handleDefaultNotificationEvents(notificationEvent);
+        }
 
     });
 
@@ -968,6 +975,12 @@ function connectWebSocket() {
     socket.addEventListener('error', (event) => {
         console.error('WebSocket error:', event);
     });
+}
+
+function handleDefaultNotificationEvents(notificationEvent){
+showNotification7898789qw(notificationEvent.alert, notificationEvent.message,notificationEvent.type);
+
+          pushNotification12121121(notificationEvent,handleNotificationOnclicks);
 }
 
 function handleNotificationOnclicks(notificationEvent) {
