@@ -3,7 +3,7 @@ package com.worktree.hrms.handlers;
 import com.worktree.hrms.utils.EncryptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
@@ -34,7 +34,7 @@ public class NotificationWebsocketHandler extends TextWebSocketHandler {
         for (WebSocketSession session : sessions) {
             try {
                 log.info("sending to session -->" + session.getId());
-                session.sendMessage(new TextMessage(encryptedBody));
+                session.sendMessage(new BinaryMessage(encryptedBody.getBytes()));
             } catch (IOException e) {
                 log.error(e.getMessage());
             }

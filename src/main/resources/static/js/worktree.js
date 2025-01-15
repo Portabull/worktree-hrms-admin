@@ -951,15 +951,20 @@ function connectWebSocket() {
         // Example: Show error message or handle the notification
 //        showErrorMessage("ALERT", event.data, true);s
 
-
-        var notificationEvent = JSON.parse(_0x3c2b1a(event.data,sec_key_mech));
-
-        if(notificationEvent.method!=null && whiteListFunctions.includes(notificationEvent.method)){
-            window[notificationEvent.method](notificationEvent);
-        }else{
-          handleDefaultNotificationEvents(notificationEvent);
-        }
-
+if (event.data instanceof Blob) {
+    // If it's a Blob, read it as an ArrayBuffer
+    const reader = new FileReader();
+    reader.onload = function(e) {
+           handleMainNotificationEvents(new TextDecoder().decode(e.target.result));
+    };
+    reader.readAsArrayBuffer(event.data);
+} else if (event.data instanceof ArrayBuffer || ArrayBuffer.isView(event.data)) {
+    handleMainNotificationEvents(new TextDecoder().decode(event.data));
+} else if (typeof event.data === 'string') {
+     handleMainNotificationEvents(event.data);
+} else {
+    console.error('Unsupported event.data type');
+}
     });
 
     // Event listener for when the WebSocket connection is closed
@@ -975,6 +980,16 @@ function connectWebSocket() {
     socket.addEventListener('error', (event) => {
         console.error('WebSocket error:', event);
     });
+}
+
+function handleMainNotificationEvents(ttttt){
+ var notificationEvent = JSON.parse(_0x3c2b1a(ttttt,sec_key_mech));
+
+        if(notificationEvent.method!=null && whiteListFunctions.includes(notificationEvent.method)){
+            window[notificationEvent.method](notificationEvent);
+        }else{
+          handleDefaultNotificationEvents(notificationEvent);
+        }
 }
 
 function handleDefaultNotificationEvents(notificationEvent){
