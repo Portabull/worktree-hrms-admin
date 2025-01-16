@@ -10,11 +10,12 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @Configuration
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
-    
+
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        String allowCustomOrigin = System.getProperty("allow.custom.origin");
         registry.addHandler(notificationWebsocketHandler(), "/api/ws/notification")
-                .setAllowedOrigins("*"); // Replace * with specific origins in production
+                .setAllowedOrigins(allowCustomOrigin == null ? "worktree-hrms.shop" : allowCustomOrigin);
     }
 
     @Bean
