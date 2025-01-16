@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FCM Notification Demo</title>
+    <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+    import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-messaging.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-analytics.js";
+
+    // Firebase configuration
+   const firebaseConfig = {
+    apiKey: "AIzaSyA_ii6KwNuN8bIzeK7V8IkBzBzMFjXni8Q",
+    authDomain: "worktree-hrms.firebaseapp.com",
+    projectId: "worktree-hrms",
+    storageBucket: "worktree-hrms.firebasestorage.app",
+    messagingSenderId: "559305051722",
+    appId: "1:559305051722:web:64ac18194578e66ea260b3",
+    measurementId: "G-4QLF75ZPYT"
+  };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const messaging = getMessaging(app);
+
+    // Request user permission and get the FCM token
+    async function requestPermission() {
+      try {
+        const token = await getToken(messaging, { vapidKey: '9YnXoH5g_kOJV77vGfKkeW55xldq8Mq0FpUxNyVRH7Q' });
+        console.log('FCM Token:', token);
+        alert('FCM Token received and registered successfully!');
+      } catch (err) {
+        console.error('Error getting FCM token:', err);
+      }
+    }
+
+    // Listen for messages while the app is in the foreground
+    onMessage(messaging, (payload) => {
+      console.log('Message received:', payload);
+      const notificationTitle = payload.notification.title;
+      const notificationOptions = {
+        body: payload.notification.body,
+        icon: payload.notification.icon,
+      };
+      new Notification(notificationTitle, notificationOptions);
+    });
+
+    // Add a click handler to request permission
+    window.onload = () => {
+      const subscribeBtn = document.getElementById('subscribe');
+      subscribeBtn.onclick = () => requestPermission();
+    };
+  </script>
+</head>
+<body>
+<h1>Firebase Push Notifications</h1>
+<button id="subscribe">Subscribe for Notifications</button>
+</body>
+</html>
