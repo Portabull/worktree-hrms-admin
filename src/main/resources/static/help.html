@@ -368,11 +368,15 @@ var badRequest = false;
         function afterFetchData(xhr,decryptedResponseObj){
 
             if(xhr.status==400){
+                stopLoader();
+                   document.getElementById('sidebarHeader').hidden  = true;
+                document.getElementById('contentHeader').hidden  = true;
+                
                  const internetContainer = document.getElementById("internet_container_id");
                 internetContainer.hidden = false;
                 document.getElementById('errorMessageForBD').innerHTML = decryptedResponseObj.message;
 
-badRequest = true;
+                badRequest = true;
                  const internetContainerImage = document.getElementById("imageDivGIFID");
                 internetContainerImage.hidden = true;
                 return;
