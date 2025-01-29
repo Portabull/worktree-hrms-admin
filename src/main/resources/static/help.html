@@ -301,10 +301,10 @@
 <div class="error-container-wrapper" >
     <div class="error-container" >
         <div class="error-icon">
-            <img src="image/no_internet.gif" alt="Internet Error">
+            <img src="image/no_internet.gif" id="imageDivGIFID" alt="Internet Error">
         </div>
         <div class="error-title">Uh-Oh!</div>
-        <div class="error-message">Slow or no internet connection.<br>Please check your internet settings and try again.</div>
+        <div class="error-message" id="errorMessageForBD">Slow or no internet connection.<br>Please check your internet settings and try again.</div>
         <button class="retry-button" onclick="retry()">Retry</button>
     </div>
 </div>
@@ -364,8 +364,20 @@ const typeValue = new URL(window.location.href).searchParams.get("t");
 
         }
 
-
+var badRequest = false;
         function afterFetchData(xhr,decryptedResponseObj){
+
+            if(xhr.status==400){
+                 const internetContainer = document.getElementById("internet_container_id");
+                internetContainer.hidden = false;
+                document.getElementById('errorMessageForBD').innerHTML = decryptedResponseObj.message;
+
+badRequest = true;
+                 const internetContainerImage = document.getElementById("imageDivGIFID");
+                internetContainerImage.hidden = true;
+                return;
+            }
+            
         stopLoader();
            document.getElementById('sidebarHeader').textContent = decryptedResponseObj.sideBarHeader;
                 document.getElementById('contentHeader').textContent = decryptedResponseObj.mainBarHeader;
@@ -536,6 +548,12 @@ if('Unreachable' == header){
 }
 
 function retry(){
+
+    if(badRequest){
+       window.location.reload();
+        return;
+    }
+    
 <!-- document.getElementById('menuButton').style.display = 'block';-->
 <!--document.getElementById('sidebar').classList.add('open');-->
 
