@@ -425,7 +425,7 @@
 <script>
 
 var locationDetails;
-
+startLoader();
 
     function showErrorMessage(title, message) {
         const modal = document.getElementById('infoModal');
@@ -563,6 +563,8 @@ if (userNameTINFOJson !== null) {
 
  }
 
+stopLoader();
+    
  function isUserNameListValid(userNameList) {
     if (userNameList === null || userNameList === undefined || userNameList.length === 0) {
         return false;  // userNameList is either null, undefined, or empty
