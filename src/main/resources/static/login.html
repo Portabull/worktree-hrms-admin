@@ -425,7 +425,7 @@
 <script>
 
 var locationDetails;
-startLoader();
+
 
     function showErrorMessage(title, message) {
         const modal = document.getElementById('infoModal');
@@ -563,7 +563,6 @@ if (userNameTINFOJson !== null) {
 
  }
 
-stopLoader();
     
  function isUserNameListValid(userNameList) {
     if (userNameList === null || userNameList === undefined || userNameList.length === 0) {
@@ -631,7 +630,15 @@ function getDeviceDetails() {
     return JSON.stringify(deviceDetails);
 }
 
-console.log(getDeviceDetails());
+
+document.addEventListener("DOMContentLoaded", function () {
+    startLoader(); // Show the loader immediately when HTML loads
+});
+
+// Hide loader only when the entire page (including CSS, JS, and images) is fully loaded
+window.addEventListener("load", function () {
+    stopLoader();
+});
 
 </script>
 </body>
