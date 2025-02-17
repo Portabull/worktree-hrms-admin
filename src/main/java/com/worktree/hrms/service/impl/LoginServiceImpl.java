@@ -40,6 +40,7 @@ public class LoginServiceImpl implements LoginService {
             }
 
             response.put("status", "SUCCESS");
+            response.put("licenseVerified", licenseVerified);
             String jwt = UUID.randomUUID() + "" + new Date().getTime();
             userDao.saveRandomToken(userId, jwt, licenseVerified);
             response.put("jwt", jwt);

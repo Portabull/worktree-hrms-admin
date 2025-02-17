@@ -351,15 +351,34 @@
     100% { transform: rotate(360deg); }
 }
 
+
+.loader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.loader-text {
+    margin-top: 10px; /* Adds spacing between loader and text */
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+    text-align: center;
+}
+
 /* loader css ends */
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-
 <div id="loader" class="loader-overlay">
-    <div class="loader"></div>
+    <div class="loader-container">
+        <div class="loader"></div>
+        <p id="loaderCustomText" class="loader-text"></p>
+    </div>
 </div>
+
 
 <div class="animated-bg"></div>
 
@@ -508,6 +527,7 @@ function stopLoader() {
             if(locationDetails === undefined && retryCount < 3){
             retryCount++;
              console.log(`Retrying login, attempt #${retryCount}`);
+                changeLoaderText('Waiting for Location...');
                 setTimeout(login, 1000);
                 return;
             }
@@ -518,11 +538,16 @@ function stopLoader() {
                 retryCount = 0;
                 return;
             }
+             changeLoaderText('Please wait while logging in...');
             dynamicXhrApi('POST', BASE_URL + 'api/login', { 'Content-Type': 'application/json','latlong': locationDetails,'dd':getDeviceDetails()}, { "userName": username, "password": _0x1a2b3c(password, sec_key_mech) }, afterLogin);
         } else {
          stopLoader();
                  showErrorMessage('Validation Error', 'Please fill in both Username and Password.');
         }
+    }
+
+    function changeLoaderText(message) {
+         document.getElementById('loaderCustomText').innerHTML = message;
     }
 
     function afterLogin(xhr,decryptedResponseObj) {

@@ -57,10 +57,10 @@ function dynamicXhrApi(method, url, headers, requestBody, callback, isFileUpload
                 return;
             }
 
-            if(xhr.status == 402){
-                window.location.href="license";
-                return;
-            }
+//            if(xhr.status == 402){
+//                window.location.href="license";
+//                return;
+//            }
 
             if(xhr.status == 401 && !url.endsWith("/api/login")) {
                removeCurrentUserCache();

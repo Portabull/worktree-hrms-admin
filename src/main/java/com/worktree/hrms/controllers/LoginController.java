@@ -34,6 +34,10 @@ public class LoginController {
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
 
+        if (!Boolean.valueOf(response.get("licenseVerified").toString())) {
+            return new ResponseEntity<>(response, HttpStatus.PAYMENT_REQUIRED);
+        }
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
