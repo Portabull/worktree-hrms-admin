@@ -173,16 +173,6 @@
 
 
 
-        /* Layout */
-        .container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: repeat(2, 1fr);
-            gap: 20px;
-            padding: 100px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
 
         .box {
             background-color: white;
@@ -413,6 +403,105 @@
     box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
 }
 
+
+
+
+
+
+  body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+              margin-top: 80px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .section {
+            border-bottom: 1px solid #ddd;
+            padding: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .section:last-child {
+            border-bottom: none;
+        }
+        .label {
+            font-weight: bold;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #333;
+        }
+        .license-key {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+        .register-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 15px;
+        }
+        .button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        .flex-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+        .info {
+            flex: 1;
+        }
+        .align-right {
+            text-align: right;
+        }
+        @media (max-width: 768px) {
+            .flex-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .register-container {
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body oncontextmenu="return false;"> <!-- Disable right click -->
@@ -508,256 +597,64 @@
     </div>
 </div>
 
-<!-- Main Content -->
 <div class="container">
-    <!-- Chart Section -->
-    <div class="box chart-box" id="chart-box">
-        <button class="reload-button" id="reloadButtonInstance" title="Reload" onclick="startReload('Instance')">
-            <i class="fas fa-sync-alt"></i>
-        </button>
-        <h2>Instance Graph
-            <i class="fas fa-external-link-alt popout-icon" onclick="showPopup('Instance Graph Pop-out')"></i>
-        </h2>
-        <div id="chart"></div>
-        <div id="button-container" class="button">
-            <button id="chart1DayButton" onclick="updateChart(this,'1D')" style="background-color: #f4f4f4;color: #007bff;border: none;border-radius: 6px;padding: 10px 15px;font-size: 14px;font-weight: bold;cursor: pointer;margin: 5px;transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;">1 Day</button>
-            <button onclick="updateChart(this,'1W')" style="background-color: #f4f4f4;color: #007bff;border: none;border-radius: 6px;padding: 10px 15px;font-size: 14px;font-weight: bold;cursor: pointer;margin: 5px;transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;">Week</button>
-            <button onclick="updateChart(this,'1M')" style="background-color: #f4f4f4;color: #007bff;border: none;border-radius: 6px;padding: 10px 15px;font-size: 14px;font-weight: bold;cursor: pointer;margin: 5px;transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;">Month</button>
-            <button onclick="updateChart(this,'6M')" style="background-color: #f4f4f4;color: #007bff;border: none;border-radius: 6px;padding: 10px 15px;font-size: 14px;font-weight: bold;cursor: pointer;margin: 5px;transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;">6 Months</button>
-            <button onclick="updateChart(this,'1Y')" style="background-color: #f4f4f4;color: #007bff;border: none;border-radius: 6px;padding: 10px 15px;font-size: 14px;font-weight: bold;cursor: pointer;margin: 5px;transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;">1 Year</button>
+    <h2><i class="fas fa-id-card"></i> License Details</h2>
+
+    <div class="section">
+        <p class="label"><i class="fas fa-building"></i> Company</p>
+        <div class="flex-container">
+            <p class="info">Name: <span class="highlight">Datagaps hjhjjgjg gfdtdstrdtrInc.</span></p>
+            <p class="info align-right">Email: <span class="highlight">aniyffftuftfkyuyufhhhjhjuiuiul@datagaps.com</span></p>
         </div>
-
     </div>
 
-    <!-- Billing Table Section -->
-    <div class="box table-box">
-        <button class="reload-button" id="reloadButtonManageTenants" title="Reload" onclick="startReload('ManageTenants')">
-            <i class="fas fa-sync-alt"></i>
-        </button>
-        <h2>Billing Expires in a Week
-            <i class="fas fa-external-link-alt popout-icon" onclick="manageTenants(startLoader)"></i>
-        </h2>
-        <table>
-            <thead>
-            <tr>
-                <th>Tenant Name</th>
-                <th>Billing Expiry Date</th>
-            </tr>
-            </thead>
-            <tbody id="billing-tbody">
-            <!-- Dynamically populated -->
-            </tbody>
-        </table>
-        <p id="billing-message" style="color: red; display: none;">No bills are due in a week for tenants.</p>
+    <div class="section">
+        <p class="label"><i class="fas fa-calendar-alt"></i> Date</p>
+        <div class="flex-container">
+            <p class="info">Start Date: <span class="highlight">2022-11-30</span></p>
+            <p class="info">Expiration Date: <span class="highlight">2025-12-31</span></p>
+            <p class="info">Next Registration: <span class="highlight">2024-12-31</span></p>
+        </div>
     </div>
 
-    <!-- Detailed Table Section -->
-    <div class="box table-box">
-        <button class="reload-button" id="reloadButtonRecentErrors" title="Reload" onclick="startReload('RecentErrors')">
-            <i class="fas fa-sync-alt"></i>
-        </button>
-        <h2>Recent Errors
-            <i class="fas fa-external-link-alt popout-icon" onclick="goToRecentErrors()"></i>
-        </h2>
-        <table>
-            <thead>
-            <tr>
-                <th>RequestId</th>
-                <th>Display Message</th>
-            </tr>
-            </thead>
-            <tbody id="errors-tbody">
-            <!-- Dynamically populated -->
-            </tbody>
-        </table>
-        <p id="errors-message" style="color: red; display: none;">No recent errors detected.</p>
+    <div class="section">
+        <p class="label"><i class="fas fa-users"></i> Tenant Info</p>
+        <div class="flex-container">
+            <p class="info">No of Tenants: <span class="highlight">50</span></p>
+            <p class="info align-right">Max Users per Tenant: <span class="highlight">200</span></p>
+        </div>
     </div>
 
-    <!-- Log Details Section -->
-    <div class="box table-box">
-        <button class="reload-button" id="reloadButtonRecentRequests" title="Reload" onclick="startReload('RecentRequests')">
-            <i class="fas fa-sync-alt"></i>
-        </button>
-        <h2>Recent Requests
-            <i class="fas fa-external-link-alt popout-icon" onclick="showPopup('Log Details Pop-out')"></i>
-        </h2>
-        <table>
-            <thead>
-            <tr>
-                <th>LogId</th>
-                <th>Details</th>
-                <th>Date</th>
-            </tr>
-            </thead>
-            <tbody id="log-details-tbody">
-            <!-- Dynamically populated -->
-            </tbody>
-        </table>
-        <p id="log-details-message" style="color: red; display: none;">There are no recent requests.</p>
+    <p class="label"><i class="fas fa-key"></i> License Key</p>
+    <div class="license-key">
+        <input type="file" id="fileUpload" style="display: none;" />
+        <label for="fileUpload" class="button"><i class="fas fa-upload"></i> Browse...</label>
+        <p>Or drop files here</p>
+    </div>
+
+    <div class="register-container">
+        <button class="button"><i class="fas fa-check"></i> Register</button>
     </div>
 </div>
+
+
+
 <script src="js/security.js"></script>
 <script src="js/chart.js"></script>
 <script src="js/worktree.js"></script>
 <script>
 
-
-      var apiResponse = {
-        "1D": { "instances": [[1698051600, 4], [1698055200, 5], [1698058800, 6]] },
-        "1W": { "instances": [[1697643600, 8], [1697730000, 6], [1697816400, 7]] },
-        "1M": { "instances": [[1695375600, 3], [1695967200, 5], [1696558800, 7]] },
-        "6M": { "instances": [[1677577200, 10], [1680265200, 12], [1682953200, 15]] },
-        "1Y": { "instances": [[1666626000, 8], [1671903600, 6], [1677181200, 9]] }
-    };
-
-    // Sample data
-    var billingData = [
-        { tenantName: "Tenant A", expiryDate: "2024-10-30" },
-        { tenantName: "Tenant B", expiryDate: "2024-10-28" },
-        { tenantName: "Tenant C", expiryDate: "2024-10-26" }
-    ];
-
-    var recentErrorsData = [
-        { requestId: "REQ001", message: "Message for Request 001" },
-        { requestId: "REQ002", message: "Message for Request 002" }
-    ];
-
-    var logDetailsData = [
-        { logId: "LOG001", details: "Error in process A", date: "2024-10-23" },
-        { logId: "LOG002", details: "Timeout in process B", date: "2024-10-22" }
-    ];
-
-    function populateTables() {
-        // Populate Billing Table
-        const billingTbody = document.getElementById('billing-tbody');
-         billingTbody.innerHTML = '';
-        const billingMessage = document.getElementById('billing-message');
-        if (billingData.length === 0) {
-            billingMessage.style.display = 'block';
-        } else {
-            billingData.forEach(item => {
-                const row = `<tr><td>${item.tenantName}</td><td>${item.expiryDate}</td></tr>`;
-                billingTbody.innerHTML += row;
-            });
-            billingMessage.style.display = 'none';
-        }
-
-        // Populate Recent Errors Table
-        const errorsTbody = document.getElementById('errors-tbody');
-        errorsTbody.innerHTML = '';
-        const errorsMessage = document.getElementById('errors-message');
-        if (recentErrorsData.length === 0) {
-            errorsMessage.style.display = 'block';
-        } else {
-            recentErrorsData.forEach(item => {
-                const row = `<tr><td>${item.requestId}</td><td>${item.message}</td></tr>`;
-                errorsTbody.innerHTML += row;
-            });
-            errorsMessage.style.display = 'none';
-        }
-
-        // Populate Log Details Table
-        const logDetailsTbody = document.getElementById('log-details-tbody');
-        logDetailsTbody.innerHTML = '';
-        const logDetailsMessage = document.getElementById('log-details-message');
-        if (logDetailsData.length === 0) {
-            logDetailsMessage.style.display = 'block';
-        } else {
-            logDetailsData.forEach(item => {
-                const row = `<tr><td>${item.logId}</td><td>${item.details}</td><td>${item.date}</td></tr>`;
-                logDetailsTbody.innerHTML += row;
-            });
-            logDetailsMessage.style.display = 'none';
-        }
-    }
-
-
-
-    // Disable right-click context menu
-    document.addEventListener('contextmenu', event => event.preventDefault());
-
-    // Chart Data Setup
-
-    function processApiResponse(apiData) {
-        return apiData.map(entry => ({ x: entry[0] * 1000, y: entry[1] }));
-    }
-
-    const chartOptions = {
-        chart: {
-            type: 'line',
-            height: 300,
-            animations: { enabled: true, easing: 'easeinout', speed: 800 },
-            toolbar: { show: false }
-        },
-        series: [{
-            name: 'Instances Running',
-            data: processApiResponse(apiResponse['1D'].instances)
-        }],
-        xaxis: { type: 'datetime', labels: { format: 'dd MMM HH:mm' } },
-        tooltip: { x: { format: 'dd MMM HH:mm' } }
-    };
-
-    var chart;
-    
-    function renderChart() {
-        if (!chart) { // Only initialize if chart is not already created
-
-        chart = new ApexCharts(document.querySelector("#chart"), chartOptions);
-        chart.render();
-    } else {
-        chart.updateSeries([{ data: processApiResponse(apiResponse['1D'].instances) }]);
-    }
-    }
-
-// Update Chart
-function updateChart(button, period) {
-    // Remove 'selected' class from all buttons
-    const buttons = document.querySelectorAll('#button-container button');
-    buttons.forEach(btn => btn.classList.remove('selected'));
-
-    // Add 'selected' class to the clicked button
-    button.classList.add('selected');
-
-    // Update chart with the new period
-    chart.updateSeries([{ data: processApiResponse(apiResponse[period].instances) }]);
-}
-
-
-
-    // Sidebar Toggle
+// Sidebar Toggle
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('active');
     }
-
-    // Profile Dropdown
+  // Profile Dropdown
     function toggleProfileDropdown() {
         const dropdown = document.getElementById('dropdown-menu');
         dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
     }
 
-    // Close dropdown when clicking outside
-    window.onclick = function(event) {
-        if (!event.target.matches('.profile img')) {
-            const dropdown = document.getElementById('dropdown-menu');
-            if (dropdown.style.display === 'block') {
-                dropdown.style.display = 'none';
-            }
-        }
-    }
 
-    // Function stubs for the buttons
-    function openSettings() {
-        alert("Settings clicked");
-    }
-
-
-
-
-
-function goToRecentErrors(){
-    startLoader();
-	window.location.href="log";
-}
 
 function startLoader() {
     document.getElementById('loader').style.visibility = 'visible';
@@ -770,83 +667,6 @@ function stopLoader() {
 }
 
 
-function init(xhr,decryptedResponseObj){
-     if (xhr.status == 200) {
-
-
-        var response = decryptedResponseObj;
-        if(response.billing!=undefined){
-        billingData = response.billing;
-         stopReload("ManageTenants");
-        }
-
-        if(response.chart!=undefined)
-        {
-        apiResponse =  response.chart;
-         stopReload("Instance");
-        }
-
-        if(response.requests!=undefined)
-        {
-        recentErrorsData=response.requests;
-         stopReload("RecentErrors");
-        }
-
-        if(response.errors!=undefined)
-        {
-        logDetailsData=response.errors;
-         stopReload("RecentRequests");
-        }
-    }else{
-       removeCurrentUserCache();
-    }
- populateTables();
- renderChart(); // Render the chart when the page loads
-getCurrentToken();
-   const profilePicBase64 = getCurrentProfileImageWithoutRedirect();
-      const profileBtn = document.querySelector('.profile img');
-            profileBtn.src = profilePicBase64;
-
- const firstButton = document.getElementById('chart1DayButton'); // Select the button by ID
-        updateChart(firstButton, '1D');
-
-            stopLoader();
-}
-
-  // Function to start the reload (rotation) effect
-    function startReload(text) {
-       var params= "?type=";
-       if(text=="Instance") {
-            params = params+  "chart";
-       }else if(text=="ManageTenants"){
-        params =params+ "billing";
-       }
-       else if(text=="RecentErrors"){
-             params = params +"requests";
-       }else{
-            params = params +"errors";
-       }
-      document.getElementById("reloadButton" + text).classList.add("loading");
-
-      dynamicXhrApi('GET',BASE_URL + 'api/home' + params,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined, init);
-
-
-    }
-
-    // Function to stop the reload (rotation) effect
-    function stopReload(text) {
-      document.getElementById("reloadButton" + text).classList.remove("loading");
-    }
-
-
-startLoader()
-dynamicXhrApi('GET',BASE_URL + 'api/home',{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined, init);
-
-
-<!--      // Call populate function on page load-->
-<!--    window.onload = function() {-->
-<!--       -->
-<!--    }-->
 
  window.addEventListener('pageshow', function(event) {
         // Check if the page is loaded from the cache
