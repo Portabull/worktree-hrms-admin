@@ -439,6 +439,7 @@
             align-items: center;
             gap: 15px;
             flex-wrap: wrap;
+                margin-bottom: 5px;
         }
         .section:last-child {
             border-bottom: none;
@@ -450,6 +451,7 @@
             align-items: center;
             gap: 10px;
             flex-wrap: wrap;
+              margin-bottom: 2px;
         }
         .highlight {
             font-weight: bold;
@@ -461,14 +463,29 @@
             text-align: center;
             border-radius: 6px;
             margin-top: 20px;
+             margin: 5px 0;
+              font-size: 12px;
         }
+
+        .license-key p {
+    margin-top: 5px; /* Reduce space between the upload button and the text */
+}
+
+.license-key.drag-over {
+    border-color: #008CBA; /* Highlight border when dragging */
+    background-color: #f0f0f0; /* Optional: Background highlight on drag */
+}
+
+#fileUpload {
+    display: none; /* Keep the file input hidden */
+}
         .register-container {
             display: flex;
             justify-content: flex-end;
             margin-top: 15px;
         }
         .button {
-            background: #007bff;
+            background: #6c757d;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -476,9 +493,11 @@
             cursor: pointer;
             font-size: 16px;
             transition: 0.3s;
+            padding: 8px 12px; /* Adjust the padding of the button to make it smaller */
+    font-size: 12px; /* Reduce the font size for the button text */
         }
         .button:hover {
-            background: #0056b3;
+             background-color: #5a6268;
         }
         .flex-container {
             display: flex;
@@ -489,6 +508,7 @@
         }
         .info {
             flex: 1;
+            margin-top: 0;
         }
         .align-right {
             text-align: right;
@@ -571,7 +591,7 @@
         <i class="fas fa-times"></i>
         <span>Close</span>
     </button>
-    <div class="sidebar-item" onclick="gotohome()" style="pointer-events: none; opacity: 0.5;" aria-disabled="true">
+    <div class="sidebar-item" onclick="gotohome()" style="pointer-events: none; opacity: 0.5;">
         <i class="fas fa-home"></i>
         <span>Home</span>
     </div>
@@ -587,7 +607,7 @@
         <i class="fas fa-file-alt"></i>
         <span>Audit Logs</span>
     </div>
-    <div id="licenseButton" class="sidebar-item" onclick="gotoLicenseConfig()"  style="display: none;">
+    <div id="licenseButton" class="sidebar-item" onclick="gotoLicenseConfig()"  style="display: none;" aria-disabled="true">
         <i class="fas fa-id-card"></i>
         <span>License</span>
     </div>
@@ -603,25 +623,25 @@
     <div class="section">
         <p class="label"><i class="fas fa-building"></i> Company</p>
         <div class="flex-container">
-            <p class="info">Name: <span class="highlight">Datagaps hjhjjgjg gfdtdstrdtrInc.</span></p>
-            <p class="info align-right">Email: <span class="highlight">aniyffftuftfkyuyufhhhjhjuiuiul@datagaps.com</span></p>
+            <p class="info">Name: <span id="companyName" class="highlight"></span></p>
+            <p class="info align-right">Email: <span id="companyEmail" class="highlight"></span></p>
         </div>
     </div>
 
     <div class="section">
         <p class="label"><i class="fas fa-calendar-alt"></i> Date</p>
         <div class="flex-container">
-            <p class="info">Start Date: <span class="highlight">2022-11-30</span></p>
-            <p class="info">Expiration Date: <span class="highlight">2025-12-31</span></p>
-            <p class="info">Next Registration: <span class="highlight">2024-12-31</span></p>
+            <p class="info">Start Date: <span id="startDate" class="highlight"></span></p>
+            <p class="info">Expiration Date: <span id="expiryDate"  class="highlight"></span></p>
+            <p class="info">Next Registration: <span id="nextRegDate"  class="highlight"></span></p>
         </div>
     </div>
 
     <div class="section">
         <p class="label"><i class="fas fa-users"></i> Tenant Info</p>
         <div class="flex-container">
-            <p class="info">No of Tenants: <span class="highlight">50</span></p>
-            <p class="info align-right">Max Users per Tenant: <span class="highlight">200</span></p>
+            <p class="info">No of Tenants: <span id="noOfTenants" class="highlight"></span></p>
+            <p class="info align-right">Max Users per Tenant: <span id="maxUsersPerTenant"  class="highlight"></span></p>
         </div>
     </div>
 
@@ -674,6 +694,66 @@ function stopLoader() {
             stopLoader();
         }
     });
+
+
+    startLoader();
+             dynamicXhrApi('GET',BASE_URL + "api/licence" ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken()},undefined, handleLicenseResp);
+
+             function handleLicenseResp(xhr,decryptedResponseObj){
+             stopLoader();
+            if(xhr.status==200){
+            document.getElementById('companyName').innerHTML = decryptedResponseObj.companyName;
+            document.getElementById('companyEmail').innerHTML = decryptedResponseObj.companyEmail;
+            document.getElementById('startDate').innerHTML = decryptedResponseObj.startDate;
+            document.getElementById('expiryDate').innerHTML = decryptedResponseObj.expiryDate;
+            document.getElementById('nextRegDate').innerHTML = decryptedResponseObj.nextRegDate;
+            document.getElementById('noOfTenants').innerHTML = decryptedResponseObj.noOfTenants;
+            document.getElementById('maxUsersPerTenant').innerHTML = decryptedResponseObj.maxUsersPerTenant;
+
+             }}
+
+
+
+
+
+
+
+
+
+
+
+
+
+             // Get the drag-and-drop area and file input elements
+const dragDropArea = document.getElementById('dragDropArea');
+const fileUpload = document.getElementById('fileUpload');
+
+// Prevent the default behavior for the dragover and drop events
+dragDropArea.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    dragDropArea.classList.add('drag-over'); // Highlight area when dragging
+});
+
+dragDropArea.addEventListener('dragleave', () => {
+    dragDropArea.classList.remove('drag-over'); // Remove highlight when drag leaves
+});
+
+dragDropArea.addEventListener('drop', (event) => {
+    event.preventDefault();
+    dragDropArea.classList.remove('drag-over'); // Remove highlight on drop
+
+    // Get the dropped files
+    const files = event.dataTransfer.files;
+    if (files.length > 0) {
+        fileUpload.files = files; // Add the files to the hidden file input element
+    }
+});
+
+// Optionally, trigger the file input when the label is clicked
+document.querySelector('label[for="fileUpload"]').addEventListener('click', () => {
+    fileUpload.click();
+});
+
 </script>
 
 </body>

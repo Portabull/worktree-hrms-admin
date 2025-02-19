@@ -37,7 +37,7 @@ public class LicenceServiceImpl implements LicenceService {
 
             Map<String, Object> response = new ObjectMapper().readValue(content.toString(), Map.class);
 
-            if (DateUtils.isDateExceeded(response.get("licenceValidTill").toString(), "dd-MM-yyyy")) {
+            if (DateUtils.isDateExceeded(response.get("licenseValidTill").toString(), "dd-MM-yyyy")) {
                 throw new BadRequestException("You uploaded Expired Licence file");
             }
 
@@ -46,6 +46,11 @@ public class LicenceServiceImpl implements LicenceService {
         } catch (Exception e) {
             throw new BadRequestException("Invalid Licence");
         }
+    }
+
+    @Override
+    public Map<String, Object> getLicence() {
+        return licenceDao.getLicence();
     }
 
 

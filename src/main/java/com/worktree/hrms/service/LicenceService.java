@@ -8,4 +8,5 @@ public interface LicenceService {
 
     Map<String, Object> uploadLicence(MultipartFile file);
 
+    Map<String, Object> getLicence();
 }

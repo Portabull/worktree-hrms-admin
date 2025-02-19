@@ -6,4 +6,5 @@ public interface LicenceDao {
 
     Map<String, Object> uploadLicence(String licence);
 
+    Map<String, Object> getLicence();
 }
