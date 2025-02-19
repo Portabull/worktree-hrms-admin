@@ -576,6 +576,10 @@ function _0x3c2b1a(encryptedData, _0x7f8e9d) {
 function gotoconfiguration(){
   window.location.href = "configuration";
 }
+
+function gotoLicenseConfig(){
+  window.location.href = "license-configuration";
+}
 function getISTTimestamp() {
     const currentTime = new Date();
 
@@ -632,15 +636,25 @@ function checkConfButtons(){
     var userFeatures = getCurrentUserFeatures();
         if(userFeatures != undefined && userFeatures.length!=0){
  const button = document.getElementById('configurationButton');
+  const licenseButton = document.getElementById('licenseButton');
  const searchDropDownButton = document.getElementById('configurationButtonSearch');
+ const searchLicenseDropDownButton = document.getElementById('licenseButtonSearch');
  if(button!=undefined)
        {
         button.style.display = 'block'; // Show the button
                this.textContent = 'Hide Button'; // Change toggle button text
        }
 
+if(licenseButton!=undefined){
+licenseButton.style.display = 'block';
+//  this.textContent = 'Hide Button';
+}
+
        if(searchDropDownButton!=undefined){
           searchDropDownButton.style.display = 'block'; // Show the button
+       }
+       if(searchLicenseDropDownButton!=undefined){
+       searchLicenseDropDownButton.style.display = 'block'; // Show the button
        }
         }
 }
@@ -751,7 +765,15 @@ const worktreeSearchCache = [
                                 Audit Logs
                             </div>
                     `
-                },
+                },{
+                                          key: ["License"],
+                                          value: `
+                                              <div class="dropdown-item-2123112" id="licenseButtonSearch" onclick="gotoLicenseConfig()" style="display: none;">
+                                                      <span class="dropdown-icon-2123112"><i class="fas fa-id-card"></i></span>
+                                                      License
+                                                  </div>
+                                          `
+                                      },
                 {
                         key: ["Configuration"],
                         value: `
@@ -856,6 +878,10 @@ const innerHtmlContent = `
         <span class="dropdown-icon-2123112"><i class="fas fa-file-alt"></i></span>
         Audit Logs
     </div>
+      <div class="dropdown-item-2123112" id="licenseButtonSearch"  onclick="gotoLicenseConfig()" style="display: none;">
+            <span class="dropdown-icon-2123112"><i class="fas fa-id-card"></i></span>
+            License
+        </div>
     <div class="dropdown-item-2123112" id="configurationButtonSearch" onclick="gotoconfiguration()" style="display: none;">
         <span class="dropdown-icon-2123112"><i class="fas fa-cog"></i></span>
         Configuration
