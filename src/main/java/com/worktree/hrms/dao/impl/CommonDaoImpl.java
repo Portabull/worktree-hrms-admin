@@ -104,7 +104,7 @@ public class CommonDaoImpl implements CommonDao {
             if (!CollectionUtils.isEmpty(licences)) {
                 Map<String, Object> response = new ObjectMapper().readValue(licences.get(0), Map.class);
 
-                if (DateUtils.isDateExceeded(response.get("licenseValidTill").toString(), "dd-MM-yyyy")) {
+                if (DateUtils.isDateExceeded(response.get("licenseValidTill").toString(), DateUtils.LICENSE_DATE_FORMAT)) {
                     throw new PaymentRequiredException("Licence file expired");
                 }
             } else {

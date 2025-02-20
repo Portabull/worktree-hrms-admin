@@ -5,14 +5,18 @@ import com.worktree.hrms.constants.CommonConstants;
 import com.worktree.hrms.dao.LicenceDao;
 import com.worktree.hrms.dao.UserDao;
 import com.worktree.hrms.entity.Licence;
+import com.worktree.hrms.utils.DateUtils;
 import com.worktree.hrms.utils.HibernateUtils;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collections;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +26,8 @@ public class LicenceDaoImpl implements LicenceDao {
 
     @Autowired
     private HibernateUtils hibernateUtils;
+
+    private static final Logger log = LoggerFactory.getLogger(LicenceDaoImpl.class);
 
     @Autowired
     private UserDao userDao;
@@ -55,20 +61,26 @@ public class LicenceDaoImpl implements LicenceDao {
             if (!CollectionUtils.isEmpty(licences)) {
                 Map<String, Object> licenseResponse = new ObjectMapper().readValue(licences.get(0), Map.class);
                 response = Map.of(
-                        "companyName", licenseResponse.getOrDefault("companyName",""),
-                        "companyEmail", licenseResponse.getOrDefault("companyEmail",""),
-                        "startDate", licenseResponse.getOrDefault("licenseStartedDate",""),
-                        "expiryDate", licenseResponse.getOrDefault("licenseValidTill",""),
-                        "nextRegDate", "",
-                        "noOfTenants", licenseResponse.getOrDefault("noOfTenants",""),
-                        "maxUsersPerTenant", licenseResponse.getOrDefault("noOfTenantMaxUsersCount","")
+                        "companyName", licenseResponse.getOrDefault("companyName", ""),
+                        "companyEmail", licenseResponse.getOrDefault("companyEmail", ""),
+                        "startDate", licenseResponse.getOrDefault("licenseStartedDate", ""),
+                        "expiryDate", licenseResponse.getOrDefault("licenseValidTill", ""),
+                        "nextRegDate", getNextRegDate(licenseResponse.getOrDefault("licenseValidTill", "").toString()),
+                        "noOfTenants", licenseResponse.getOrDefault("noOfTenants", ""),
+                        "maxUsersPerTenant", licenseResponse.getOrDefault("noOfTenantMaxUsersCount", "")
                 );
             }
         } catch (Exception e) {
-            System.out.println();
-            e.printStackTrace();
+            log.error("Exception ::", e);
         }
         return response;
+    }
+
+    public String getNextRegDate(String expiryDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DateUtils.LICENSE_DATE_FORMAT);
+        LocalDate date = LocalDate.parse(expiryDate, formatter);
+        LocalDate newDate = date.plusDays(1);
+        return newDate.format(formatter);
     }
 
 }

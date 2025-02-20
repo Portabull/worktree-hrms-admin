@@ -19,6 +19,8 @@ public class DateUtils {
 
     private final static Logger logger = LoggerFactory.getLogger(DateUtils.class);
 
+    public final static String LICENSE_DATE_FORMAT = "dd-MM-yyyy";
+
     public static final String DD_MM_YYYY_HH_MM = "dd/MM/yyyy HH:mm";
 
     //ist timezone
