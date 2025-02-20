@@ -43,6 +43,8 @@ public class LicenceServiceImpl implements LicenceService {
 
             return licenceDao.uploadLicence(content.toString());
 
+        } catch (BadRequestException e) {
+            throw e;
         } catch (Exception e) {
             throw new BadRequestException("Invalid Licence");
         }
