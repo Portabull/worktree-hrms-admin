@@ -21,7 +21,8 @@ public class LicenceController {
     @FileScan(size = 10 * 1024 * 1024, message = "Invalid Licence file uploaded please upload a valid file")
     @PostMapping("licence")
     public ResponseEntity<Map> uploadLicence(@RequestPart MultipartFile file) {
-        return new ResponseEntity<>(licenceService.uploadLicence(file), HttpStatus.OK);
+        licenceService.uploadLicence(file);
+        return new ResponseEntity<>(licenceService.getLicence(), HttpStatus.OK);
     }
 
     @GetMapping("licence")

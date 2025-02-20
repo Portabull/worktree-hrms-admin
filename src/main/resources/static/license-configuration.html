@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="css/common-style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" sizes="32x32" href="image/logo3232.png">
-    <title>Home</title>
+    <title>License Configuration</title>
     <!-- Add FontAwesome for Icons -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/common.css">
@@ -647,15 +647,20 @@
     </div>
 
     <p class="label"><i class="fas fa-key"></i> License Key</p>
-    <div class="license-key">
-        <input type="file" id="fileUpload" style="display: none;" />
+    <div id="dragDropArea" class="license-key">
+        <input type="file" accept=".txt" id="fileUpload" style="display: none;" />
         <label for="fileUpload" class="button"><i class="fas fa-upload"></i> Browse...</label>
         <p>Or drop files here</p>
+        <p id="fileNameDisplay" class="selected-file">No file selected <span id="successIcon"></span></p>
+
     </div>
 
+
+
     <div class="register-container">
-        <button class="button"><i class="fas fa-check"></i> Register</button>
+        <button class="button" onclick="register()" id="registerButton" disabled><i class="fas fa-check"></i> Register</button>
     </div>
+
 </div>
 
 
@@ -720,40 +725,112 @@ function stopLoader() {
 
 
 
-
-
-
-
-
-             // Get the drag-and-drop area and file input elements
+// Get elements
 const dragDropArea = document.getElementById('dragDropArea');
 const fileUpload = document.getElementById('fileUpload');
+const fileNameDisplay = document.getElementById('fileNameDisplay');
+const fileUploadLabel = document.querySelector('label[for="fileUpload"]');
+var cashedLFile;
 
-// Prevent the default behavior for the dragover and drop events
-dragDropArea.addEventListener('dragover', (event) => {
-    event.preventDefault();
-    dragDropArea.classList.add('drag-over'); // Highlight area when dragging
-});
 
-dragDropArea.addEventListener('dragleave', () => {
-    dragDropArea.classList.remove('drag-over'); // Remove highlight when drag leaves
-});
+// Ensure elements exist before adding event listeners
+if (dragDropArea && fileUpload && fileNameDisplay && fileUploadLabel) {
+    // Function to update file name display
+    function updateFileNameDisplay(file) {
+        if (file) {
 
-dragDropArea.addEventListener('drop', (event) => {
-    event.preventDefault();
-    dragDropArea.classList.remove('drag-over'); // Remove highlight on drop
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+        if (fileExtension !== 'txt') {
+               document.getElementById("registerButton").disabled = true;
+ fileNameDisplay.innerHTML = `Please upload a .txt file only. <span style="color: green;">&#10060;</span>`;
+            return;
+        }
 
-    // Get the dropped files
-    const files = event.dataTransfer.files;
-    if (files.length > 0) {
-        fileUpload.files = files; // Add the files to the hidden file input element
+         const maxFileSize = 10 * 1024 * 1024; // 10MB in bytes
+        if (file.size > maxFileSize) {
+               document.getElementById("registerButton").disabled = true;
+        fileNameDisplay.innerHTML = `The file size must be less than 10MB. <span style="color: green;">&#10060;</span>`;
+            return;
+        }
+
+cashedLFile=file;
+             fileNameDisplay.innerHTML = `Selected file: ${file.name} <span style="color: green;">&#9989;</span>`;
+               document.getElementById("registerButton").disabled = false;
+        } else {
+            fileNameDisplay.innerHTML = "No file selected";
+        }
     }
-});
 
-// Optionally, trigger the file input when the label is clicked
-document.querySelector('label[for="fileUpload"]').addEventListener('click', () => {
-    fileUpload.click();
-});
+    // File input change event (for browsing files)
+    fileUpload.addEventListener('change', (event) => {
+        if (event.target.files.length > 0) {
+            updateFileNameDisplay(event.target.files[0]);
+
+            // Delay resetting the value to allow proper selection
+            setTimeout(() => {
+                fileUpload.value = "";
+            }, 500);
+        }
+    });
+
+    // Drag-and-drop events
+    dragDropArea.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        dragDropArea.classList.add('drag-over'); // Highlight area when dragging
+    });
+
+    dragDropArea.addEventListener('dragleave', () => {
+        dragDropArea.classList.remove('drag-over'); // Remove highlight when drag leaves
+    });
+
+    dragDropArea.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dragDropArea.classList.remove('drag-over'); // Remove highlight on drop
+
+        // Get the dropped file
+        const files = event.dataTransfer.files;
+        if (files.length > 0) {
+            fileUpload.files = files; // Assign the dropped file to input
+            updateFileNameDisplay(files[0]); // Update file name display
+        }
+    });
+
+    // Open file selector only once when clicking the label
+    fileUploadLabel.addEventListener('click', (event) => {
+        event.preventDefault(); // Prevent multiple clicks
+        fileUpload.click();
+    });
+} else {
+    console.error("Drag-and-drop elements not found!");
+}
+
+
+function register(){
+
+        const formData = new FormData();
+        formData.append("file", cashedLFile);
+
+startLoader();
+        // Call dynamicXhrApi to upload the file
+        dynamicXhrApi(
+            "POST", // HTTP method
+            BASE_URL + "api/licence", // Replace with your upload endpoint
+            { Authorization: getCurrentToken() }, // Headers, if needed
+            formData, // FormData with the file
+            function (response, decryptedResponseObj) {
+                if (response.status >= 200 && response.status < 300) {
+                       handleLicenseResp(response, decryptedResponseObj);
+                        showErrorMessage("OK", "License Registered Successfully", false);
+                } else {
+                    stopLoader();
+                     showErrorMessage("Error Occurred", decryptedResponseObj.message, true);
+                }
+            },
+            true // Indicate that this is a file upload
+        );
+
+
+}
 
 </script>
 
