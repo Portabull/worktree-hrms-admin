@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Log Viewer</title>
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/common-style.css">
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+
+
+/* Sidebar starts */
+.sidebar {
+   position: fixed;
+    left: -300px;
+    top: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #343a40;
+    padding: 20px;
+    color: white;
+    transition: all 0.5s ease;
+    z-index: 1001;
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Hide horizontal scrolling */
+}
+
+/* Add a scrollbar only if content overflows */
+.sidebar::-webkit-scrollbar {
+    width: 6px; /* Adjust scrollbar width */
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.5); /* Scrollbar color */
+    border-radius: 10px; /* Rounded corners */
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.8); /* Hover color */
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.sidebar .sidebar-item {
+    color: white;
+    padding: 15px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar .sidebar-item:hover {
+    background-color: #50575d;
+}
+
+.sidebar .sidebar-item i {
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.sidebar .close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.sidebar .close-btn i {
+    margin-right: 10px;
+}
+
+.sidebar .close-btn:hover {
+    color: #ff5c5c;
+    transform: scale(1.1);
+    transition: all 0.3s ease;
+}
+
+/* Add animation to sidebar opening */
+.sidebar.active {
+    animation: slideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+    0% {
+        left: -300px;
+    }
+    100% {
+        left: 0;
+    }
+}
+
+/* Add bounce effect on item click */
+.sidebar .sidebar-item:active {
+    transform: scale(0.95);
+    transition: transform 0.1s;
+}
+
+/* Sidebar ends */
+
+
+ /* Navbar styling */
+/* Navbar should be consistent on all pages */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #343a40;
+    color: white;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+        .navbar .menu-button {
+           display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .navbar .menu-button div {
+             width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+.dropdown-menu {
+    position: absolute;
+    top: 50px;
+    right: 10px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    z-index: 9999; /* Highest z-index to prevent hiding */
+    padding: 10px;
+    width: 180px;
+    display: none; /* Initially hidden */
+}
+
+/* Ensure it is displayed properly */
+.profile {
+    position: relative; /* Important to align dropdown correctly */
+}
+
+.profile:hover .dropdown-menu,
+.profile img:focus + .dropdown-menu {
+    display: block; /* Show on hover or focus */
+}
+
+/* Ensure dropdown stays within the screen */
+@media screen and (max-width: 768px) {
+    .dropdown-menu {
+        right: 0;
+        left: auto;
+    }
+}
+
+
+     /* Fix for Profile Icon Alignment */
+/* Fix for Profile Icon */
+.navbar .profile {
+    display: flex;
+    align-items: center;
+    margin-left: auto; /* Push profile icon to the right */
+    padding-right: 20px;
+}
+
+.navbar .profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.navbar .search-box-container-2123112 {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+
+
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            text-decoration: none;
+            color: black;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .dropdown-menu a i {
+             margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .dropdown-menu a:hover {
+               background-color: #f4f4f4;
+        }
+
+
+
+html, body {
+     font-family: Arial, sans-serif;
+    overflow: hidden; /* Disable outer scrolling */
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Full height of screen */
+    padding: 20px;
+    margin-top: 120px; /* Adjust to prevent overlap with navbar and buttons */
+    overflow: hidden; /* Ensure no unwanted scrolling */
+}
+
+
+
+
+.controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Keep items aligned properly */
+    gap: 15px;
+    padding: 10px;
+    background-color: #343a40; /* Match navbar background */
+    position: fixed;
+    top: 60px; /* Adjust to stay below navbar */
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Ensure it's above log content */
+}
+
+
+.controls select, .controls input, .controls button {
+    padding: 10px;
+    font-size: 16px;
+}
+
+
+
+     .log-container {
+    flex-grow: 1;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto; /* Enable scrolling */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    white-space: pre-wrap;
+    font-family: monospace;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    height: calc(100vh - 200px); /* Adjust based on navbar and controls */
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Ensures logs start from the top */
+}
+
+
+
+        .scroll-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #008CBA;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 50%;
+            font-size: 20px;
+            display: none;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .progress-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            color: black;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+            width: 300px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(to right, #4a90e2, #007bff);
+            transition: width 0.3s;
+        }
+
+.progress-bar-container {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;  /* Moved to bottom left */
+    background: rgba(255, 255, 255, 0.9);
+    color: black;
+    padding: 5px;
+    border-radius: 5px;
+    display: none;
+    cursor: pointer;
+    width: 200px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+
+        .hide-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* Log level colors */
+        .info { color: #2a9d8f; }
+        .warning { color: #e9c46a; }
+        .error { color: #e76f51; font-weight: bold; }
+        .debug { color: #8e44ad; }
+
+        /* Themes */
+        .theme-dark {
+            background-color: #2e2e2e;
+            color: white;
+        }
+        .theme-light {
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .theme-blue {
+            background-color: #1e3a8a;
+            color: white;
+        }
+        .theme-green {
+            background-color: #14532d;
+            color: white;
+        }
+    </style>
+</head>
+<body class="theme-dark">
+
+
+
+<!-- Navbar -->
+
+<!--<div class="navbar">-->
+<!--  <div class="menu-button" onclick="toggleSidebar()">-->
+<!--    <div></div>-->
+<!--    <span class="company-name"></span>-->
+<!--  </div>-->
+<!--  &nbsp;&nbsp;-->
+<!--  <div class="search-box-container-2123112">-->
+<!--    <input type="text" class="search-box-2123112" id="searchInput-2123112" placeholder="Search any action or ask for help...">-->
+<!--    <div class="dropdown-container-2123112" id="dropdownMenu-2123112">-->
+<!--    </div>-->
+<!--  </div>-->
+
+<!--  <div class="profile">-->
+<!--    <img src="https://via.placeholder.com/50" alt="Profile" onclick="toggleProfileDropdown()">-->
+<!--    <div class="dropdown-menu" id="dropdown-menu">-->
+<!--      <a href="#"><i class="fas fa-cog"></i>Settings</a>-->
+<!--      <a href="#"><i class="fas fa-user"></i>Manage Profiles</a>-->
+<!--      <a href="#"><i class="fas fa-sign-out-alt"></i>Logout</a>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+<div class="navbar">
+  <div class="menu-button" onclick="toggleSidebar()">
+    <div></div>
+    <span class="company-name"></span>
+  </div>
+
+<!--  <div class="search-box-container-2123112">-->
+<!--    <input type="text" class="search-box-2123112" id="searchInput-2123112" placeholder="Search any action or ask for help...">-->
+<!--        <div class="dropdown-container-2123112" id="dropdownMenu-2123112">-->
+<!--        </div>-->
+<!--  </div>-->
+
+  <div class="profile">
+    <img src="https://via.placeholder.com/50" alt="Profile" onclick="toggleProfileDropdown()">
+    <div class="dropdown-menu" id="dropdown-menu">
+      <a href="#"><i class="fas fa-cog"></i>Settings</a>
+      <a href="#"><i class="fas fa-user"></i>Manage Profiles</a>
+      <a href="#"><i class="fas fa-sign-out-alt"></i>Logout</a>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <button class="close-btn" onclick="toggleSidebar()">
+    <i class="fas fa-times"></i>
+    <span>Close</span>
+  </button>
+  <div class="sidebar-item" onclick="gotohome()">
+    <i class="fas fa-home"></i>
+    <span>Home</span>
+  </div>
+  <div class="sidebar-item" onclick="manageTenants(startLoader)">
+    <i class="fas fa-users"></i>
+    <span>Manage Tenants</span>
+  </div>
+  <div class="sidebar-item" onclick="showReports()">
+    <i class="fas fa-chart-bar"></i>
+    <span>Reports</span>
+  </div>
+  <div class="sidebar-item" onclick="showAuditLogs()">
+    <i class="fas fa-file-alt"></i>
+    <span>Audit Logs</span>
+  </div>
+  <div id="licenseButton" class="sidebar-item" onclick="gotoLicenseConfig()"   style="display: none;">
+    <i class="fas fa-id-card"></i>
+    <span>License</span>
+  </div>
+  <div id="configurationButton" class="sidebar-item" onclick="gotoconfiguration()"  style="display: none; pointer-events: none; opacity: 0.5;"aria-disabled="true">
+    <i class="fas fa-cog"></i>
+    <span>Configuration</span>
+  </div>
+</div>
+
+
+
+<div class="container">
+  <div class="controls">
+    <select id="logLevel" onchange="filterLogs()">
+      <option value="all">All</option>
+      <option value="info">Info</option>
+      <option value="warning">Warning</option>
+      <option value="error">Error</option>
+      <option value="debug">Debug</option>
+    </select>
+    <input type="text" id="searchInput" oninput="filterLogs()" placeholder="Search logs..." />
+    <select id="themeSelect" onchange="changeTheme()">
+      <option value="dark">Dark</option>
+      <option value="light">Light</option>
+      <option value="blue">Blue</option>
+      <option value="green">Green</option>
+    </select>
+    <button id="liveLogToggle" onclick="toggleLiveLogs()">View Live Logs</button>
+    <button id="downloadButton" onclick="startDownload()">Download Logs</button>
+  </div>
+  <div class="log-container theme-dark" id="logContainer" onscroll="checkScroll()"></div>
+  <button id="scrollButton" class="scroll-button" onclick="scrollToBottom()">↓</button>
+</div>
+
+<div id="progressPopup" class="progress-popup">
+  <button class="hide-button" onclick="hideProgress()">✖</button>
+  <p>Downloading... <span id="progressPercent">0%</span></p>
+  <div class="progress-bar">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+</div>
+<div id="progressBar" class="progress-bar-container" onclick="showProgressPopup()">
+  Downloading... <span id="progressBarPercent">0%</span>
+  <div class="progress-bar">
+    <div class="progress-bar-fill" id="progressBarFill"></div>
+  </div>
+</div>
+
+<script src="js/security.js"></script>
+<script src="js/worktree.js"></script>
+
+<script>
+loadProfilePhoto();
+    // Hide dropdown when clicking outside
+    window.onclick = function(event) {
+        if (!event.target.matches('.profile img')) {
+            const dropdown = document.getElementById('dropdown-menu');
+            if (dropdown && dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            }
+        }
+    };
+
+        let logs = [];
+        let liveLogging = false;
+        let logInterval;
+        let autoScroll = true;
+function showProgressPopup() {
+    document.getElementById('progressPopup').style.display = 'block';
+    document.getElementById('progressBar').style.display = 'none';  // Hide minimized progress bar
+}
+
+       function renderLogs() {
+    const logContainer = document.getElementById('logContainer');
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const logLevel = document.getElementById('logLevel').value;
+
+    let filteredLogs = logs.filter(log =>
+        (logLevel === 'all' || log.level === logLevel) &&
+        log.message.toLowerCase().includes(searchTerm)
+    );
+
+    logContainer.innerHTML = filteredLogs.map(log =>
+        `<div class="${log.level}"><strong>${log.timestamp}</strong> - ${log.message}</div>`
+    ).join('');
+
+    if (autoScroll) scrollToBottom();
+}
+
+// Ensure search and filtering update dynamically
+document.getElementById('logLevel').addEventListener('change', renderLogs);
+document.getElementById('searchInput').addEventListener('input', renderLogs);
+
+
+      function toggleLiveLogs() {
+    liveLogging = !liveLogging;
+    document.getElementById('liveLogToggle').textContent = liveLogging ? "Stop Live Logs" : "View Live Logs";
+    if (liveLogging) {
+        logInterval = setInterval(() => {
+            logs.push({
+                timestamp: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                level: ['info', 'warning', 'error', 'debug'][Math.floor(Math.random() * 4)],
+                message: "New simulated log entry."
+            });
+            renderLogs();
+        }, 10);
+    } else {
+        clearInterval(logInterval);
+        renderLogs();  // Ensure the last logs remain visible
+        filterLogs();  // Ensure filtering and search works correctly after stopping live logs
+    }
+}
+
+
+        function checkScroll() {
+            autoScroll = document.getElementById('logContainer').scrollTop +
+                         document.getElementById('logContainer').clientHeight >=
+                         document.getElementById('logContainer').scrollHeight - 20;
+            document.getElementById('scrollButton').style.display = autoScroll ? 'none' : 'block';
+        }
+
+
+
+        function changeTheme() {
+            const theme = document.getElementById('themeSelect').value;
+            document.body.className = `theme-${theme}`;
+            document.getElementById('logContainer').className = `log-container theme-${theme}`;
+        }
+
+        function startDownload() {
+    let progress = 0;
+    document.getElementById('progressPopup').style.display = 'block';
+    document.getElementById('progressBar').style.display = 'none';
+
+    const interval = setInterval(() => {
+        if (progress >= 100) {
+            clearInterval(interval);
+            document.getElementById('progressPopup').style.display = 'none';
+            document.getElementById('progressBar').style.display = 'none';
+            alert('Download Complete');
+        } else {
+            progress += 5;
+            document.getElementById('progressPercent').innerText = `${progress}%`;
+            document.getElementById('progressBarPercent').innerText = `${progress}%`;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            document.getElementById('progressBarFill').style.width = `${progress}%`;
+        }
+    }, 200);
+}
+function hideProgress() {
+    document.getElementById('progressPopup').style.display = 'none';
+    document.getElementById('progressBar').style.display = 'block';  // Show minimized progress bar at bottom left
+}
+
+
+
+function filterLogs() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const logLevel = document.getElementById('logLevel').value;
+    const logContainer = document.getElementById('logContainer');
+
+    let filteredLogs = logs.filter(log =>
+        (logLevel === 'all' || log.level === logLevel) &&
+        log.message.toLowerCase().includes(searchTerm)
+    );
+
+    logContainer.innerHTML = filteredLogs.map(log =>
+        `<div class="${log.level}"><strong>${log.timestamp}</strong> - ${log.message}</div>`
+    ).join('');
+
+    if (autoScroll) scrollToBottom();
+}
+
+  function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+    }
+
+  function toggleProfileDropdown() {
+    let dropdown = document.getElementById("dropdown-menu");
+
+    if (dropdown.style.display === "block") {
+        dropdown.style.display = "none";
+    } else {
+        dropdown.style.display = "block";
+    }
+}
+
+// Hide dropdown when clicking outside
+document.addEventListener("click", function (event) {
+    let profileDropdown = document.getElementById("profile-dropdown");
+    let dropdownMenu = document.getElementById("dropdown-menu");
+
+    if (!profileDropdown.contains(event.target)) {
+        dropdownMenu.style.display = "none";
+    }
+});
+
+
+
+function startLoader() {
+    document.getElementById('loader').style.visibility = 'visible';
+    document.body.style.pointerEvents = 'none'; // Disable interaction with the screen
+}
+
+function scrollToBottom() {
+    let logContainer = document.getElementById("logContainer");
+    logContainer.scrollTop = logContainer.scrollHeight;
+}
+
+// Call this function every time new logs are added
+function addLogEntry(log) {
+    let logContainer = document.getElementById("logContainer");
+    let logElement = document.createElement("div");
+    logElement.innerHTML = `<strong>${log.timestamp}</strong> - ${log.message}`;
+    logContainer.appendChild(logElement);
+
+    scrollToBottom(); // Scroll to the latest log
+}
+
+
+window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the cache
+        if (event.persisted) {
+            stopLoader();
+        }
+    });
+
+function stopLoader() {
+    document.getElementById('loader').style.visibility = 'hidden';
+    document.body.style.pointerEvents = 'auto'; // Re-enable interaction with the screen
+}
+    </script>
+</body>
+</html>
