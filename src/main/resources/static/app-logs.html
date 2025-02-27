@@ -592,9 +592,9 @@ document.getElementById('searchInput').addEventListener('input', renderLogs);
             clearInterval(interval);
             document.getElementById('progressPopup').style.display = 'none';
             document.getElementById('progressBar').style.display = 'none';
-            alert('Download Complete');
+            //need to give some alert that log file is deleted
         } else {
-            progress += 5;
+            progress += 1;
             document.getElementById('progressPercent').innerText = `${progress}%`;
             document.getElementById('progressBarPercent').innerText = `${progress}%`;
             document.getElementById('progressFill').style.width = `${progress}%`;
