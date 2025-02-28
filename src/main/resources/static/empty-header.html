@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Logs</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="image/logo3232.png">
+    <!-- Add FontAwesome for Icons -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/common-style.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Reset and basic styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f5f7;
+            padding-top: 60px;
+            user-select: none;
+    -webkit-user-select: none; /* For Safari */
+    -moz-user-select: none; /* For Firefox */
+    -ms-user-select: none; /* For IE and Edge */
+        }
+
+        /* Navbar styling */
+        .navbar {
+           display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar .menu-button {
+           display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .navbar .menu-button div {
+             width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar .profile {
+             position: relative;
+        }
+
+        .navbar .profile img {
+             width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .dropdown-menu {
+                display: none;
+            position: absolute;
+            top: 60px; /* Position dropdown below profile icon */
+            right: 0;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            padding: 10px;
+            width: 180px; /* Increased width to prevent text overflow */
+        }
+
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            text-decoration: none;
+            color: black;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .dropdown-menu a i {
+             margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .dropdown-menu a:hover {
+               background-color: #f4f4f4;
+        }
+
+
+
+        /* Settings container styling */
+        .settings-container {
+    position: relative; /* Make it the reference point for absolute positioning */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    max-width: 1000px;
+    width: 100%;
+    margin: 80px auto;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    animation: fadeIn 0.6s ease;
+}
+
+
+        /* Keyframe animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Settings option styling */
+        .settings-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s, color 0.3s;
+        }
+
+        /* Hover effect */
+        .settings-option:hover {
+            transform: rotate(5deg) scale(1.1);
+            background-color: #e0f7fa;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            color: #00796b;
+        }
+
+        .settings-option:hover i {
+            color: #00796b;
+        }
+
+        /* Icon and label styling */
+        .settings-option i {
+            font-size: 32px;
+            margin-bottom: 5px;
+            color: #4CAF50;
+            transition: color 0.3s;
+        }
+
+        .settings-label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .settings-option.active {
+            background-color: #4CAF50;
+            color: #fff;
+            box-shadow: 0 6px 12px rgba(0, 128, 0, 0.3);
+        }
+
+        .settings-option.active i {
+            color: #fff;
+        }
+
+        /* Mobile responsive adjustments */
+        @media (max-width: 600px) {
+            .settings-container {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                padding: 10px;
+            }
+            .settings-option {
+                width: 80px;
+                height: 80px;
+                padding: 15px;
+            }
+            .settings-option i {
+                font-size: 24px;
+            }
+            .settings-label {
+                font-size: 12px;
+            }
+        }
+
+
+
+
+
+
+
+         /* loader css starts */
+
+
+ /* Rotate animation for the loader */
+    .loading {
+      animation: rotate 1s linear infinite;
+    }
+
+    /* Keyframes for the rotating animation */
+    @keyframes rotate {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+
+
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    visibility: hidden; /* Hide loader by default */
+}
+
+.loader {
+    border: 8px solid #f3f3f3; /* Light gray */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* loader css ends */
+
+
+
+
+/* Sidebar starts */
+.sidebar {
+   position: fixed;
+    left: -300px;
+    top: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #343a40;
+    padding: 20px;
+    color: white;
+    transition: all 0.5s ease;
+    z-index: 1001;
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Hide horizontal scrolling */
+}
+
+/* Add a scrollbar only if content overflows */
+.sidebar::-webkit-scrollbar {
+    width: 6px; /* Adjust scrollbar width */
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.5); /* Scrollbar color */
+    border-radius: 10px; /* Rounded corners */
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.8); /* Hover color */
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.sidebar .sidebar-item {
+    color: white;
+    padding: 15px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar .sidebar-item:hover {
+    background-color: #50575d;
+}
+
+.sidebar .sidebar-item i {
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.sidebar .close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.sidebar .close-btn i {
+    margin-right: 10px;
+}
+
+.sidebar .close-btn:hover {
+    color: #ff5c5c;
+    transform: scale(1.1);
+    transition: all 0.3s ease;
+}
+
+/* Add animation to sidebar opening */
+.sidebar.active {
+    animation: slideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+    0% {
+        left: -300px;
+    }
+    100% {
+        left: 0;
+    }
+}
+
+/* Add bounce effect on item click */
+.sidebar .sidebar-item:active {
+    transform: scale(0.95);
+    transition: transform 0.1s;
+}
+
+/* Sidebar ends */
+
+
+
+.help-icon {
+    position: absolute; /* Position relative to .settings-container */
+    top: 10px; /* Adjust to fit your design */
+    right: 10px; /* Adjust to fit your design */
+    width: 30px;
+    height: 30px;
+    background-color: #4dabf7;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 10; /* Ensure it appears above other content */
+}
+
+.help-icon:hover {
+    background-color: #228be6;
+    transform: scale(1.1);
+}
+
+
+
+
+
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+<!-- Notification Container Starts -->
+<div class="notification-container7898789qw" id="notification-container7898789qw"></div>
+
+<!-- Popup -->
+<div class="popup-overlay7898789qw" id="popup-overlay7898789qw">
+    <div class="popup7898789qw">
+        <div class="popup-header7898789qw">
+            <span class="title7898789qw" id="title7898789qwHeader">Notification Details</span>
+            <button class="close-btn7898789qw" onclick="closePopup7898789qw()">✖</button>
+        </div>
+        <div class="popup-content7898789qw" id="popup-content7898789qw">
+            <!-- Content dynamically added here -->
+        </div>
+    </div>
+</div>
+<!-- Notification Container Ends -->
+
+<!-- Error Popup Modal -->
+<div id="uniqueErrorModal9875">
+    <div class="unique-modal-content9875" id="modalContent9875">
+        <h2 id="errorHeader9875">Error Occurred</h2>
+        <p id="errorFooter9875" class="message-container9875">An unexpected error has occurred. Please try again later.</p>
+        <span class="read-more9875" id="readMore9875">Read more</span>
+        <button id="uniqueOkayBtn9875">Okay</button>
+    </div>
+</div>
+
+
+
+<div id="loader" class="loader-overlay">
+    <div class="loader"></div>
+</div>
+
+
+<!-- Navbar -->
+<div class="navbar">
+    <div class="menu-button" onclick="toggleSidebar()">
+        <div></div>
+        <span class="company-name"></span>
+    </div>
+
+
+    &nbsp;&nbsp;    &nbsp;&nbsp;
+    <div class="search-box-container-2123112">
+        <input type="text" class="search-box-2123112" id="searchInput-2123112" placeholder="Search any action or ask for help...">
+        <div class="dropdown-container-2123112" id="dropdownMenu-2123112">
+        </div>
+    </div>
+    &nbsp;&nbsp;
+
+
+    <div class="profile" id="profile-dropdown">
+        <img src="https://via.placeholder.com/50" alt="Profile" onclick="toggleProfileDropdown()">
+        <div class="dropdown-menu" id="dropdown-menu">
+            <a href="#" onclick="openProfileSettings()"><i class="fas fa-cog"></i>Settings</a>
+            <a href="#" onclick="manageUserProfiles(startLoader)"><i class="fas fa-user"></i>Manage Profiles</a>
+            <a href="#" onclick="logout(startLoader,redirectafterlogout)"><i class="fas fa-sign-out-alt"></i>Logout</a>
+        </div>
+    </div>
+</div>
+
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <button class="close-btn" onclick="toggleSidebar()">
+        <i class="fas fa-times"></i>
+        <span>Close</span>
+    </button>
+    <div class="sidebar-item" onclick="gotohome()">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+    </div>
+    <div class="sidebar-item" onclick="manageTenants(startLoader)">
+        <i class="fas fa-users"></i>
+        <span>Manage Tenants</span>
+    </div>
+    <div class="sidebar-item" onclick="showReports()">
+        <i class="fas fa-chart-bar"></i>
+        <span>Reports</span>
+    </div>
+    <div class="sidebar-item" onclick="showAuditLogs()">
+        <i class="fas fa-file-alt"></i>
+        <span>Audit Logs</span>
+    </div>
+    <div id="licenseButton" class="sidebar-item" onclick="gotoLicenseConfig()"   style="display: none;">
+        <i class="fas fa-id-card"></i>
+        <span>License</span>
+    </div>
+    <div id="configurationButton" class="sidebar-item" onclick="gotoconfiguration()"  style="display: none; pointer-events: none; opacity: 0.5;"aria-disabled="true">
+        <i class="fas fa-cog"></i>
+        <span>Configuration</span>
+    </div>
+</div>
+
+
+
+
+
+<script src="js/security.js"></script>
+<script src="js/worktree.js"></script>
+<script>
+    // Sidebar toggle function
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+    }
+
+    // Profile dropdown toggle function
+    function toggleProfileDropdown() {
+        const dropdown = document.getElementById('dropdown-menu');
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Hide dropdown when clicking outside
+    window.onclick = function(event) {
+        if (!event.target.matches('.profile img')) {
+            const dropdown = document.getElementById('dropdown-menu');
+            if (dropdown && dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            }
+        }
+    };
+
+    // JavaScript list with aliases for settings options
+    var requiredSettingsAliases =  getCurrentUserFeatures();
+
+
+
+function startLoader() {
+    document.getElementById('loader').style.visibility = 'visible';
+    document.body.style.pointerEvents = 'none'; // Disable interaction with the screen
+}
+
+window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the cache
+        if (event.persisted) {
+            stopLoader();
+        }
+    });
+
+function stopLoader() {
+    document.getElementById('loader').style.visibility = 'hidden';
+    document.body.style.pointerEvents = 'auto'; // Re-enable interaction with the screen
+}
+
+
+ window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the cache
+        if (event.persisted) {
+            stopLoader();
+        }
+    });
+loadProfilePhoto();
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const helpIcon = document.getElementById('helpIcon');
+    if (helpIcon) {
+        helpIcon.style.display = 'flex'; // Ensure it is visible
+        helpIcon.hidden = false;
+    } else {
+        console.error('Help icon element not found in DOM.');
+    }
+});
+
+</script>
+
+</body>
+</html>
