@@ -3,13 +3,255 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Advanced Log Viewer</title>
-
+  <title>Application Logs</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="image/logo3232.png">
+  <!-- Add FontAwesome for Icons -->
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/common-style.css">
   <link rel="stylesheet" href="css/common.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
+        /* Reset and basic styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f5f7;
+            padding-top: 60px;
+            user-select: none;
+    -webkit-user-select: none; /* For Safari */
+    -moz-user-select: none; /* For Firefox */
+    -ms-user-select: none; /* For IE and Edge */
+        }
+
+        /* Navbar styling */
+        .navbar {
+           display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar .menu-button {
+           display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .navbar .menu-button div {
+             width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar .profile {
+             position: relative;
+        }
+
+        .navbar .profile img {
+             width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .dropdown-menu {
+                display: none;
+            position: absolute;
+            top: 60px; /* Position dropdown below profile icon */
+            right: 0;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            padding: 10px;
+            width: 180px; /* Increased width to prevent text overflow */
+        }
+
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            text-decoration: none;
+            color: black;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .dropdown-menu a i {
+             margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .dropdown-menu a:hover {
+               background-color: #f4f4f4;
+        }
+
+
+
+        /* Settings container styling */
+        .settings-container {
+    position: relative; /* Make it the reference point for absolute positioning */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    max-width: 1000px;
+    width: 100%;
+    margin: 80px auto;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    animation: fadeIn 0.6s ease;
+}
+
+
+        /* Keyframe animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Settings option styling */
+        .settings-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s, color 0.3s;
+        }
+
+        /* Hover effect */
+        .settings-option:hover {
+            transform: rotate(5deg) scale(1.1);
+            background-color: #e0f7fa;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            color: #00796b;
+        }
+
+        .settings-option:hover i {
+            color: #00796b;
+        }
+
+        /* Icon and label styling */
+        .settings-option i {
+            font-size: 32px;
+            margin-bottom: 5px;
+            color: #4CAF50;
+            transition: color 0.3s;
+        }
+
+        .settings-label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .settings-option.active {
+            background-color: #4CAF50;
+            color: #fff;
+            box-shadow: 0 6px 12px rgba(0, 128, 0, 0.3);
+        }
+
+        .settings-option.active i {
+            color: #fff;
+        }
+
+        /* Mobile responsive adjustments */
+        @media (max-width: 600px) {
+            .settings-container {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                padding: 10px;
+            }
+            .settings-option {
+                width: 80px;
+                height: 80px;
+                padding: 15px;
+            }
+            .settings-option i {
+                font-size: 24px;
+            }
+            .settings-label {
+                font-size: 12px;
+            }
+        }
+
+
+
+
+
+
+
+         /* loader css starts */
+
+
+ /* Rotate animation for the loader */
+    .loading {
+      animation: rotate 1s linear infinite;
+    }
+
+    /* Keyframes for the rotating animation */
+    @keyframes rotate {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+
+
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    visibility: hidden; /* Hide loader by default */
+}
+
+.loader {
+    border: 8px solid #f3f3f3; /* Light gray */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* loader css ends */
+
+
 
 
 /* Sidebar starts */
@@ -111,175 +353,82 @@
 /* Sidebar ends */
 
 
- /* Navbar styling */
-/* Navbar should be consistent on all pages */
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    background-color: #343a40;
+
+.help-icon {
+    position: absolute; /* Position relative to .settings-container */
+    top: 10px; /* Adjust to fit your design */
+    right: 10px; /* Adjust to fit your design */
+    width: 30px;
+    height: 30px;
+    background-color: #4dabf7;
     color: white;
-    position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-        .navbar .menu-button {
-           display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .navbar .menu-button div {
-             width: 25px;
-            height: 3px;
-            background-color: white;
-            margin: 5px 0;
-            transition: all 0.3s ease;
-        }
-
-.dropdown-menu {
-    position: absolute;
-    top: 50px;
-    right: 10px;
-    background-color: white;
-    border-radius: 5px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    z-index: 9999; /* Highest z-index to prevent hiding */
-    padding: 10px;
-    width: 180px;
-    display: none; /* Initially hidden */
-}
-
-/* Ensure it is displayed properly */
-.profile {
-    position: relative; /* Important to align dropdown correctly */
-}
-
-.profile:hover .dropdown-menu,
-.profile img:focus + .dropdown-menu {
-    display: block; /* Show on hover or focus */
-}
-
-/* Ensure dropdown stays within the screen */
-@media screen and (max-width: 768px) {
-    .dropdown-menu {
-        right: 0;
-        left: auto;
-    }
-}
-
-
-     /* Fix for Profile Icon Alignment */
-/* Fix for Profile Icon */
-.navbar .profile {
-    display: flex;
-    align-items: center;
-    margin-left: auto; /* Push profile icon to the right */
-    padding-right: 20px;
-}
-
-.navbar .profile img {
-    width: 40px;
-    height: 40px;
     border-radius: 50%;
-    cursor: pointer;
-}
-
-.navbar .search-box-container-2123112 {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-}
-
-
-
-        .dropdown-menu a {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            text-decoration: none;
-            color: black;
-            font-weight: 500;
-            transition: background-color 0.3s ease;
-            white-space: nowrap;
-        }
-
-        .dropdown-menu a i {
-             margin-right: 10px;
-            font-size: 18px;
-        }
-
-        .dropdown-menu a:hover {
-               background-color: #f4f4f4;
-        }
-
-
-
-html, body {
-     font-family: Arial, sans-serif;
-    overflow: hidden; /* Disable outer scrolling */
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh; /* Full height of screen */
-    padding: 20px;
-    margin-top: 120px; /* Adjust to prevent overlap with navbar and buttons */
-    overflow: hidden; /* Ensure no unwanted scrolling */
-}
-
-
-
-
-.controls {
     display: flex;
     align-items: center;
-    justify-content: flex-start; /* Keep items aligned properly */
-    gap: 15px;
-    padding: 10px;
-    background-color: #343a40; /* Match navbar background */
-    position: fixed;
-    top: 60px; /* Adjust to stay below navbar */
-    left: 0;
-    width: 100%;
-    z-index: 1000; /* Ensure it's above log content */
-}
-
-
-.controls select, .controls input, .controls button {
-    padding: 10px;
+    justify-content: center;
     font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 10; /* Ensure it appears above other content */
+}
+
+.help-icon:hover {
+    background-color: #228be6;
+    transform: scale(1.1);
 }
 
 
 
-     .log-container {
-    flex-grow: 1;
-    padding: 20px;
-    box-sizing: border-box;
-    overflow-y: auto; /* Enable scrolling */
-    overflow-x: hidden; /* Prevent horizontal scrolling */
-    white-space: pre-wrap;
-    font-family: monospace;
-    font-size: 14px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    height: calc(100vh - 200px); /* Adjust based on navbar and controls */
-    min-height: 400px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start; /* Ensures logs start from the top */
-}
 
 
+    </style>
+
+  <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevent external scrolling */
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .controls select, .controls input, .controls button {
+            padding: 8px;
+            font-size: 16px;
+        }
+
+        .log-container {
+            flex-grow: 1;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow-y: auto; /* Internal scrolling enabled */
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            max-height: calc(100vh - 120px); /* Fits within screen */
+        }
 
         .scroll-button {
             position: fixed;
@@ -295,6 +444,40 @@ html, body {
             display: none;
             box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
         }
+
+        /* Log level colors */
+        .info { color: #2a9d8f; }
+        .warning { color: #e9c46a; }
+        .error { color: #e76f51; font-weight: bold; }
+        .debug { color: #8e44ad; }
+
+        /* Themes */
+        .theme-dark {
+            background-color: #2e2e2e;
+            color: white;
+        }
+        .theme-light {
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .theme-blue {
+            background-color: #1e3a8a;
+            color: white;
+        }
+        .theme-green {
+            background-color: #14532d;
+            color: white;
+        }
+
+
+
+
+
+
+
+
+
+
 
         .progress-popup {
             position: fixed;
@@ -352,82 +535,70 @@ html, body {
             cursor: pointer;
             font-size: 18px;
         }
-
-        /* Log level colors */
-        .info { color: #2a9d8f; }
-        .warning { color: #e9c46a; }
-        .error { color: #e76f51; font-weight: bold; }
-        .debug { color: #8e44ad; }
-
-        /* Themes */
-        .theme-dark {
-            background-color: #2e2e2e;
-            color: white;
-        }
-        .theme-light {
-            background-color: #f9f9f9;
-            color: #333;
-        }
-        .theme-blue {
-            background-color: #1e3a8a;
-            color: white;
-        }
-        .theme-green {
-            background-color: #14532d;
-            color: white;
-        }
     </style>
 </head>
-<body class="theme-dark">
+<body oncontextmenu="return false;">
 
+<!-- Notification Container Starts -->
+<div class="notification-container7898789qw" id="notification-container7898789qw"></div>
+
+<!-- Popup -->
+<div class="popup-overlay7898789qw" id="popup-overlay7898789qw">
+  <div class="popup7898789qw">
+    <div class="popup-header7898789qw">
+      <span class="title7898789qw" id="title7898789qwHeader">Notification Details</span>
+      <button class="close-btn7898789qw" onclick="closePopup7898789qw()">✖</button>
+    </div>
+    <div class="popup-content7898789qw" id="popup-content7898789qw">
+      <!-- Content dynamically added here -->
+    </div>
+  </div>
+</div>
+<!-- Notification Container Ends -->
+
+<!-- Error Popup Modal -->
+<div id="uniqueErrorModal9875">
+  <div class="unique-modal-content9875" id="modalContent9875">
+    <h2 id="errorHeader9875">Error Occurred</h2>
+    <p id="errorFooter9875" class="message-container9875">An unexpected error has occurred. Please try again later.</p>
+    <span class="read-more9875" id="readMore9875">Read more</span>
+    <button id="uniqueOkayBtn9875">Okay</button>
+  </div>
+</div>
+
+
+
+<div id="loader" class="loader-overlay">
+  <div class="loader"></div>
+</div>
 
 
 <!-- Navbar -->
-
-<!--<div class="navbar">-->
-<!--  <div class="menu-button" onclick="toggleSidebar()">-->
-<!--    <div></div>-->
-<!--    <span class="company-name"></span>-->
-<!--  </div>-->
-<!--  &nbsp;&nbsp;-->
-<!--  <div class="search-box-container-2123112">-->
-<!--    <input type="text" class="search-box-2123112" id="searchInput-2123112" placeholder="Search any action or ask for help...">-->
-<!--    <div class="dropdown-container-2123112" id="dropdownMenu-2123112">-->
-<!--    </div>-->
-<!--  </div>-->
-
-<!--  <div class="profile">-->
-<!--    <img src="https://via.placeholder.com/50" alt="Profile" onclick="toggleProfileDropdown()">-->
-<!--    <div class="dropdown-menu" id="dropdown-menu">-->
-<!--      <a href="#"><i class="fas fa-cog"></i>Settings</a>-->
-<!--      <a href="#"><i class="fas fa-user"></i>Manage Profiles</a>-->
-<!--      <a href="#"><i class="fas fa-sign-out-alt"></i>Logout</a>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
-
 <div class="navbar">
   <div class="menu-button" onclick="toggleSidebar()">
     <div></div>
     <span class="company-name"></span>
   </div>
 
-<!--  <div class="search-box-container-2123112">-->
-<!--    <input type="text" class="search-box-2123112" id="searchInput-2123112" placeholder="Search any action or ask for help...">-->
-<!--        <div class="dropdown-container-2123112" id="dropdownMenu-2123112">-->
-<!--        </div>-->
-<!--  </div>-->
 
-  <div class="profile">
+  &nbsp;&nbsp;    &nbsp;&nbsp;
+  <div class="search-box-container-2123112">
+    <input type="text" class="search-box-2123112" id="searchInput-2123112" placeholder="Search any action or ask for help...">
+    <div class="dropdown-container-2123112" id="dropdownMenu-2123112">
+    </div>
+  </div>
+  &nbsp;&nbsp;
+
+
+  <div class="profile" id="profile-dropdown">
     <img src="https://via.placeholder.com/50" alt="Profile" onclick="toggleProfileDropdown()">
     <div class="dropdown-menu" id="dropdown-menu">
-      <a href="#"><i class="fas fa-cog"></i>Settings</a>
-      <a href="#"><i class="fas fa-user"></i>Manage Profiles</a>
-      <a href="#"><i class="fas fa-sign-out-alt"></i>Logout</a>
+      <a href="#" onclick="openProfileSettings()"><i class="fas fa-cog"></i>Settings</a>
+      <a href="#" onclick="manageUserProfiles(startLoader)"><i class="fas fa-user"></i>Manage Profiles</a>
+      <a href="#" onclick="logout(startLoader,redirectafterlogout)"><i class="fas fa-sign-out-alt"></i>Logout</a>
     </div>
   </div>
 </div>
-
 
 
 <!-- Sidebar -->
@@ -464,6 +635,7 @@ html, body {
 
 
 
+<br><br><br><br>
 <div class="container">
   <div class="controls">
     <select id="logLevel" onchange="filterLogs()">
@@ -487,6 +659,7 @@ html, body {
   <button id="scrollButton" class="scroll-button" onclick="scrollToBottom()">↓</button>
 </div>
 
+
 <div id="progressPopup" class="progress-popup">
   <button class="hide-button" onclick="hideProgress()">✖</button>
   <p>Downloading... <span id="progressPercent">0%</span></p>
@@ -501,11 +674,22 @@ html, body {
   </div>
 </div>
 
+
+
 <script src="js/security.js"></script>
 <script src="js/worktree.js"></script>
-
 <script>
-loadProfilePhoto();
+    // Sidebar toggle function
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+    }
+
+    // Profile dropdown toggle function
+    function toggleProfileDropdown() {
+        const dropdown = document.getElementById('dropdown-menu');
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
     // Hide dropdown when clicking outside
     window.onclick = function(event) {
         if (!event.target.matches('.profile img')) {
@@ -516,6 +700,52 @@ loadProfilePhoto();
         }
     };
 
+    // JavaScript list with aliases for settings options
+    var requiredSettingsAliases =  getCurrentUserFeatures();
+
+
+
+function startLoader() {
+    document.getElementById('loader').style.visibility = 'visible';
+    document.body.style.pointerEvents = 'none'; // Disable interaction with the screen
+}
+
+window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the cache
+        if (event.persisted) {
+            stopLoader();
+        }
+    });
+
+function stopLoader() {
+    document.getElementById('loader').style.visibility = 'hidden';
+    document.body.style.pointerEvents = 'auto'; // Re-enable interaction with the screen
+}
+
+
+ window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the cache
+        if (event.persisted) {
+            stopLoader();
+        }
+    });
+loadProfilePhoto();
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const helpIcon = document.getElementById('helpIcon');
+    if (helpIcon) {
+        helpIcon.style.display = 'flex'; // Ensure it is visible
+        helpIcon.hidden = false;
+    } else {
+        console.error('Help icon element not found in DOM.');
+    }
+});
+
+</script>
+
+
+<script>
         let logs = [];
         let liveLogging = false;
         let logInterval;
@@ -574,7 +804,11 @@ document.getElementById('searchInput').addEventListener('input', renderLogs);
             document.getElementById('scrollButton').style.display = autoScroll ? 'none' : 'block';
         }
 
-
+        function scrollToBottom() {
+            document.getElementById('logContainer').scrollTop = document.getElementById('logContainer').scrollHeight;
+            autoScroll = true;
+            checkScroll();
+        }
 
         function changeTheme() {
             const theme = document.getElementById('themeSelect').value;
@@ -592,9 +826,9 @@ document.getElementById('searchInput').addEventListener('input', renderLogs);
             clearInterval(interval);
             document.getElementById('progressPopup').style.display = 'none';
             document.getElementById('progressBar').style.display = 'none';
-            //need to give some alert that log file is deleted
+            alert('Download Complete');
         } else {
-            progress += 1;
+            progress += 5;
             document.getElementById('progressPercent').innerText = `${progress}%`;
             document.getElementById('progressBarPercent').innerText = `${progress}%`;
             document.getElementById('progressFill').style.width = `${progress}%`;
@@ -626,64 +860,9 @@ function filterLogs() {
     if (autoScroll) scrollToBottom();
 }
 
-  function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('active');
-    }
 
-  function toggleProfileDropdown() {
-    let dropdown = document.getElementById("dropdown-menu");
-
-    if (dropdown.style.display === "block") {
-        dropdown.style.display = "none";
-    } else {
-        dropdown.style.display = "block";
-    }
-}
-
-// Hide dropdown when clicking outside
-document.addEventListener("click", function (event) {
-    let profileDropdown = document.getElementById("profile-dropdown");
-    let dropdownMenu = document.getElementById("dropdown-menu");
-
-    if (!profileDropdown.contains(event.target)) {
-        dropdownMenu.style.display = "none";
-    }
-});
-
-
-
-function startLoader() {
-    document.getElementById('loader').style.visibility = 'visible';
-    document.body.style.pointerEvents = 'none'; // Disable interaction with the screen
-}
-
-function scrollToBottom() {
-    let logContainer = document.getElementById("logContainer");
-    logContainer.scrollTop = logContainer.scrollHeight;
-}
-
-// Call this function every time new logs are added
-function addLogEntry(log) {
-    let logContainer = document.getElementById("logContainer");
-    let logElement = document.createElement("div");
-    logElement.innerHTML = `<strong>${log.timestamp}</strong> - ${log.message}`;
-    logContainer.appendChild(logElement);
-
-    scrollToBottom(); // Scroll to the latest log
-}
-
-
-window.addEventListener('pageshow', function(event) {
-        // Check if the page is loaded from the cache
-        if (event.persisted) {
-            stopLoader();
-        }
-    });
-
-function stopLoader() {
-    document.getElementById('loader').style.visibility = 'hidden';
-    document.body.style.pointerEvents = 'auto'; // Re-enable interaction with the screen
-}
     </script>
+
+
 </body>
 </html>
