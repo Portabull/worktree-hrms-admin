@@ -851,12 +851,12 @@
   </div>
   <div class="popup-content">
     <label>
-      <input type="radio" name="downloadOption" value="complete" onclick="toggleTextField()"> Download Complete File
+      <input type="radio" id="downloadCompleteFile" name="downloadOption" value="complete" onclick="toggleTextField()"> Download Complete File
     </label>
     <label>
-      <input type="radio" name="downloadOption" value="logLines" onclick="toggleTextField()"> Download Log Lines
+      <input type="radio" id="downloadLogLines" name="downloadOption" value="logLines" onclick="toggleTextField()"> Download Log Lines
     </label>
-    <input type="text" id="logLinesInput" placeholder="Enter number of lines">
+    <input type="text" id="logLinesInput" placeholder="Enter number of lines" value="1000">
     <button class="download-btn" onclick="startDownload()">Download</button>
   </div>
 </div>
@@ -883,6 +883,7 @@
 <script src="js/security.js"></script>
 <script src="js/worktree.js"></script>
 <script>
+
     // Sidebar toggle function
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('active');
@@ -928,6 +929,8 @@ window.addEventListener('pageshow', function(event) {
         function closePopup() {
             document.getElementById("downloadPopup").style.display = "none";
         }
+     document.getElementById('downloadCompleteFile').click();
+
 
         function toggleTextField() {
             let logLinesInput = document.getElementById("logLinesInput");
@@ -1039,7 +1042,12 @@ document.getElementById('searchInput').addEventListener('input', renderLogs);
         function startDownload() {
         closePopup();
 
-         const apiUrl =  BASE_URL + 'api/download/logs';
+        var params = '';
+        if(!document.getElementById('downloadCompleteFile').checked){
+            params = '?lines=' + document.getElementById('logLinesInput').value;
+        }
+
+         const apiUrl =  BASE_URL + 'api/download/logs' + params;
     const requestOptions = {
         method: "GET",
         headers: {

@@ -10,11 +10,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api")
@@ -25,11 +26,10 @@ public class LogsController {
 
     @Feature(feature = CommonConstants.Features.KEYSTORE_SETTINGS)
     @GetMapping("/download/logs")
-    public ResponseEntity<?> downloadLogs() throws IOException {
+    public ResponseEntity<?> downloadLogs(@RequestParam Optional<Integer> lines) throws IOException {
         ResponseEntity<?> response;
 
-
-        byte[] bytes = logsService.downloadLogs(new HashMap<>());
+        byte[] bytes = logsService.downloadLogs(lines);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=logs.log");
