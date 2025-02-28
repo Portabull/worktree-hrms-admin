@@ -31,6 +31,104 @@ const sec_key_mech = 'NWIYRFIYF%@&#$)ABCDEFGHIJKLMNOP';
             }
         });
 
+
+
+/**
+ * Generic function for File Download & Upload with Progress tracking
+ * Supports request headers, body, params, and different HTTP methods
+ *
+ * @param {string} url - API endpoint
+ * @param {Object} options - Request options (method, headers, body, etc.)
+ * @param {Function} progressCallback - Callback function for progress updates
+ * @param {Function} successCallback - Callback function for success
+ * @param {Function} errorCallback - Callback function for error handling
+ */
+async function handleFileRequest(url, options, progressCallback, successCallback, errorCallback) {
+    try {
+
+         const defaultHeaders = {
+                   "X-TOKEN_PACK_ID":getISTTimestamp()
+                };
+
+         options.headers = { ...defaultHeaders, ...options.headers };
+
+        const response = await fetch(url, options);
+        if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+
+        const totalSize = parseInt(response.headers.get("Content-Length"), 10) || 0;
+
+         let filename = "downloaded-file"; // Default filename
+                const contentDisposition = response.headers.get("Content-Disposition");
+                if (contentDisposition) {
+                    const match = contentDisposition.match(/filename\s*=\s*"?([^";]*)"?/);
+                    if (match && match[1]) {
+                        filename = match[1];
+                    }
+                }
+
+        if (options.method === "GET") {
+            // File Download
+            const reader = response.body.getReader();
+            let receivedSize = 0;
+            let chunks = [];
+            let startTime = performance.now();
+
+            async function readStream() {
+                const { done, value } = await reader.read();
+                if (done) return;
+
+                chunks.push(value);
+                receivedSize += value.length;
+
+                let elapsedTime = (performance.now() - startTime) / 1000;
+                let speed = (receivedSize / elapsedTime) / 1024;
+
+                if (typeof progressCallback === "function") {
+                    progressCallback({
+                        percentage: ((receivedSize / totalSize) * 100).toFixed(2),
+                        downloaded: formatSize(receivedSize),
+                        total: formatSize(totalSize),
+                        speed: formatSize(speed * 1024) + "/s"
+                    });
+                }
+
+                await readStream();
+            }
+
+            await readStream();
+
+            const blob = new Blob(chunks);
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(a.href);
+
+            if (typeof successCallback === "function") {
+                successCallback("Download Complete");
+            }
+        } else if (options.method === "POST" && options.body instanceof FormData) {
+            // File Upload
+            if (typeof successCallback === "function") {
+                successCallback("File Upload Successful");
+            }
+        }
+    } catch (error) {
+        if (typeof errorCallback === "function") {
+            errorCallback(error.message);
+        }
+    }
+}
+
+/**
+ * Converts bytes to KB/MB/GB format
+ */
+function formatSize(bytes) {
+    return bytes >= 1048576 ? (bytes / 1048576).toFixed(2) + " MB" : (bytes / 1024).toFixed(2) + " KB";
+}
+
 function dynamicXhrApi(method, url, headers, requestBody, callback, isFileUpload = false) {
     // Create a new XMLHttpRequest object
     const xhr = new XMLHttpRequest();

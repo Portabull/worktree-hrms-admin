@@ -385,6 +385,82 @@
     </style>
 
   <style>
+/* Popup Container */
+.popup-454478545 {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    color: black;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    width: 300px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    display: none;
+    opacity: 0;
+    animation: fadeIn-454478545 0.3s ease-in-out;
+}
+
+/* Success Icon */
+.icon-454478545.success-454478545 {
+    color: #28a745;
+    font-size: 40px;
+    border: 3px solid #28a745;
+    display: inline-block;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    animation: popIn-454478545 0.4s ease-in-out;
+}
+
+/* Error Icon */
+.icon-454478545.error-454478545 {
+    color: #dc3545;
+    font-size: 40px;
+    border: 3px solid #dc3545;
+    display: inline-block;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    animation: popIn-454478545 0.4s ease-in-out;
+}
+
+/* Close Button */
+.popup-close-454478545 {
+    background: none;
+    border: none;
+    color: black;
+    font-size: 18px;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-weight: bold;
+    transition: transform 0.2s;
+}
+
+.popup-close-454478545:hover {
+    transform: scale(1.2);
+}
+
+/* Animations */
+@keyframes fadeIn-454478545 {
+    from { opacity: 0; transform: translate(-50%, -55%); }
+    to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+@keyframes popIn-454478545 {
+    0% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); }
+}
+</style>
+
+  <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -479,62 +555,85 @@
 
 
 
-        .progress-popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.9);
-            color: black;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            display: none;
-            width: 300px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 10px;
-            background-color: #ddd;
-            border-radius: 5px;
-            margin-top: 10px;
-            overflow: hidden;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            width: 0;
-            background: linear-gradient(to right, #4a90e2, #007bff);
-            transition: width 0.3s;
-        }
-
-.progress-bar-container {
+      .progress-popup {
     position: fixed;
-    bottom: 10px;
-    left: 10px;  /* Moved to bottom left */
-    background: rgba(255, 255, 255, 0.9);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 1);
     color: black;
-    padding: 5px;
-    border-radius: 5px;
-    display: none;
-    cursor: pointer;
-    width: 200px;
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    border-radius: 12px;
     text-align: center;
+    display: none;
+    width: 320px; /* Slightly larger */
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Add a smooth fade-in effect */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -55%); }
+    to { opacity: 1; transform: translate(-50%, -50%); }
 }
 
 
-        .hide-button {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-        }
+      .progress-bar {
+    width: 100%;
+    height: 12px; /* Increased height for better visibility */
+    background-color: #ddd;
+    border-radius: 6px; /* More rounded edges */
+    margin-top: 10px;
+    overflow: hidden;
+    box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.2);
+}
+
+.progress-bar-fill {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(to right, #4a90e2, #007bff);
+    transition: width 0.5s ease-in-out; /* Smoother transition */
+    border-radius: 6px;
+}
+
+
+.progress-bar-container {
+    position: fixed;
+    bottom: 15px; /* Increased space */
+    left: 15px;  /* Increased space */
+    background: rgba(255, 255, 255, 0.95);
+    color: black;
+    padding: 8px;
+    border-radius: 8px;
+    display: none;
+    cursor: pointer;
+    width: 220px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    transition: transform 0.2s ease-in-out;
+}
+
+.progress-bar-container:hover {
+    transform: scale(1.05);
+}
+
+
+.hide-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: black;
+    transition: transform 0.2s ease-in-out;
+}
+
+.hide-button:hover {
+    transform: scale(1.2);
+}
+
     </style>
 
 
@@ -730,10 +829,14 @@
 <div id="progressPopup" class="progress-popup">
   <button class="hide-button" onclick="hideProgress()">✖</button>
   <p>Downloading... <span id="progressPercent">0%</span></p>
+  <p>Downloaded: <span id="progressDownload">0/0</span></p>
+  <p>Speed: <span id="progressSpeed">0</span></p>
   <div class="progress-bar">
     <div class="progress-bar-fill" id="progressFill"></div>
   </div>
 </div>
+
+
 <div id="progressBar" class="progress-bar-container" onclick="showProgressPopup()">
   Downloading... <span id="progressBarPercent">0%</span>
   <div class="progress-bar">
@@ -758,6 +861,24 @@
   </div>
 </div>
 
+
+<!-- Success Popup -->
+<div id="successPopup-454478545" class="popup-454478545">
+  <div class="icon-454478545 success-454478545">
+    <span>✔</span>
+  </div>
+  <p id="successMessage-454478545">Downloaded Successfully!</p>
+  <button class="popup-close-454478545" onclick="hidePopup('successPopup-454478545')">✖</button>
+</div>
+
+<!-- Error Popup -->
+<div id="errorPopup-454478545" class="popup-454478545">
+  <div class="icon-454478545 error-454478545">
+    <span>✖</span>
+  </div>
+  <p id="errorMessage-454478545">Download Failed!</p>
+  <button class="popup-close-454478545" onclick="hidePopup('errorPopup-454478545')">✖</button>
+</div>
 
 <script src="js/security.js"></script>
 <script src="js/worktree.js"></script>
@@ -913,26 +1034,50 @@ document.getElementById('searchInput').addEventListener('input', renderLogs);
             document.getElementById('logContainer').className = `log-container theme-${theme}`;
         }
 
+
+
         function startDownload() {
         closePopup();
-    let progress = 0;
+
+         const apiUrl =  BASE_URL + 'api/download/logs';
+    const requestOptions = {
+        method: "GET",
+        headers: {
+             "Authorization": getCurrentToken()
+        }
+    };
+
+
+document.getElementById('progressPercent').innerText = `0%`;
+            document.getElementById('progressSpeed').innerText = `0`;
+            document.getElementById('progressDownload').innerText = `0 / 0`;
+            document.getElementById('progressBarPercent').innerText = `0%`;
+            document.getElementById('progressFill').style.width = `0%`;
+            document.getElementById('progressBarFill').style.width = `0%`;
+
     document.getElementById('progressPopup').style.display = 'block';
     document.getElementById('progressBar').style.display = 'none';
 
-    const interval = setInterval(() => {
-        if (progress >= 100) {
-            clearInterval(interval);
+    handleFileRequest(apiUrl, requestOptions, function (progress){
+
+            document.getElementById('progressPercent').innerText = `${progress.percentage}%`;
+            document.getElementById('progressSpeed').innerText = `${progress.speed}`;
+            document.getElementById('progressDownload').innerText = `${progress.downloaded} / ${progress.total}`;
+            document.getElementById('progressBarPercent').innerText = `${progress.percentage}%`;
+            document.getElementById('progressFill').style.width = `${progress.percentage}%`;
+            document.getElementById('progressBarFill').style.width = `${progress.percentage}%`;
+
+    }, function (message){
             document.getElementById('progressPopup').style.display = 'none';
             document.getElementById('progressBar').style.display = 'none';
-            alert('Download Complete');
-        } else {
-            progress += 1;
-            document.getElementById('progressPercent').innerText = `${progress}%`;
-            document.getElementById('progressBarPercent').innerText = `${progress}%`;
-            document.getElementById('progressFill').style.width = `${progress}%`;
-            document.getElementById('progressBarFill').style.width = `${progress}%`;
-        }
-    }, 400);
+            showPopup('success',"Download Complete!");
+    }, function (error){
+            document.getElementById('progressPopup').style.display = 'none';
+            document.getElementById('progressBar').style.display = 'none';
+            showPopup('error',"Download Failed!");
+    });
+
+
 }
 function hideProgress() {
     document.getElementById('progressPopup').style.display = 'none';
@@ -960,6 +1105,45 @@ function filterLogs() {
 
 
     </script>
+
+
+
+<script>
+
+
+function showPopup(type, message) {
+    let popupId = type === 'success' ? 'successPopup-454478545' : 'errorPopup-454478545';
+    let popup = document.getElementById(popupId);
+
+    // Set message dynamically
+    if (type === 'success') {
+        document.getElementById("successMessage-454478545").innerText = message;
+    } else {
+        document.getElementById("errorMessage-454478545").innerText = message;
+    }
+
+    popup.style.display = "block";
+    popup.style.opacity = "0";
+
+    // Fade-in effect
+    setTimeout(() => { popup.style.opacity = "1"; }, 50);
+
+    // Auto hide after 3 seconds
+    setTimeout(() => { hidePopup(popupId); }, 3000);
+}
+
+function hidePopup(popupId) {
+    let popup = document.getElementById(popupId);
+    popup.style.opacity = "0";
+
+    // Wait for fade-out before hiding
+    setTimeout(() => { popup.style.display = "none"; }, 300);
+}
+
+// Example Usage
+// showPopup('success', 'File Downloaded Successfully!');
+// showPopup('error', 'Download Failed. Please try again!');
+</script>
 
 
 </body>
