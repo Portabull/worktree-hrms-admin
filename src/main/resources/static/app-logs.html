@@ -536,6 +536,73 @@
             font-size: 18px;
         }
     </style>
+
+
+  <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .popup {
+            width: 300px;
+            background: white;
+            border: 2px solid black;
+            padding: 20px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            display: none;
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+        }
+
+        .popup-header .close-btn {
+            cursor: pointer;
+        }
+
+        .popup-content {
+            margin-top: 10px;
+        }
+
+        .popup-content label {
+            display: block;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        .popup-content input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            display: none;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            border: none;
+            background: black;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .download-btn:hover {
+            background: gray;
+        }
+    </style>
 </head>
 <body oncontextmenu="return false;">
 
@@ -653,7 +720,7 @@
       <option value="green">Green</option>
     </select>
     <button id="liveLogToggle" onclick="toggleLiveLogs()">View Live Logs</button>
-    <button id="downloadButton" onclick="startDownload()">Download Logs</button>
+    <button id="downloadButton" onclick="openPopup()">Download Logs</button>
   </div>
   <div class="log-container theme-dark" id="logContainer" onscroll="checkScroll()"></div>
   <button id="scrollButton" class="scroll-button" onclick="scrollToBottom()">↓</button>
@@ -674,6 +741,22 @@
   </div>
 </div>
 
+<div id="downloadPopup" class="popup">
+  <div class="popup-header">
+    <span>Download Options</span>
+    <span class="close-btn" onclick="closePopup()">X</span>
+  </div>
+  <div class="popup-content">
+    <label>
+      <input type="radio" name="downloadOption" value="complete" onclick="toggleTextField()"> Download Complete File
+    </label>
+    <label>
+      <input type="radio" name="downloadOption" value="logLines" onclick="toggleTextField()"> Download Log Lines
+    </label>
+    <input type="text" id="logLinesInput" placeholder="Enter number of lines">
+    <button class="download-btn" onclick="startDownload()">Download</button>
+  </div>
+</div>
 
 
 <script src="js/security.js"></script>
@@ -716,6 +799,20 @@ window.addEventListener('pageshow', function(event) {
             stopLoader();
         }
     });
+
+      function openPopup() {
+            document.getElementById("downloadPopup").style.display = "block";
+        }
+
+        function closePopup() {
+            document.getElementById("downloadPopup").style.display = "none";
+        }
+
+        function toggleTextField() {
+            let logLinesInput = document.getElementById("logLinesInput");
+            let selectedOption = document.querySelector('input[name="downloadOption"]:checked').value;
+            logLinesInput.style.display = (selectedOption === "logLines") ? "block" : "none";
+        }
 
 function stopLoader() {
     document.getElementById('loader').style.visibility = 'hidden';
@@ -817,6 +914,7 @@ document.getElementById('searchInput').addEventListener('input', renderLogs);
         }
 
         function startDownload() {
+        closePopup();
     let progress = 0;
     document.getElementById('progressPopup').style.display = 'block';
     document.getElementById('progressBar').style.display = 'none';
@@ -828,13 +926,13 @@ document.getElementById('searchInput').addEventListener('input', renderLogs);
             document.getElementById('progressBar').style.display = 'none';
             alert('Download Complete');
         } else {
-            progress += 5;
+            progress += 1;
             document.getElementById('progressPercent').innerText = `${progress}%`;
             document.getElementById('progressBarPercent').innerText = `${progress}%`;
             document.getElementById('progressFill').style.width = `${progress}%`;
             document.getElementById('progressBarFill').style.width = `${progress}%`;
         }
-    }, 200);
+    }, 400);
 }
 function hideProgress() {
     document.getElementById('progressPopup').style.display = 'none';
