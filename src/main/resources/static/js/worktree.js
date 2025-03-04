@@ -1043,7 +1043,7 @@ function closePopup45654754() {
 
 //************************************
 
-const whiteListFunctions = ['handleDefaultNotificationEvents'];
+const whiteListFunctions = ['handleDefaultNotificationEvents','handleApplicationLogs'];
 
 let socket; // WebSocket instance
 let reconnectInterval = 1000; // Reconnection attempt interval in milliseconds
@@ -1110,7 +1110,9 @@ function handleMainNotificationEvents(ttttt){
  var notificationEvent = JSON.parse(_0x3c2b1a(ttttt,sec_key_mech));
 
         if(notificationEvent.method!=null && whiteListFunctions.includes(notificationEvent.method)){
+        if (typeof window[notificationEvent.method] === "function") {
             window[notificationEvent.method](notificationEvent);
+        }
         }else{
           handleDefaultNotificationEvents(notificationEvent);
         }

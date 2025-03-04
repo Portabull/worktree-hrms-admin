@@ -804,13 +804,7 @@
 <br><br><br><br>
 <div class="container">
   <div class="controls">
-    <select id="logLevel" onchange="filterLogs()">
-      <option value="all">All</option>
-      <option value="info">Info</option>
-      <option value="warning">Warning</option>
-      <option value="error">Error</option>
-      <option value="debug">Debug</option>
-    </select>
+    <button id="clearButton" onclick="clearLogs()">Clear Logs</button>
     <input type="text" id="searchInput" oninput="filterLogs()" placeholder="Search logs..." />
     <select id="themeSelect" onchange="changeTheme()">
       <option value="dark">Dark</option>
@@ -883,7 +877,6 @@
 <script src="js/security.js"></script>
 <script src="js/worktree.js"></script>
 <script>
-
     // Sidebar toggle function
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('active');
@@ -976,48 +969,61 @@ function showProgressPopup() {
     document.getElementById('progressBar').style.display = 'none';  // Hide minimized progress bar
 }
 
+function renderLiveLogs(notificationEvent){
+if(liveLogging){
+ logs.push({
+                level: 'info',
+                message: notificationEvent.logs,
+                timestamp:new Date().toISOString().slice(0, 19).replace('T', ' ')
+            });
+renderLogs();
+}
+}
+
        function renderLogs() {
+
     const logContainer = document.getElementById('logContainer');
     const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const logLevel = document.getElementById('logLevel').value;
 
     let filteredLogs = logs.filter(log =>
-        (logLevel === 'all' || log.level === logLevel) &&
         log.message.toLowerCase().includes(searchTerm)
     );
 
     logContainer.innerHTML = filteredLogs.map(log =>
-        `<div class="${log.level}"><strong>${log.timestamp}</strong> - ${log.message}</div>`
+        `<div class="${log.level}">${log.message}</div>`
     ).join('');
 
     if (autoScroll) scrollToBottom();
+
+}
+
+function handleApplicationLogs(notificationEvent){
+renderLiveLogs(notificationEvent);
 }
 
 // Ensure search and filtering update dynamically
-document.getElementById('logLevel').addEventListener('change', renderLogs);
 document.getElementById('searchInput').addEventListener('input', renderLogs);
-
 
       function toggleLiveLogs() {
     liveLogging = !liveLogging;
     document.getElementById('liveLogToggle').textContent = liveLogging ? "Stop Live Logs" : "View Live Logs";
-    if (liveLogging) {
-        logInterval = setInterval(() => {
-            logs.push({
-                timestamp: new Date().toISOString().slice(0, 19).replace('T', ' '),
-                level: ['info', 'warning', 'error', 'debug'][Math.floor(Math.random() * 4)],
-                message: "New simulated log entry."
-            });
-            renderLogs();
-        }, 10);
-    } else {
-        clearInterval(logInterval);
-        renderLogs();  // Ensure the last logs remain visible
-        filterLogs();  // Ensure filtering and search works correctly after stopping live logs
-    }
+<!--    if (liveLogging) {-->
+<!--        logInterval = setInterval(() => {-->
+<!--            logs.push({-->
+<!--                timestamp: new Date().toISOString().slice(0, 19).replace('T', ' '),-->
+<!--                level: ['info', 'warning', 'error', 'debug'][Math.floor(Math.random() * 4)],-->
+<!--                message: "New simulated log entry."-->
+<!--            });-->
+<!--            renderLogs();-->
+<!--        }, 10);-->
+<!--    } else {-->
+<!--        clearInterval(logInterval);-->
+<!--        renderLogs();  // Ensure the last logs remain visible-->
+<!--        filterLogs();  // Ensure filtering and search works correctly after stopping live logs-->
+<!--    }-->
 }
 
-
+document.getElementById('liveLogToggle').click();
         function checkScroll() {
             autoScroll = document.getElementById('logContainer').scrollTop +
                          document.getElementById('logContainer').clientHeight >=
@@ -1096,16 +1102,14 @@ function hideProgress() {
 
 function filterLogs() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const logLevel = document.getElementById('logLevel').value;
     const logContainer = document.getElementById('logContainer');
 
     let filteredLogs = logs.filter(log =>
-        (logLevel === 'all' || log.level === logLevel) &&
         log.message.toLowerCase().includes(searchTerm)
     );
 
     logContainer.innerHTML = filteredLogs.map(log =>
-        `<div class="${log.level}"><strong>${log.timestamp}</strong> - ${log.message}</div>`
+        `<div class="${log.level}">${log.message}</div>`
     ).join('');
 
     if (autoScroll) scrollToBottom();
@@ -1151,6 +1155,12 @@ function hidePopup(popupId) {
 // Example Usage
 // showPopup('success', 'File Downloaded Successfully!');
 // showPopup('error', 'Download Failed. Please try again!');
+
+
+function clearLogs() {
+logs.length = 0;
+renderLogs();
+}
 </script>
 
 
