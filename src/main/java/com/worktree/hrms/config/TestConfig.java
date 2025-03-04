@@ -59,6 +59,8 @@ public class TestConfig {
             hibernateUtils.saveOrUpdateEntity(new FeatureEntity(CommonConstants.Features.VAULT_SETTINGS, dateUtils.getCurrentDate()));
         if (getFeature(CommonConstants.Features.PROXY_SETTINGS) == null)
             hibernateUtils.saveOrUpdateEntity(new FeatureEntity(CommonConstants.Features.PROXY_SETTINGS, dateUtils.getCurrentDate()));
+        if (getFeature(CommonConstants.Features.LOGS) == null)
+            hibernateUtils.saveOrUpdateEntity(new FeatureEntity(CommonConstants.Features.LOGS, dateUtils.getCurrentDate()));
 
         loadInitHelp();
     }

@@ -549,9 +549,11 @@
     </div>
 
 
-
-
-
+    <div class="settings-option" data-alias="Logs" onclick="gotoLogs()" data-tooltip="View Logs">
+        <!-- Logs Icon -->
+        <i class="fas fa-file-alt"></i>
+        <div class="settings-label">Logs</div>
+    </div>
 
     <div class="settings-option" data-alias="Storage Settings" onclick="gotoStorageSettings()" data-tooltip="Manage Storage">
         <i class="fas fa-database"></i>
@@ -664,6 +666,11 @@ loadProfilePhoto();
 function gotoStorageSettings(){
     startLoader();
   window.location.href = "storage-configuration";
+}
+
+function gotoLogs(){
+ startLoader();
+  window.location.href = "app-logs";
 }
 
 function gotoProxySettings() {

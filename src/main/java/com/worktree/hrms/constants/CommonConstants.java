@@ -54,6 +54,8 @@ public class CommonConstants {
         public static final String VAULT_SETTINGS = "Vault Settings";
 
         public static final String PROXY_SETTINGS = "Proxy Settings";
+
+        public static final String LOGS = "Logs";
     }
 
 }
