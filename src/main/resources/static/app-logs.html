@@ -946,16 +946,6 @@ function stopLoader() {
 loadProfilePhoto();
 
 
-document.addEventListener('DOMContentLoaded', () => {
-    const helpIcon = document.getElementById('helpIcon');
-    if (helpIcon) {
-        helpIcon.style.display = 'flex'; // Ensure it is visible
-        helpIcon.hidden = false;
-    } else {
-        console.error('Help icon element not found in DOM.');
-    }
-});
-
 </script>
 
 
@@ -1023,7 +1013,32 @@ document.getElementById('searchInput').addEventListener('input', renderLogs);
 <!--    }-->
 }
 
-document.getElementById('liveLogToggle').click();
+startLoader();
+       dynamicXhrApi('GET',BASE_URL + 'api/view/logs?lines=5000' ,{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() },undefined, function (xhr,decryptedResponseObj){
+      stopLoader();
+        if(xhr.status==200){
+
+
+
+              decryptedResponseObj.forEach(log => {
+    logs.push({
+                level: 'info',
+                message: log,
+                timestamp:new Date().toISOString().slice(0, 19).replace('T', ' ')
+            });
+});
+
+
+
+
+            renderLogs();
+
+             document.getElementById('liveLogToggle').click();
+        }
+
+       });
+
+
         function checkScroll() {
             autoScroll = document.getElementById('logContainer').scrollTop +
                          document.getElementById('logContainer').clientHeight >=
@@ -1161,6 +1176,25 @@ function clearLogs() {
 logs.length = 0;
 renderLogs();
 }
+
+
+function startLoader() {
+    document.getElementById('loader').style.visibility = 'visible';
+    document.body.style.pointerEvents = 'none'; // Disable interaction with the screen
+}
+
+window.addEventListener('pageshow', function(event) {
+        // Check if the page is loaded from the cache
+        if (event.persisted) {
+            stopLoader();
+        }
+    });
+
+function stopLoader() {
+    document.getElementById('loader').style.visibility = 'hidden';
+    document.body.style.pointerEvents = 'auto'; // Re-enable interaction with the screen
+}
+
 </script>
 
 

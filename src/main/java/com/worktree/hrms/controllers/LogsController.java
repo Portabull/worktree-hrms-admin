@@ -6,6 +6,7 @@ import com.worktree.hrms.service.LogsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -24,7 +26,7 @@ public class LogsController {
     @Autowired
     private LogsService logsService;
 
-    @Feature(feature = CommonConstants.Features.KEYSTORE_SETTINGS)
+    @Feature(feature = CommonConstants.Features.LOGS)
     @GetMapping("/download/logs")
     public ResponseEntity<?> downloadLogs(@RequestParam Optional<Integer> lines) throws IOException {
         ResponseEntity<?> response;
@@ -42,4 +44,11 @@ public class LogsController {
 
         return response;
     }
+
+    @Feature(feature = CommonConstants.Features.LOGS)
+    @GetMapping("/view/logs")
+    public ResponseEntity<List<String>> getLatestLogs(@RequestParam Optional<Integer> lines) throws IOException {
+        return new ResponseEntity<>(logsService.getLatestLogs(lines), HttpStatus.OK);
+    }
+
 }

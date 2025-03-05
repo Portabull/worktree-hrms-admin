@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -53,7 +52,7 @@ public class LogsServiceImpl implements LogsService {
                         String line;
                         while ((line = raf.readLine()) != null) {
                             String logMessage = objectMapper.writeValueAsString(Map.of("method", "handleApplicationLogs", "type", "info", "logs", line));
-                        notificationWebsocketHandler.sendNotification(logMessage);
+                            notificationWebsocketHandler.sendNotification(logMessage);
                         }
                         filePointer = raf.getFilePointer(); // Save the last read position
                     }
@@ -69,7 +68,6 @@ public class LogsServiceImpl implements LogsService {
     }
 
 
-
     @Override
     public byte[] downloadLogs(Optional<Integer> lines) throws IOException {
 
@@ -83,6 +81,8 @@ public class LogsServiceImpl implements LogsService {
                     result.add(line);
                 }
             }
+
+            Collections.reverse(result);
 
             // Create a unique log file name with timestamp and random string in the temp folder
             String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -113,6 +113,28 @@ public class LogsServiceImpl implements LogsService {
         try (InputStream inputStream = new FileInputStream(logFileName)) {
             return IOUtils.toByteArray(inputStream);
         }
+    }
+
+    @Override
+    public List<String> getLatestLogs(Optional<Integer> lines) throws IOException {
+
+        String logFileName = System.getProperty("user.dir") + File.separator + "worktree.log";
+        List<String> result = new ArrayList<>();
+
+        if (lines.isEmpty()) {
+            lines = Optional.of(5000);
+        }
+
+        try (ReversedLinesFileReader reader = new ReversedLinesFileReader(new File(logFileName))) {
+            String line = "";
+            while ((line = reader.readLine()) != null && result.size() < lines.get()) {
+                result.add(line);
+            }
+        }
+
+        Collections.reverse(result);
+
+        return result;
     }
 
 
