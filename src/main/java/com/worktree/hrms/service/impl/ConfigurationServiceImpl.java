@@ -3,6 +3,7 @@ package com.worktree.hrms.service.impl;
 import com.worktree.hrms.dao.ConfigurationDao;
 import com.worktree.hrms.service.ConfigurationService;
 import com.worktree.hrms.service.TestConfigService;
+import com.worktree.hrms.utils.ConfigurationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Autowired
     private TestConfigService testConfigService;
+
+    @Autowired
+    private ConfigurationUtils configurationUtils;
 
     @Override
     public Map<String, Object> saveEmailConfiguration(Map<String, Object> payload) {
@@ -69,5 +73,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Override
     public Map<String, Object> getProxyConfiguration() {
         return configurationDao.getProxyConfiguration();
+    }
+
+    @Override
+    public Map<String, Object> getStorageStatistics() {
+        Map<String, Object> storageConfiguration = configurationDao.getStorageConfiguration();
+        return configurationUtils.getStorageStatistics(storageConfiguration);
     }
 }

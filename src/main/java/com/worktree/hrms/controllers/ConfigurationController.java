@@ -77,4 +77,10 @@ public class ConfigurationController {
         return new ResponseEntity<>(configurationService.getProxyConfiguration(), HttpStatus.OK);
     }
 
+    @Feature(feature = CommonConstants.Features.STORAGE_SETTINGS)
+    @GetMapping("storage/statistics")
+    public ResponseEntity<Map<String, Object>> getStorageStatistics() {
+        return new ResponseEntity<>(configurationService.getStorageStatistics(), HttpStatus.OK);
+    }
+
 }

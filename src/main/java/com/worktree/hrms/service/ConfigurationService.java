@@ -26,4 +26,5 @@ public interface ConfigurationService {
 
     Map<String, Object> getProxyConfiguration();
 
+    Map<String, Object> getStorageStatistics();
 }

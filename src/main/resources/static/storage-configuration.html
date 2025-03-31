@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Storage Configuration</title>
   <link rel="stylesheet" href="css/common-style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
         body {
@@ -333,6 +335,153 @@
     background-color: #228be6; /* Slightly darker blue on hover */
     transform: scale(1.1); /* Slight zoom effect on hover */
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .overlay-7854 {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .popup-7854 {
+      background: #fff;
+      border-radius: 14px;
+      padding: 20px 20px 30px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      position: relative;
+      animation: fadeIn-7854 0.3s ease;
+    }
+
+    .popup-7854 h3 {
+      margin-top: 0;
+      text-align: center;
+      color: #1d4ed8;
+    }
+
+    .close-btn-7854 {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: #888;
+      cursor: pointer;
+    }
+
+    .close-btn-7854:hover {
+      color: #111;
+    }
+
+    .summary-7854 {
+      text-align: center;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .chart-box-7854 {
+      width: 100%;
+      max-width: 250px;
+      margin: 0 auto 10px;
+    }
+
+    .btn-7854 {
+      display: block;
+      margin: 15px auto 0;
+      padding: 8px 16px;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn-7854:hover {
+      background: #1e40af;
+    }
+
+    .table-section-7854 {
+      display: none;
+      animation: fadeIn-7854 0.4s ease;
+      margin-top: 15px;
+    }
+
+    .filter-box-7854 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .filter-box-7854 input {
+      padding: 6px 10px;
+      width: 90%;
+      max-width: 300px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .table-wrapper-7854 {
+      max-height: 250px;
+      overflow-y: auto;
+      border-radius: 6px;
+      box-shadow: inset 0 0 4px rgba(0,0,0,0.1);
+    }
+
+    table.table-7854 {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      background: white;
+    }
+
+    .table-7854 th,
+    .table-7854 td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .table-7854 th {
+      background: #f0f9ff;
+      color: #1e3a8a;
+      position: sticky;
+      top: 0;
+    }
+
+    .table-7854 tr:hover {
+      background: #f9fafb;
+    }
+
+    @keyframes fadeIn-7854 {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
     </style>
 </head>
 <body>
@@ -364,6 +513,52 @@
 </div>
 
 
+
+
+
+<div class="overlay-7854" id="statsPopup">
+  <div class="popup-7854">
+    <button class="close-btn-7854" onclick="document.getElementById('statsPopup').style.display='none'">&times;</button>
+    <h3>Storage Statistics</h3>
+    <div class="summary-7854" id="summaryText"></div>
+    <div class="chart-box-7854">
+      <canvas id="fileTypeChart" width="200" height="200"></canvas>
+    </div>
+    <button class="btn-7854" id="toggleBtn" onclick="toggleTable()">Show Additional Details</button>
+
+    <div class="table-section-7854" id="detailsTableSection">
+      <div class="filter-box-7854">
+        <input type="text" id="folderFilter" placeholder="Search folder..." oninput="filterTable()">
+      </div>
+      <div class="table-wrapper-7854">
+        <table class="table-7854">
+          <thead>
+          <tr>
+            <th>Folder</th>
+            <th>Count</th>
+            <th>Size</th>
+          </tr>
+          </thead>
+          <tbody id="tableBody">
+          <!-- Injected via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
 <div class="loader-overlay" id="loader">
   <div class="spinner"></div>
 </div>
@@ -374,6 +569,11 @@
     <i class="fas fa-question"></i>
   </div>
   <h2>Storage Configuration</h2>
+  <div style="width: 100%; display: flex; justify-content: flex-end; align-items: center; ">
+    <button style="background: rgb(108, 99, 255); color: white; padding: 4px 10px; border: none; border-radius: 15px; font-size: 12px; font-weight: 500; cursor: pointer; box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 4px; transition: transform 0.2s; transform: scale(1);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" onclick="getStorageStats()">
+      📊 Stats
+    </button>
+  </div>
   <form id="storageProviderForm">
     <label for="provider">Storage Provider</label>
     <select id="provider" name="provider" required>
@@ -777,6 +977,130 @@ function showLocalFileName(fileName) {
 }
 
 </script>
+<script>
+let chartInstance = null;
+
+  var statsResponse = {
+    "fileTypeCounts": {
+      "Image": 4,
+      "Document": 1
+    },
+    "folderFiles": {
+      "new": {
+        "size": "0.22 MB",
+        "count": 1
+      },
+      "Root": {
+        "size": "1.38 MB",
+        "count": 2
+      },
+      "new/a123": {
+        "size": "0.12 MB",
+        "count": 1
+      },
+      "new/a123/Test12333/d/aysh/djhsd/djhsdhsd/skdhskdsd": {
+        "size": "0.21 MB",
+        "count": 1
+      }
+    },
+    "totalFiles": 5,
+    "totalSizeBytes": 2017228
+  };
+
+ function openPopup() {
+  document.getElementById('summaryText').innerHTML = `
+    <div><strong>Total Files:</strong> ${statsResponse.totalFiles}</div>
+    <div><strong>Total Storage:</strong> ${(statsResponse.totalSizeBytes / 1024 / 1024).toFixed(2)} MB</div>
+  `;
+
+  const labels = Object.keys(statsResponse.fileTypeCounts);
+  const data = Object.values(statsResponse.fileTypeCounts);
+  const colors = labels.map((_, i) => `hsl(${i * 360 / labels.length}, 70%, 60%)`);
+
+  // 🔥 Clear old chart
+  if (chartInstance) {
+    chartInstance.destroy();
+  }
+
+  // Create new chart
+  chartInstance = new Chart(document.getElementById('fileTypeChart').getContext('2d'), {
+    type: 'pie',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: colors
+      }]
+    },
+    options: {
+      plugins: {
+        legend: { position: 'bottom' },
+        title: { display: true, text: 'File Type' }
+      }
+    }
+  });
+
+  // 🔥 Clear old table rows
+  const tableBody = document.getElementById('tableBody');
+  tableBody.innerHTML = ''; // ← Clear old data
+
+  // Append new rows
+  Object.entries(statsResponse.folderFiles).forEach(([folder, stats]) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${folder}</td>
+      <td>${stats.count}</td>
+      <td>${stats.size}</td>
+    `;
+    tableBody.appendChild(tr);
+  });
+}
+
+  // Function to toggle table visibility
+  function toggleTable() {
+    const section = document.getElementById('detailsTableSection');
+    const btn = document.getElementById('toggleBtn');
+    const isVisible = section.style.display === 'block';
+    section.style.display = isVisible ? 'none' : 'block';
+    btn.textContent = isVisible ? 'Show Additional Details' : 'Hide Additional Details';
+  }
+
+  // Function to filter the table
+  function filterTable() {
+    const filter = document.getElementById('folderFilter').value.toLowerCase();
+    const rows = document.querySelectorAll('#tableBody tr');
+    rows.forEach(row => {
+      const folderName = row.children[0].innerText.toLowerCase();
+      row.style.display = folderName.includes(filter) ? '' : 'none';
+    });
+  }
+
+  function getStorageStats() {
+startLoader();
+    dynamicXhrApi(
+        'GET',
+        BASE_URL + 'api/storage/statistics',
+        { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': getCurrentToken()},
+        undefined,
+        function (xhr,decryptedResponseObj){
+             stopLoader();
+        if(xhr.status==200){
+       statsResponse = decryptedResponseObj;
+       document.getElementById('statsPopup').style.display='';
+         openPopup();
+         }else{
+ showErrorMessage("Bad Request", decryptedResponseObj.message, true);
+          return;
+         }
+        }
+    );
+
+  }
+
+
+document.getElementById('statsPopup').style.display='none';
+</script>
+
 
 </body>
 </html>
