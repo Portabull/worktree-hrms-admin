@@ -416,8 +416,13 @@ if (userNameTINFOJson !== null) {
 // Check if the userName already exists in the array
 var existingUser = userNameList.find(user => user.userName === currentUserName);
 
-    if(existingUser==null || existingUser==undefined)
+    if(existingUser==null || existingUser==undefined){
+     let urlWithoutProtocol = window.location.href.replace(/^https?:\/\//, '');
+     let pathOnly = '/' + urlWithoutProtocol.split('/').slice(1).join('/');
+     window.localStorage.setItem("loginRedirectPage", pathOnly);
           window.location.href = "login";
+    }
+
 
      return existingUser.jwt;
 

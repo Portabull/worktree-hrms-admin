@@ -553,9 +553,16 @@ function stopLoader() {
 
     function afterLogin(xhr,decryptedResponseObj) {
         if (xhr.status == 200) {
+
+        var redirectPage = window.localStorage.getItem('loginRedirectPage');
+
         setAsCurrentUser(userNameCache);
                         loginCacheTokenInfo(xhr,decryptedResponseObj);
 
+        if(redirectPage!=undefined){
+                window.localStorage.removeItem('loginRedirectPage');
+                  window.location.href = redirectPage;
+        }else
             window.location.href = "home";
         } else {
             const response = decryptedResponseObj;
