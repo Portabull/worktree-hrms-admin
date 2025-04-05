@@ -1007,11 +1007,30 @@ let chartInstance = null;
     "totalSizeBytes": 2017228
   };
 
+  function formatSize(sizeInBytes) {
+  const kb = 1024;
+  const mb = kb * 1024;
+  const gb = mb * 1024;
+  const tb = gb * 1024;
+
+  if (sizeInBytes >= tb) {
+    return (sizeInBytes / tb).toFixed(2) + ' TB';
+  } else if (sizeInBytes >= gb) {
+    return (sizeInBytes / gb).toFixed(2) + ' GB';
+  } else if (sizeInBytes >= mb) {
+    return (sizeInBytes / mb).toFixed(2) + ' MB';
+  } else if (sizeInBytes >= kb) {
+    return (sizeInBytes / kb).toFixed(2) + ' KB';
+  } else {
+    return sizeInBytes + ' Bytes';
+  }
+}
+
  function openPopup() {
   document.getElementById('summaryText').innerHTML = `
-    <div><strong>Total Files:</strong> ${statsResponse.totalFiles}</div>
-    <div><strong>Total Storage:</strong> ${(statsResponse.totalSizeBytes / 1024 / 1024).toFixed(2)} MB</div>
-  `;
+  <div><strong>Total Files:</strong> ${statsResponse.totalFiles}</div>
+  <div><strong>Total Storage:</strong> ${formatSize(statsResponse.totalSizeBytes)}</div>
+`;
 
   const labels = Object.keys(statsResponse.fileTypeCounts);
   const data = Object.values(statsResponse.fileTypeCounts);
@@ -1085,6 +1104,12 @@ startLoader();
         function (xhr,decryptedResponseObj){
              stopLoader();
         if(xhr.status==200){
+
+        if(decryptedResponseObj.status =='SUCCESS'){
+         showErrorMessage("INFO", 'Hey, we will notify once stats completed please be relaxed', false);
+          return;
+        }
+
        statsResponse = decryptedResponseObj;
        document.getElementById('statsPopup').style.display='';
          openPopup();
@@ -1099,6 +1124,12 @@ startLoader();
 
 
 document.getElementById('statsPopup').style.display='none';
+
+const typeValue = new URL(window.location.href).searchParams.get("type");
+if(typeValue=='open-stats') {
+getStorageStats();
+}
+
 </script>
 
 

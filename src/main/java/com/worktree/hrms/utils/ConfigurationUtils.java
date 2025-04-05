@@ -9,6 +9,14 @@ import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.blob.models.BlobItem;
 import com.azure.storage.blob.models.BlobProperties;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.worktree.hrms.constants.CommonConstants;
+import com.worktree.hrms.handlers.NotificationWebsocketHandler;
+import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -21,36 +29,104 @@ import software.amazon.awssdk.services.s3.model.S3Object;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class ConfigurationUtils {
 
+    private final Map<String, Object> response = new HashMap<>();
 
-    public Map<String, Object> getStorageStatistics(Map<String, Object> storageConfiguration) {
+    private boolean isRunning;
+    @Autowired
+    NotificationWebsocketHandler notificationWebsocketHandler;
+
+    Logger logger = LoggerFactory.getLogger(ConfigurationUtils.class);
 
 
-        String provider = storageConfiguration.get("provider").toString().toLowerCase();
-        BucketStats bucketStats = null;
-        switch (provider) {
-            case "aws3":
-                bucketStats = getS3BucketStats(storageConfiguration);
-                break;
-            case "azureadls":
-                bucketStats = getADLSBucketStats(storageConfiguration);
-                break;
-            case "gcs":
-                bucketStats = getGCSBucketStats(storageConfiguration);
-                break;
-            case "serverlocalstorage":
-                bucketStats = getLocalStorageBucketStats(storageConfiguration);
-                break;
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    private String notificationMessage;
+    Map<String, Object> message = new HashMap<>();
+
+    @PostConstruct
+    public void initMessage() throws JsonProcessingException {
+
+        message.put("alert", "Storage Stats Ready!!!");
+        message.put("message", "Hi, storage stats ready please find in configuration -> storage -> stats or <a href=\"storage-configuration?type=open-stats\">\n" +
+                "    Click here\n" +
+                "</a>\n");
+        message.put("method", "handleDefaultNotificationEvents");
+        notificationMessage = objectMapper.writeValueAsString(message);
+        message.put("alert", "Storage Stats Failed!!!");
+        message.put("message", "");
+        message.put("method", "handleDefaultNotificationEvents");
+    }
+
+    public synchronized Map<String, Object> getStorageStatistics(Map<String, Object> storageConfiguration) {
+
+        if (isRunning) {
+            return CommonConstants.SUCCESS_RESPONSE;
         }
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("fileTypeCounts", bucketStats.fileTypeCounts);
-        response.put("folderFiles", bucketStats.folderFiles);
-        response.put("totalFiles", bucketStats.totalFiles);
-        response.put("totalSizeBytes", bucketStats.totalSizeBytes);
+        if (response.get("timestamp") == null ||
+                System.currentTimeMillis() - Long.valueOf(response.get("timestamp").toString()) > 5 * 60 * 1000) {
+            isRunning = true;
+            response.clear();
+
+            CountDownLatch latch = new CountDownLatch(1);
+            new Thread(() -> {
+                try {
+                    String provider = storageConfiguration.get("provider").toString().toLowerCase();
+                    BucketStats bucketStats = null;
+                    switch (provider) {
+                        case "aws3":
+                            bucketStats = getS3BucketStats(storageConfiguration);
+                            break;
+                        case "azureadls":
+                            bucketStats = getADLSBucketStats(storageConfiguration);
+                            break;
+                        case "gcs":
+                            bucketStats = getGCSBucketStats(storageConfiguration);
+                            break;
+                        case "serverlocalstorage":
+                            bucketStats = getLocalStorageBucketStats(storageConfiguration);
+                            break;
+                    }
+
+                    response.put("fileTypeCounts", bucketStats.fileTypeCounts);
+                    response.put("folderFiles", bucketStats.folderFiles);
+                    response.put("totalFiles", bucketStats.totalFiles);
+                    response.put("totalSizeBytes", bucketStats.totalSizeBytes);
+                    response.put("timestamp", System.currentTimeMillis());
+                    notificationWebsocketHandler.sendNotification(notificationMessage);
+                } catch (Exception e) {
+                    message.put("message", e.getMessage());
+                    try {
+                        notificationWebsocketHandler.sendNotification(objectMapper.writeValueAsString(message));
+                    } catch (JsonProcessingException ex) {
+                        logger.error("Exception :: ", ex);
+                    }
+                } finally {
+                    isRunning = false;
+                    latch.countDown(); // Notify that the thread work is done
+                }
+            }).start();
+
+
+            try {
+                if (latch.await(30, TimeUnit.SECONDS)) {
+                    return response;
+                } else {
+                    return CommonConstants.SUCCESS_RESPONSE;
+                }
+            } catch (InterruptedException e) {
+                return CommonConstants.SUCCESS_RESPONSE;
+            }
+        }
+
+
         return response;
     }
 
