@@ -474,6 +474,7 @@
       padding: 20px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
       overflow-x: auto;
+      white-space: nowrap;
     }
 
     table {
@@ -654,6 +655,7 @@
         <a href="#" style="display: none; text-decoration: none; color: #007BFF; font-size: 16px;" id="backToSchemas" onclick="goBackToSchemas()">
             &lt; Back to Schemas
         </a>
+        <p id="infoMessagePara"></p>
         <table id="dynamicTable"></table>
     </div>
 </div>
@@ -837,7 +839,7 @@ function getRandomColor() {
   }
 
   function loadTableData(){
-
+document.getElementById('infoMessagePara').innerHTML = '';
     const table = document.getElementById("dynamicTable");
 
     const thead = document.createElement("thead");
@@ -898,9 +900,11 @@ dynamicXhrApi('GET',BASE_URL + 'api/db/stats?type=schema' ,
 
 stopLoader();
 sampleResponse = decryptedResponseObj.tableData;
+var validResponse = validateTableResponse('No Schemas Found for the current database');
 data = decryptedResponseObj.chartData;
 
 loadChartData();
+if(validResponse)
 loadTableData();
 document.getElementById('totalSizeLabel').innerHTML = 'Storage Size: ' + decryptedResponseObj.totalDBStorage;
 });
@@ -931,6 +935,8 @@ dynamicXhrApi('GET',BASE_URL + 'api/db/stats?type=retrieveSchema&schemaName=' + 
 
 stopLoader();
 sampleResponse = decryptedResponseObj.tableData;
+var validResponse = validateTableResponse('No Tables found for the current schema');
+if(validResponse)
 loadTableData();
 });
 
@@ -957,6 +963,8 @@ dynamicXhrApi('GET',BASE_URL + 'api/db/stats?type=retrieveTable&tableName=' + ro
 
 stopLoader();
 sampleResponse = decryptedResponseObj.tableData;
+var validResponse = validateTableResponse('No Data Found for the selected table');
+if(validResponse)
 loadTableData();
 
 });
@@ -1000,6 +1008,8 @@ dynamicXhrApi('GET',BASE_URL + 'api/db/stats?type=retrieveSchema&schemaName=' + 
 
 stopLoader();
 sampleResponse = decryptedResponseObj.tableData;
+var validResponse = validateTableResponse('No Tables Found for the current schema');
+if(validResponse)
 loadTableData();
 });
 
@@ -1057,6 +1067,8 @@ dynamicXhrApi('GET',BASE_URL + 'api/db/stats?type=longRunningQueries',
 
 stopLoader();
 sampleResponse = decryptedResponseObj.tableData;
+var validResponse = validateTableResponse('No Long running queries found');
+if(validResponse)
 loadTableData();
 });
 }
@@ -1078,12 +1090,22 @@ dynamicXhrApi('GET',BASE_URL + 'api/db/stats?type=currentConnections',
 
 stopLoader();
 sampleResponse = decryptedResponseObj.tableData;
+var validResponse = validateTableResponse('No Connections found for the current database');
+if(validResponse)
 loadTableData();
 });
 }
 
 function loadAppStorageData() {
 goBackToSchemas();
+}
+
+function validateTableResponse(message){
+if(sampleResponse==undefined || sampleResponse.length==0){
+document.getElementById('infoMessagePara').innerHTML = message;
+return false;
+}
+return true;
 }
   </script>
 </body>

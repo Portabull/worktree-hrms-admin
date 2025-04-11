@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.Tuple;
 import jakarta.persistence.TupleElement;
 import org.hibernate.Session;
+import org.postgresql.util.PGInterval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
@@ -71,18 +72,21 @@ public class DBStatsDaoImpl implements DBStatsDao {
 
                 List<Tuple> results = entityManager.createNativeQuery(query, Tuple.class).getResultList();
 
-                List<String> columnNames = results.get(0).getElements().stream()
-                        .map(TupleElement::getAlias)
-                        .collect(Collectors.toList());
+                if (!CollectionUtils.isEmpty(results)) {
+                    List<String> columnNames = results.get(0).getElements().stream()
+                            .map(TupleElement::getAlias)
+                            .collect(Collectors.toList());
 
-                data.add(columnNames.toArray());
+                    data.add(columnNames.toArray());
 
-                for (Tuple tuple : results) {
-                    Object[] row = new Object[columnNames.size()];
-                    for (int i = 0; i < columnNames.size(); i++) {
-                        row[i] = tuple.get(columnNames.get(i));
+                    for (Tuple tuple : results) {
+                        Object[] row = new Object[columnNames.size()];
+                        for (int i = 0; i < columnNames.size(); i++) {
+                            row[i] = tuple.get(columnNames.get(i));
+                        }
+                        data.add(row);
                     }
-                    data.add(row);
+
                 }
 
                 response.put("tableData", data);
@@ -127,7 +131,13 @@ public class DBStatsDaoImpl implements DBStatsDao {
                     for (Tuple tuple : results) {
                         Object[] row = new Object[columnNames.size()];
                         for (int i = 0; i < columnNames.size(); i++) {
-                            row[i] = tuple.get(columnNames.get(i));
+                            Object obj = tuple.get(columnNames.get(i));
+                            if (obj instanceof PGInterval interval) {
+                                row[i] = interval.getSeconds() + " Seconds";
+                            } else {
+                                row[i] = obj;
+                            }
+
                         }
                         data.add(row);
                     }
