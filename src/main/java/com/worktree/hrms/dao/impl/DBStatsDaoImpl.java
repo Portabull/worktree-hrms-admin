@@ -8,6 +8,7 @@ import jakarta.persistence.TupleElement;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -84,6 +85,53 @@ public class DBStatsDaoImpl implements DBStatsDao {
                     data.add(row);
                 }
 
+                response.put("tableData", data);
+            } else if (type.equalsIgnoreCase("currentConnections")) {
+                String query = "SELECT datname AS database_name, usename AS user_name, client_addr, application_name, state, backend_start, query_start, wait_event_type, wait_event, query FROM pg_stat_activity WHERE state = 'active';";
+
+                List<Object[]> data = new ArrayList<>();
+
+                List<Tuple> results = entityManager.createNativeQuery(query, Tuple.class).getResultList();
+
+                if (!CollectionUtils.isEmpty(results)) {
+                    List<String> columnNames = results.get(0).getElements().stream()
+                            .map(TupleElement::getAlias)
+                            .collect(Collectors.toList());
+
+                    data.add(columnNames.toArray());
+
+                    for (Tuple tuple : results) {
+                        Object[] row = new Object[columnNames.size()];
+                        for (int i = 0; i < columnNames.size(); i++) {
+                            row[i] = tuple.get(columnNames.get(i));
+                        }
+                        data.add(row);
+                    }
+                }
+
+                response.put("tableData", data);
+            } else if (type.equalsIgnoreCase("longRunningQueries")) {
+                String query = "SELECT pid, datname, usename, state, query, now() - query_start AS duration, query_start FROM pg_stat_activity WHERE state = 'active' AND now() - query_start > interval '30 seconds' ORDER BY duration DESC;";
+
+                List<Object[]> data = new ArrayList<>();
+
+                List<Tuple> results = entityManager.createNativeQuery(query, Tuple.class).getResultList();
+
+                if (!CollectionUtils.isEmpty(results)) {
+                    List<String> columnNames = results.get(0).getElements().stream()
+                            .map(TupleElement::getAlias)
+                            .collect(Collectors.toList());
+
+                    data.add(columnNames.toArray());
+
+                    for (Tuple tuple : results) {
+                        Object[] row = new Object[columnNames.size()];
+                        for (int i = 0; i < columnNames.size(); i++) {
+                            row[i] = tuple.get(columnNames.get(i));
+                        }
+                        data.add(row);
+                    }
+                }
                 response.put("tableData", data);
             }
 

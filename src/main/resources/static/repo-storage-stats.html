@@ -633,9 +633,9 @@
 
 <div class="container">
     <div class="tabs">
-        <div class="tab active">App Storage</div>
-        <div class="tab">Long Running Queries</div>
-        <div class="tab">Connections</div>
+        <div class="tab active" data-tab="AppStorage">App Storage</div>
+        <div class="tab" data-tab="LongRunningQueries">Long Running Queries</div>
+        <div class="tab" data-tab="Connections">Connections</div>
     </div>
 
     <div id="mypiechart" class="top-section">
@@ -909,7 +909,7 @@ document.getElementById('totalSizeLabel').innerHTML = 'Storage Size: ' + decrypt
 
 function handleRowClick(row){
 
-if(!tabType=="AppStorage"){
+if(tabType!="AppStorage"){
 return;
 }
 
@@ -1005,6 +1005,86 @@ loadTableData();
 
 }
 
+
+
+
+
+
+
+
+
+
+
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', function () {
+        // Remove 'active' class from all tabs
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+        // Add 'active' class to clicked tab
+        this.classList.add('active');
+
+        // Get which tab is selected
+        const selectedTab = this.getAttribute('data-tab');
+
+        // Update global variable if needed
+        tabType = selectedTab;
+
+        // Call the appropriate method
+        if (selectedTab === 'AppStorage') {
+            loadAppStorageData();
+        } else if (selectedTab === 'LongRunningQueries') {
+            loadLongRunningQueriesData();
+        } else if (selectedTab === 'Connections') {
+            loadConnectionsData();
+        }
+    });
+});
+
+
+function loadLongRunningQueriesData() {
+hideBackToSchemas();
+hideBackToTables();
+hidePieChart();
+
+const table = document.getElementById("dynamicTable");
+table.innerHTML = "";
+
+
+ startLoader();
+dynamicXhrApi('GET',BASE_URL + 'api/db/stats?type=longRunningQueries',
+{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() }
+,undefined, function (xhr,decryptedResponseObj){
+
+stopLoader();
+sampleResponse = decryptedResponseObj.tableData;
+loadTableData();
+});
+}
+
+function loadConnectionsData() {
+hideBackToSchemas();
+hideBackToTables();
+hidePieChart();
+
+const table = document.getElementById("dynamicTable");
+table.innerHTML = "";
+
+
+
+ startLoader();
+dynamicXhrApi('GET',BASE_URL + 'api/db/stats?type=currentConnections',
+{ 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization':getCurrentToken() }
+,undefined, function (xhr,decryptedResponseObj){
+
+stopLoader();
+sampleResponse = decryptedResponseObj.tableData;
+loadTableData();
+});
+}
+
+function loadAppStorageData() {
+goBackToSchemas();
+}
   </script>
 </body>
 </html>
