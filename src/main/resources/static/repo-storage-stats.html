@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/common-style.css">
     <link rel="stylesheet" href="css/common.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Reset and basic styling */
@@ -531,6 +532,44 @@
   background-color: #eef3ff;
   cursor: pointer;
 }
+
+
+.sub-tabs {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.sub-tab {
+    padding: 8px 16px;
+    background-color: #ffffff;
+    border: 2px solid #6c757d;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sub-tab:hover,
+.sub-tab.active {
+    background-color: #6c757d;
+    color: white;
+}
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.dashboard-chart {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+}
+
   </style>
 </head>
 <body oncontextmenu="return false;">
@@ -636,8 +675,46 @@
     <div class="tabs">
         <div class="tab active" data-tab="AppStorage">App Storage</div>
         <div class="tab" data-tab="LongRunningQueries">Long Running Queries</div>
-        <div class="tab" data-tab="Connections">Connections</div>
+        <div class="tab" data-tab="Advanced">Advanced</div>
     </div>
+
+    <!-- Add this sub-tab container -->
+    <div id="advancedSubTabs" style="display: none; margin-top: 10px;" class="tabs">
+        <div class="tab sub-tab active" data-subtab="Connections">Connections</div>
+        <div class="tab sub-tab" data-subtab="Dashboard">Dashboard</div>
+    </div>
+
+
+    <div id="dashboardSection" style="display: none;">
+        <div class="dashboard-grid">
+            <div class="dashboard-chart">
+                <button class="expand-btn" onclick="expandChart('serverSessionsChart')">
+                    <i class="fas fa-expand"></i>
+                </button>
+                <h4>Server Sessions</h4>
+                <canvas id="serverSessionsChart"></canvas>
+            </div>
+
+            <div class="dashboard-chart">
+                <button class="expand-btn" onclick="expandChart('transactionsChart')">
+                    <i class="fas fa-expand"></i>
+                </button>
+                <h4>Transactions per Second</h4>
+                <canvas id="transactionsChart"></canvas>
+            </div>
+
+            <div class="dashboard-chart">
+                <button class="expand-btn" onclick="expandChart('blockIOChart')">
+                    <i class="fas fa-expand"></i>
+                </button>
+                <h4>Block IO</h4>
+                <canvas id="blockIOChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+
 
     <div id="mypiechart" class="top-section">
         <div class="top-right">
@@ -1017,38 +1094,72 @@ loadTableData();
 
 
 
-
-
-
-
-
-
-
-
 document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', function () {
-        // Remove 'active' class from all tabs
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-
-        // Add 'active' class to clicked tab
-        this.classList.add('active');
-
-        // Get which tab is selected
         const selectedTab = this.getAttribute('data-tab');
-
-        // Update global variable if needed
         tabType = selectedTab;
 
-        // Call the appropriate method
+        // Reset all top-level tabs' active state
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+
+        // Hide all main content areas
+        document.querySelector('.table-container').style.display = 'none';
+        document.getElementById('mypiechart').style.display = 'none';
+        document.getElementById('dashboardSection').style.display = 'none';
+        document.getElementById('advancedSubTabs').style.display = 'none';
+
+        // Remove active from all sub-tabs
+        document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+
+        // Main tab actions
         if (selectedTab === 'AppStorage') {
+            document.querySelector('.table-container').style.display = 'block';
+            document.getElementById('mypiechart').style.display = 'block';
             loadAppStorageData();
         } else if (selectedTab === 'LongRunningQueries') {
+            document.querySelector('.table-container').style.display = 'block';
             loadLongRunningQueriesData();
         } else if (selectedTab === 'Connections') {
+            document.querySelector('.table-container').style.display = 'block';
+            loadConnectionsData();
+        } else if (selectedTab === 'Advanced') {
+            document.getElementById('advancedSubTabs').style.display = 'flex';
+
+            // Default to Connections view
+            document.querySelector('.table-container').style.display = 'block';
+            document.querySelector('[data-subtab="Connections"]').classList.add('active');
             loadConnectionsData();
         }
     });
 });
+
+document.querySelectorAll('.sub-tab').forEach(tab => {
+    tab.addEventListener('click', function () {
+        const selectedSubTab = this.getAttribute('data-subtab');
+
+        // Highlight selected sub-tab
+        document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+
+        // Don't hide advancedSubTabs — just switch content
+        document.querySelector('.table-container').style.display = 'none';
+        document.getElementById('dashboardSection').style.display = 'none';
+
+        if (selectedSubTab === 'Connections') {
+         document.querySelector('[data-subtab="Connections"]').classList.add('active');
+           document.getElementById('advancedSubTabs').style.display = 'flex';
+            document.querySelector('.table-container').style.display = 'block';
+            loadConnectionsData();
+        } else if (selectedSubTab === 'Dashboard') {
+          document.querySelector('[data-subtab="Dashboard"]').classList.add('active');
+         document.getElementById('advancedSubTabs').style.display = 'flex';
+            document.getElementById('dashboardSection').style.display = 'block';
+            initDashboardCharts();
+        }
+    });
+});
+
 
 
 function loadLongRunningQueriesData() {
@@ -1107,6 +1218,238 @@ return false;
 }
 return true;
 }
+
+
+
+
+
+let serverChart, txChart, ioChart;
+// Inside initDashboardCharts(), update the Chart.js config for better formatting
+
+function initDashboardCharts() {
+    if (!serverChart) {
+        const numberFormatter = value => {
+            if (value >= 1_000_000_000) return value / 1_000_000_000 + 'B';
+            if (value >= 1_000_000) return value / 1_000_000 + 'M';
+            if (value >= 1_000) return value / 1_000 + 'K';
+            return value;
+        };
+
+        const tooltipCallback = unit => {
+            return function(context) {
+                const label = context.dataset.label || '';
+                const value = context.parsed.y;
+                return `${label}: ${value.toLocaleString()} ${unit}`;
+            };
+        };
+
+        const ctx1 = document.getElementById('serverSessionsChart').getContext('2d');
+        serverChart = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    { label: 'Active', data: [], borderColor: 'red', fill: false },
+                    { label: 'Idle', data: [], borderColor: 'blue', fill: false },
+                    { label: 'Total', data: [], borderColor: 'gray', fill: false }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: { callbacks: { label: tooltipCallback('sessions') } },
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    y: {
+                        title: { display: true, text: 'Session Count' },
+                        ticks: { callback: numberFormatter }
+                    }
+                }
+            }
+        });
+
+        const ctx2 = document.getElementById('transactionsChart').getContext('2d');
+        txChart = new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    { label: 'Total', data: [], borderColor: 'brown', fill: false },
+                    { label: 'Commit', data: [], borderColor: 'green', fill: false },
+                    { label: 'Rollback', data: [], borderColor: 'orange', fill: false }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: { callbacks: { label: tooltipCallback('tx/s') } },
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    y: {
+                        title: { display: true, text: 'Transactions/sec' },
+                        ticks: { callback: numberFormatter }
+                    }
+                }
+            }
+        });
+
+        const ctx3 = document.getElementById('blockIOChart').getContext('2d');
+        ioChart = new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: [],
+                datasets: [
+                    { label: 'Read', data: [], backgroundColor: '#4dabf7' },
+                    { label: 'Hits', data: [], backgroundColor: '#74c0fc' }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: { callbacks: { label: tooltipCallback('blocks') } },
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    y: {
+                        title: { display: true, text: 'Block Accesses' },
+                        ticks: { callback: numberFormatter }
+                    }
+                }
+            }
+        });
+
+        startDashboardPolling();
+    }
+}
+
+function startDashboardPolling() {
+    setInterval(() => {
+        updateDashboardCharts();
+    }, 5000);
+}
+
+function updateDashboardCharts() {
+    dynamicXhrApi('GET', BASE_URL + 'api/db/monitor/dashboard', {
+        'Authorization': getCurrentToken()
+    }, undefined, function (xhr, data) {
+        const timestamps = data.timestamps;
+
+        // Update Server Chart
+        serverChart.data.labels = timestamps;
+        serverChart.data.datasets[0].data = data.server.active;
+        serverChart.data.datasets[1].data = data.server.idle;
+        serverChart.data.datasets[2].data = data.server.total;
+        serverChart.update();
+
+        // Update Transactions Chart
+        txChart.data.labels = timestamps;
+        txChart.data.datasets[0].data = data.transactions.total;
+        txChart.data.datasets[1].data = data.transactions.commit;
+        txChart.data.datasets[2].data = data.transactions.rollback;
+        txChart.update();
+
+        // Update IO Chart
+        ioChart.data.labels = timestamps;
+        ioChart.data.datasets[0].data = data.blockIO.read;
+        ioChart.data.datasets[1].data = data.blockIO.hits;
+        ioChart.update();
+
+        updatePopupChartIfVisible(timestamps, data);
+    });
+}
+
+
+
+// Add this HTML inside each dashboard-chart div (e.g. under canvas):
+// <button class="expand-btn" onclick="expandChart('serverSessionsChart')"><i class="fas fa-expand"></i></button>
+
+// Add the popup HTML at the end of body
+const popupHtml = `
+<div id="chartPopup" class="chart-popup-overlay">
+  <div class="chart-popup-content">
+    <button onclick="closeChartPopup()" class="popup-close">×</button>
+    <canvas id="popupChartCanvas"></canvas>
+  </div>
+</div>`;
+document.body.insertAdjacentHTML('beforeend', popupHtml);
+
+// Add this CSS
+const style = document.createElement('style');
+style.innerHTML = `
+.chart-popup-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+.chart-popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  height: 80%;
+  position: relative;
+}
+.popup-close {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  background: none;
+  font-size: 24px;
+  border: none;
+  cursor: pointer;
+}
+.expand-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  float: right;
+  margin-bottom: 10px;
+  color: #333;
+}`;
+document.head.appendChild(style);
+
+// Add script functions
+let popupChart;
+let popupChartId = null;
+
+function expandChart(chartId) {
+  popupChartId = chartId;
+  const originalChart = Chart.getChart(chartId);
+  const popupCanvas = document.getElementById('popupChartCanvas');
+  if (popupChart) popupChart.destroy();
+  popupChart = new Chart(popupCanvas.getContext('2d'), {
+    type: originalChart.config.type,
+    data: JSON.parse(JSON.stringify(originalChart.data)),
+    options: JSON.parse(JSON.stringify(originalChart.options))
+  });
+  document.getElementById('chartPopup').style.display = 'flex';
+}
+
+function closeChartPopup() {
+  document.getElementById('chartPopup').style.display = 'none';
+  if (popupChart) popupChart.destroy();
+  popupChartId = null;
+}
+
+// Update popupChart as well during polling
+function updatePopupChartIfVisible(allChartData) {
+  if (!popupChartId || !popupChart) return;
+  const mainChart = Chart.getChart(popupChartId);
+  popupChart.data.labels = [...mainChart.data.labels];
+  popupChart.data.datasets.forEach((ds, i) => {
+    ds.data = [...mainChart.data.datasets[i].data];
+  });
+  popupChart.update();
+}
+
   </script>
 </body>
 </html>

@@ -1,6 +1,8 @@
 package com.worktree.hrms.controllers;
 
 import com.worktree.hrms.service.DBStatsService;
+import com.worktree.hrms.utils.HibernateUtils;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,11 @@ public class DBStatsController {
     public ResponseEntity<Map<String, Object>> getDBStats(@RequestParam String type, @RequestParam(required = false) Optional<String> schemaName,
                                                           @RequestParam(required = false) Optional<String> tableName) {
         return new ResponseEntity<>(dbStatsService.getDBStats(type, schemaName, tableName), HttpStatus.OK);
+    }
+
+    @GetMapping("db/monitor/dashboard")
+    public ResponseEntity<Map<String, Object>> getDBDashboard() {
+        return new ResponseEntity<>(dbStatsService.getDBDashboard(), HttpStatus.OK);
     }
 
 }

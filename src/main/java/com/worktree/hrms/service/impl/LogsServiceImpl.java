@@ -25,9 +25,13 @@ public class LogsServiceImpl implements LogsService {
     private ObjectMapper objectMapper;
 
     @PostConstruct
-    public void initLogs() throws IOException {
-        String logFileName = System.getProperty("user.dir") + File.separator + "worktree.log";
-        monitorLogFile(logFileName);
+    public void initLogs() {
+        try {
+            String logFileName = System.getProperty("user.dir") + File.separator + "worktree.log";
+            monitorLogFile(logFileName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void monitorLogFile(String logFilePath) throws IOException {

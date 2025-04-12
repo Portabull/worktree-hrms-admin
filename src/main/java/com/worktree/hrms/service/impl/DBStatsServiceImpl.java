@@ -19,4 +19,9 @@ public class DBStatsServiceImpl implements DBStatsService {
     public Map<String, Object> getDBStats(String type, Optional<String> schemaName, Optional<String> tableName) {
         return dbStatsDao.getDBStats(type, schemaName, tableName);
     }
+
+    @Override
+    public Map<String, Object> getDBDashboard() {
+        return dbStatsDao.getStats();
+    }
 }
