@@ -15,7 +15,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         String allowCustomOrigin = System.getProperty("allow.custom.origin");
         registry.addHandler(notificationWebsocketHandler(), "/api/ws/notification")
-                .setAllowedOrigins(allowCustomOrigin == null ? "worktree-hrms.shop" : allowCustomOrigin);
+                .setAllowedOrigins(allowCustomOrigin == null ? "worktree-training.space" : allowCustomOrigin);
     }
 
     @Bean

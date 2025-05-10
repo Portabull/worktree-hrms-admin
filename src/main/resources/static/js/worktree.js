@@ -1175,7 +1175,7 @@ function pushNotification12121121(notificationEvent,callback) {
  function showNotification123456(notificationEvent,callback) {
             const notification = new Notification(notificationEvent.alert, {
                 body: notificationEvent.message,
-                icon: 'https://worktree-hrms.shop/image/logo.png' // Replace with your desired icon URL
+                icon: 'https://worktree-training.space/image/logo.png' // Replace with your desired icon URL
             });
 
             notification.onclick = () => {
