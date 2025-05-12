@@ -29,6 +29,9 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 
     private static final String SERVER_CONFIG_NAME = "serverConfigName";
 
+    private static final String PROVIDER = "provider";
+    private static final String ADDITIONAL_PROPS = "additionalProperties";
+
     @Override
     public Map<String, Object> saveEmailConfiguration(Map<String, Object> payload) {
         try {
@@ -217,12 +220,12 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 
     private Map<String, Object> getEmptyStorageResponse() {
         Map<String, Object> emptyMobileResponse = new HashMap<>();
-        emptyMobileResponse.put("provider", "aws3");
+        emptyMobileResponse.put(PROVIDER, "aws3");
         emptyMobileResponse.put("bucketName", "");
         emptyMobileResponse.put("secretKey", "");
         emptyMobileResponse.put("accessKey", "");
         emptyMobileResponse.put("localFileLocation", "");
-        emptyMobileResponse.put("additionalProperties", Arrays.asList());
+        emptyMobileResponse.put(ADDITIONAL_PROPS, Arrays.asList());
         emptyMobileResponse.put("awsRegion", "");
         return emptyMobileResponse;
     }
@@ -230,17 +233,17 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
     private Map<String, Object> getEmptyMobileResponse() {
         Map<String, Object> emptyMobileResponse = new HashMap<>();
         emptyMobileResponse.put("sid", "");
-        emptyMobileResponse.put("provider", "twilio");
+        emptyMobileResponse.put(PROVIDER, "twilio");
         emptyMobileResponse.put("token", "");
         emptyMobileResponse.put("mobile", "");
         emptyMobileResponse.put("whatsapp", "");
-        emptyMobileResponse.put("additionalProperties", Arrays.asList());
+        emptyMobileResponse.put(ADDITIONAL_PROPS, Arrays.asList());
         return emptyMobileResponse;
     }
 
     private Map<String, Object> getEmptyAIResponse() {
         Map<String, Object> emptyAIResponse = new HashMap<>();
-        emptyAIResponse.put("provider", "openai");
+        emptyAIResponse.put(PROVIDER, "openai");
         emptyAIResponse.put("key", "");
         emptyAIResponse.put("model", "");
         emptyAIResponse.put("version", "");
@@ -255,7 +258,7 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
         emptyEmailResponse.put("username", "");
         emptyEmailResponse.put("password", "");
         emptyEmailResponse.put("emailFrom", "");
-        emptyEmailResponse.put("additionalProperties", Arrays.asList());
+        emptyEmailResponse.put(ADDITIONAL_PROPS, Arrays.asList());
         return emptyEmailResponse;
     }
 }

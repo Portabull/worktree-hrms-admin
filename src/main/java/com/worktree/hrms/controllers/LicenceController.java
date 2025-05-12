@@ -20,13 +20,13 @@ public class LicenceController {
     //    10MB file max limit
     @FileScan(size = 10 * 1024 * 1024, message = "Invalid Licence file uploaded please upload a valid file")
     @PostMapping("licence")
-    public ResponseEntity<Map> uploadLicence(@RequestPart MultipartFile file) {
+    public ResponseEntity<Map<String, Object>> uploadLicence(@RequestPart MultipartFile file) {
         licenceService.uploadLicence(file);
         return new ResponseEntity<>(licenceService.getLicence(), HttpStatus.OK);
     }
 
     @GetMapping("licence")
-    public ResponseEntity<Map> getLicence() {
+    public ResponseEntity<Map<String, Object>> getLicence() {
         Map<String, Object> response = licenceService.getLicence();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

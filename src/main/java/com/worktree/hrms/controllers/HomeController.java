@@ -19,7 +19,7 @@ public class HomeController {
     private HomeService homeService;
 
     @GetMapping("home")
-    public ResponseEntity<Map> home(@RequestParam(required = false) String type) {
+    public ResponseEntity<Map<String, Object>> home(@RequestParam(required = false) String type) {
         return new ResponseEntity<>(homeService.home(type), HttpStatus.OK);
     }
 

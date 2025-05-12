@@ -33,6 +33,7 @@ public class EncryptedHttpResponseWrapper extends HttpServletResponseWrapper {
 
             @Override
             public void setWriteListener(jakarta.servlet.WriteListener writeListener) {
+                // Do nothing
             }
         };
     }

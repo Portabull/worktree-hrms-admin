@@ -23,21 +23,10 @@ public class HelpController {
     @GetMapping("help-docs")
     public ResponseEntity<Map<String, Object>> getHelpDocs(@RequestParam String type) {
 
-        // Generate ETag
-//        String etag = Integer.toHexString(response.hashCode());
         HttpHeaders headers = new HttpHeaders();
-//        headers.setETag("\"" + etag + "\"");
-//
-//        // Set Cache-Control and Last-Modified
+
         headers.setCacheControl(CacheControl.maxAge(10, TimeUnit.MINUTES).cachePublic());
-//
-//        headers.setLastModified(lastModified);
-//
-//        // Check If-None-Match
-//        String ifNoneMatch = request.getHeader("If-None-Match");
-//        if (ifNoneMatch != null && ifNoneMatch.equals("\"" + etag + "\"")) {
-//            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).headers(headers).build();
-//        }
+
 
         return new ResponseEntity<>(helpService.getHelpConfig(type), headers, HttpStatus.OK);
     }

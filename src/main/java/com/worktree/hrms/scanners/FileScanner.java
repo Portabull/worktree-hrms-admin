@@ -26,7 +26,7 @@ public class FileScanner {
     );
 
     // Maximum allowed file size in bytes (e.g., 10 MB)
-    private static final long MAX_FILE_SIZE = 10 * 1024 * 1024;
+    private static final long MAX_FILE_SIZE = 10l * 1024 * 1024;
 
     /**
      * Scans a file for malicious content or metadata issues.

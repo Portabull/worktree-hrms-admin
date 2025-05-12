@@ -28,14 +28,16 @@ public class TestConfig {
     public static final String STORAGE_CONF_GUIDE = "Storage Configuration Guide";
     public static final String TROUBLESHOOT_LOGIN_ISSUES = "Troubleshooting Login Issues";
 
+    public static final String ADMIN = "admin";
+
     @PostConstruct
     public void init() {
-        UserEntity admin = getUserEntity("admin");
+        UserEntity admin = getUserEntity(ADMIN);
         if (admin == null) {
             admin = new UserEntity();
         }
-        admin.setUserName("admin");
-        admin.setPassword("admin");
+        admin.setUserName(ADMIN);
+        admin.setPassword(ADMIN);
         admin.setProfilePic(DEFAULT_PROFILE_PIC);
         admin.setDisplayName("Administrator");
         admin.setAdmin(true);

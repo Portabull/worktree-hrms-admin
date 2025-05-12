@@ -159,7 +159,7 @@ public class DBStatsDaoImpl implements DBStatsDao {
                 if (!CollectionUtils.isEmpty(results)) {
                     List<String> columnNames = results.get(0).getElements().stream()
                             .map(TupleElement::getAlias)
-                            .collect(Collectors.toList());
+                            .toList();
 
                     data.add(columnNames.toArray());
 
@@ -184,7 +184,7 @@ public class DBStatsDaoImpl implements DBStatsDao {
                 if (!CollectionUtils.isEmpty(results)) {
                     List<String> columnNames = results.get(0).getElements().stream()
                             .map(TupleElement::getAlias)
-                            .collect(Collectors.toList());
+                            .toList();
 
                     data.add(columnNames.toArray());
 
@@ -208,7 +208,7 @@ public class DBStatsDaoImpl implements DBStatsDao {
                 if (!CollectionUtils.isEmpty(results)) {
                     List<String> columnNames = results.get(0).getElements().stream()
                             .map(TupleElement::getAlias)
-                            .collect(Collectors.toList());
+                            .toList();
 
                     data.add(columnNames.toArray());
 

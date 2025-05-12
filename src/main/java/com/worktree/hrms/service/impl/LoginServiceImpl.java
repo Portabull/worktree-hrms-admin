@@ -23,6 +23,8 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private CommonDao commonDao;
 
+    private static final String PROFILE_PIC = "profilePic";
+
     @Override
     public Map<String, Object> login(Map<String, String> payload) {
         Map<String, Object> response = new HashMap<>();
@@ -46,8 +48,8 @@ public class LoginServiceImpl implements LoginService {
             response.put("jwt", jwt);
             Map<String, String> userProfileInfo = userDao.getUserProfileInfo(userName);
             response.put("userDisplayName", userProfileInfo.get("displayName"));
-            response.put("userProfileImage", userProfileInfo.get("profilePic") != null &&
-                    !userProfileInfo.get("profilePic").trim().equals("") ? userProfileInfo.get("profilePic")
+            response.put("userProfileImage", userProfileInfo.get(PROFILE_PIC) != null &&
+                    !userProfileInfo.get(PROFILE_PIC).trim().equals("") ? userProfileInfo.get(PROFILE_PIC)
                     : TestConfig.DEFAULT_PROFILE_PIC);
             response.put("userFeatures", userDao.getFeatures(userName));
         } else {

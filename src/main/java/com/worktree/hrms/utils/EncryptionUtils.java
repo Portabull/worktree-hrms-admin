@@ -5,9 +5,13 @@ import com.worktree.hrms.exceptions.BadRequestException;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
 public class EncryptionUtils {
+
+    private EncryptionUtils() {
+    }
 
     private static String SECRET_KEY = "NWIYRFIYF%@&#$)ABCDEFGHIJKLMNOP";
 
@@ -24,7 +28,7 @@ public class EncryptionUtils {
         try {
 
 
-            byte[] keyBytes = SECRET_KEY.getBytes("UTF-8");
+            byte[] keyBytes = SECRET_KEY.getBytes(StandardCharsets.UTF_8);
             SecretKeySpec secretKeySpec = new SecretKeySpec(keyBytes, "AES");
 
             // Generate a random IV
@@ -38,7 +42,7 @@ public class EncryptionUtils {
             cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivSpec);
 
             // Encrypt the data
-            byte[] encryptedBytes = cipher.doFinal(data.getBytes("UTF-8"));
+            byte[] encryptedBytes = cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
 
             // Convert IV and encrypted data to hex and concatenate with "::"
             return bytesToHex(ivBytes) + "::" + bytesToHex(encryptedBytes);
@@ -55,7 +59,7 @@ public class EncryptionUtils {
             String iv = encodedArray[0];
             String encryptedData = encodedArray[1];
 
-            byte[] keyBytes = SECRET_KEY.getBytes("UTF-8");
+            byte[] keyBytes = SECRET_KEY.getBytes(StandardCharsets.UTF_8);
             SecretKeySpec secretKeySpec = new SecretKeySpec(keyBytes, "AES");
 
             // Convert IV and encrypted data from Hex to byte arrays
@@ -69,7 +73,7 @@ public class EncryptionUtils {
 
             // Decrypt the data
             byte[] originalBytes = cipher.doFinal(encryptedBytes);
-            return new String(originalBytes, "UTF-8");
+            return new String(originalBytes, StandardCharsets.UTF_8);
 
         } catch (Exception e) {
             throw new BadRequestException("Invalid request or decryption error");

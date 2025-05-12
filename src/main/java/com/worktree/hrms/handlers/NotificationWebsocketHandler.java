@@ -20,20 +20,19 @@ public class NotificationWebsocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         sessions.add(session);
-        log.info("New WebSocket connection established: " + session.getId());
+        log.info("New WebSocket connection established: {}", session.getId());
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, org.springframework.web.socket.CloseStatus status) throws Exception {
         sessions.remove(session);
-        log.info("WebSocket connection closed: " + session.getId());
+        log.info("WebSocket connection closed: {}", session.getId());
     }
 
     public void sendNotification(String message) {
         String encryptedBody = EncryptionUtils.encrypt(message);
         for (WebSocketSession session : sessions) {
             try {
-//                log.info("sending to session -->" + session.getId());
                 session.sendMessage(new BinaryMessage(encryptedBody.getBytes()));
             } catch (IOException e) {
                 log.error(e.getMessage());

@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.*;
-import java.net.URLConnection;
-import java.nio.file.Files;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 @RestController
@@ -17,7 +17,7 @@ import java.util.*;
 public class PaymentsController {
 
     @GetMapping("payment-history")
-    public ResponseEntity<?> paymentHistory(@RequestParam String tenantId) {
+    public ResponseEntity<Map<String, Object>> paymentHistory(@RequestParam String tenantId) {
 
         Map<String, Object> response = new HashMap<>();
 
@@ -33,10 +33,10 @@ public class PaymentsController {
 
 
         data1.put("paymentScreenshots", Arrays.asList(
-                paymentScreenShots( getBase64String("static/image/temp/1.webp","image/webp"),"1.webp"),
-                paymentScreenShots(getBase64String("static/image/temp/1689263849595.pdf","application/pdf"),"1689263849595.pdf")
+                paymentScreenShots(getBase64String("static/image/temp/1.webp", "image/webp"), "1.webp"),
+                paymentScreenShots(getBase64String("static/image/temp/1689263849595.pdf", "application/pdf"), "1689263849595.pdf")
 
-                ,  paymentScreenShots(getBase64String("static/image/temp/2.webp","image/webp"),"2.webp")));
+                , paymentScreenShots(getBase64String("static/image/temp/2.webp", "image/webp"), "2.webp")));
 
 
         datas.add(data1);
@@ -51,8 +51,8 @@ public class PaymentsController {
 
 
         data2.put("paymentScreenshots", Arrays.asList(
-                paymentScreenShots(getBase64String("static/image/temp/InvestmentsBook (4).xlsx","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),"InvestmentsBook (4).xlsx") ,
-                paymentScreenShots(getBase64String("static/image/temp/4.webp","image/webp"),"4.webp")  ));
+                paymentScreenShots(getBase64String("static/image/temp/InvestmentsBook (4).xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"), "InvestmentsBook (4).xlsx"),
+                paymentScreenShots(getBase64String("static/image/temp/4.webp", "image/webp"), "4.webp")));
 
         datas.add(data2);
 
@@ -61,8 +61,7 @@ public class PaymentsController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    private String getBase64String(String fileName,String mimeType){
-        StringBuilder base64String = new StringBuilder();
+    private String getBase64String(String fileName, String mimeType) {
         try (InputStream inputStream = PaymentsController.class.getClassLoader().getResourceAsStream(fileName)) {
 
             try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
@@ -74,7 +73,7 @@ public class PaymentsController {
                 }
                 // Convert the byte array to Base64
                 byte[] bytes = byteArrayOutputStream.toByteArray();
-                return  "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(bytes);
+                return "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(bytes);
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;
@@ -87,10 +86,10 @@ public class PaymentsController {
     }
 
 
-    public Map paymentScreenShots(String base64,String fileName){
-        Map<String,Object> paymentScreenshots1 = new HashMap<>();
-        paymentScreenshots1.put("fileName",fileName);
-        paymentScreenshots1.put("fileContent",base64);
+    public Map<String, Object> paymentScreenShots(String base64, String fileName) {
+        Map<String, Object> paymentScreenshots1 = new HashMap<>();
+        paymentScreenshots1.put("fileName", fileName);
+        paymentScreenshots1.put("fileContent", base64);
         return paymentScreenshots1;
 
     }

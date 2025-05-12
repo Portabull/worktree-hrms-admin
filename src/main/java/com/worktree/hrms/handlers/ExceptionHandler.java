@@ -20,7 +20,7 @@ public class ExceptionHandler {
     Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
 
     @org.springframework.web.bind.annotation.ExceptionHandler(Throwable.class)
-    public ResponseEntity<?> handleNotFoundError(Throwable ex) {
+    public ResponseEntity<Map<String, Object>> handleNotFoundError(Throwable ex) {
         logger.error("Exception Occurred :: ", ex);
         Map<String, Object> response = new HashMap<>();
         response.put(CommonConstants.STATUS, CommonConstants.FAILED);
@@ -40,7 +40,7 @@ public class ExceptionHandler {
 
 
     @org.springframework.web.bind.annotation.ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<?> handleForbiddenException(ForbiddenException ex) {
+    public ResponseEntity<Map<String, Object>> handleForbiddenException(ForbiddenException ex) {
         Map<String, Object> response = new HashMap<>();
         response.put(CommonConstants.STATUS, CommonConstants.FAILED);
         response.put(CommonConstants.STATUS_CODE, 403);
@@ -49,7 +49,7 @@ public class ExceptionHandler {
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<?> handleBadRequestException(BadRequestException ex) {
+    public ResponseEntity<Map<String, Object>> handleBadRequestException(BadRequestException ex) {
         Map<String, Object> response = new HashMap<>();
         response.put(CommonConstants.STATUS, CommonConstants.FAILED);
         response.put(CommonConstants.STATUS_CODE, 400);

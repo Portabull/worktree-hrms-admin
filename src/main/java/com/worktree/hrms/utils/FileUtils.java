@@ -11,6 +11,9 @@ import java.util.Date;
 @Component
 public class FileUtils {
 
+    private FileUtils() {
+    }
+
     public static File convertToFile(String base64String, String fileName) throws IOException {
 
         if (base64String.contains(",")) {

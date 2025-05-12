@@ -37,11 +37,16 @@ public class ConfigurationUtils {
 
     private final Map<String, Object> response = new HashMap<>();
 
+    private static final String COUNT = "count";
+
+    private static final String SIZE_BYTES = "sizeBytes";
+
+    private static final String TIMESTAMP = "timestamp";
     private boolean isRunning;
     @Autowired
     NotificationWebsocketHandler notificationWebsocketHandler;
 
-    Logger logger = LoggerFactory.getLogger(ConfigurationUtils.class);
+    Logger log = LoggerFactory.getLogger(ConfigurationUtils.class);
 
 
     @Autowired
@@ -70,8 +75,8 @@ public class ConfigurationUtils {
             return CommonConstants.SUCCESS_RESPONSE;
         }
 
-        if (response.get("timestamp") == null ||
-                System.currentTimeMillis() - Long.valueOf(response.get("timestamp").toString()) > 5 * 60 * 1000) {
+        if (response.get(TIMESTAMP) == null ||
+                System.currentTimeMillis() - Long.valueOf(response.get(TIMESTAMP).toString()) > 5 * 60 * 1000) {
             isRunning = true;
             response.clear();
 
@@ -99,14 +104,14 @@ public class ConfigurationUtils {
                     response.put("folderFiles", bucketStats.folderFiles);
                     response.put("totalFiles", bucketStats.totalFiles);
                     response.put("totalSizeBytes", bucketStats.totalSizeBytes);
-                    response.put("timestamp", System.currentTimeMillis());
+                    response.put(TIMESTAMP, System.currentTimeMillis());
                     notificationWebsocketHandler.sendNotification(notificationMessage);
                 } catch (Exception e) {
                     message.put("message", e.getMessage());
                     try {
                         notificationWebsocketHandler.sendNotification(objectMapper.writeValueAsString(message));
                     } catch (JsonProcessingException ex) {
-                        logger.error("Exception :: ", ex);
+                        log.error("Exception :: ", ex);
                     }
                 } finally {
                     isRunning = false;
@@ -143,9 +148,9 @@ public class ConfigurationUtils {
 
         // Convert sizeBytes to readable size
         stats.folderFiles.forEach((folder, info) -> {
-            long sizeBytes = (Long) info.get("sizeBytes");
+            long sizeBytes = (Long) info.get(SIZE_BYTES);
             info.put("size", formatSize(sizeBytes));
-            info.remove("sizeBytes");
+            info.remove(SIZE_BYTES);
         });
 
         return stats;
@@ -154,7 +159,7 @@ public class ConfigurationUtils {
     private void scanDirectory(File dir, String basePath, BucketStats stats) {
         File[] files = dir.listFiles();
         if (files == null) {
-            System.err.println("Warning: Cannot access or read directory: " + dir.getAbsolutePath());
+            log.error("Warning: Cannot access or read directory: {}", dir.getAbsolutePath());
             return;
         }
         for (File file : files) {
@@ -172,17 +177,17 @@ public class ConfigurationUtils {
 
                 stats.folderFiles.computeIfAbsent(relativeFolder, k -> {
                     Map<String, Object> map = new HashMap<>();
-                    map.put("count", 0L);
-                    map.put("sizeBytes", 0L);
+                    map.put(COUNT, 0L);
+                    map.put(SIZE_BYTES, 0L);
                     return map;
                 });
 
                 Map<String, Object> folderInfo = stats.folderFiles.get(relativeFolder);
-                long count = (Long) folderInfo.get("count");
-                long folderSize = (Long) folderInfo.get("sizeBytes");
+                long count = (Long) folderInfo.get(COUNT);
+                long folderSize = (Long) folderInfo.get(SIZE_BYTES);
 
-                folderInfo.put("count", count + 1);
-                folderInfo.put("sizeBytes", folderSize + size);
+                folderInfo.put(COUNT, count + 1);
+                folderInfo.put(SIZE_BYTES, folderSize + size);
             }
         }
     }
@@ -196,6 +201,7 @@ public class ConfigurationUtils {
 
 
     private BucketStats getGCSBucketStats(Map<String, Object> payload) {
+        //TODO:need to implement
         return null;
     }
 
@@ -250,24 +256,24 @@ public class ConfigurationUtils {
             String folder = getFolder(name);
             stats.folderFiles.computeIfAbsent(folder, k -> {
                 Map<String, Object> map = new HashMap<>();
-                map.put("count", 0L);
-                map.put("sizeBytes", 0L);
+                map.put(COUNT, 0L);
+                map.put(SIZE_BYTES, 0L);
                 return map;
             });
 
             Map<String, Object> folderInfo = stats.folderFiles.get(folder);
-            long count = (Long) folderInfo.get("count");
-            long folderSize = (Long) folderInfo.get("sizeBytes");
+            long count = (Long) folderInfo.get(COUNT);
+            long folderSize = (Long) folderInfo.get(SIZE_BYTES);
 
-            folderInfo.put("count", count + 1);
-            folderInfo.put("sizeBytes", folderSize + size);
+            folderInfo.put(COUNT, count + 1);
+            folderInfo.put(SIZE_BYTES, folderSize + size);
         }
 
         // Convert sizeBytes to readable size and clean up
         stats.folderFiles.forEach((folder, info) -> {
-            long sizeBytes = (Long) info.get("sizeBytes");
+            long sizeBytes = (Long) info.get(SIZE_BYTES);
             info.put("size", formatSize(sizeBytes));
-            info.remove("sizeBytes");
+            info.remove(SIZE_BYTES);
         });
 
         return stats;
@@ -296,9 +302,9 @@ public class ConfigurationUtils {
                         .continuationToken(continuationToken)
                         .build();
 
-                ListObjectsV2Response response = s3.listObjectsV2(request);
+                ListObjectsV2Response s3Response = s3.listObjectsV2(request);
 
-                for (S3Object s3Object : response.contents()) {
+                for (S3Object s3Object : s3Response.contents()) {
                     String key = s3Object.key();
 
                     if (key.endsWith("/") || s3Object.size() == 0) {
@@ -319,35 +325,35 @@ public class ConfigurationUtils {
                     String folder = getFolder(key);
                     stats.folderFiles.computeIfAbsent(folder, k -> {
                         Map<String, Object> map = new HashMap<>();
-                        map.put("count", 0L);
-                        map.put("sizeBytes", 0L);
+                        map.put(COUNT, 0L);
+                        map.put(SIZE_BYTES, 0L);
                         return map;
                     });
 
                     Map<String, Object> folderInfo = stats.folderFiles.get(folder);
-                    long count = (Long) folderInfo.get("count");
-                    long folderSize = (Long) folderInfo.get("sizeBytes");
+                    long count = (Long) folderInfo.get(COUNT);
+                    long folderSize = (Long) folderInfo.get(SIZE_BYTES);
 
-                    folderInfo.put("count", count + 1);
-                    folderInfo.put("sizeBytes", folderSize + size);
+                    folderInfo.put(COUNT, count + 1);
+                    folderInfo.put(SIZE_BYTES, folderSize + size);
                 }
 
-                continuationToken = response.nextContinuationToken();
+                continuationToken = s3Response.nextContinuationToken();
 
             } while (continuationToken != null);
 
             // Format size for each folder and clean up sizeBytes
             for (Map.Entry<String, Map<String, Object>> entry : stats.folderFiles.entrySet()) {
                 Map<String, Object> folderInfo = entry.getValue();
-                long sizeBytes = (Long) folderInfo.get("sizeBytes");
+                long sizeBytes = (Long) folderInfo.get(SIZE_BYTES);
                 folderInfo.put("size", formatSize(sizeBytes));
-                folderInfo.remove("sizeBytes"); // remove raw size if not needed
+                folderInfo.remove(SIZE_BYTES); // remove raw size if not needed
             }
 
             return stats;
 
         } catch (Exception e) {
-            System.err.println("Error calculating bucket stats: " + e.getMessage());
+            log.info("Error calculating bucket stats: ", e);
             throw new RuntimeException(e);
         }
     }
@@ -374,7 +380,7 @@ public class ConfigurationUtils {
             folderFiles.forEach((folder, info) ->
                     sb.append(String.format("- %s: count=%s, size=%s\n",
                             folder,
-                            info.get("count"),
+                            info.get(COUNT),
                             info.get("size"))));
 
             return sb.toString();
@@ -386,15 +392,11 @@ public class ConfigurationUtils {
         switch (extension) {
             case "pdf":
                 return "PDF";
-            case "jpg":
-            case "jpeg":
-            case "png":
-            case "gif":
+            case "jpg", "jpeg", "png", "gif":
                 return "Image";
             case "txt":
                 return "Text";
-            case "doc":
-            case "docx":
+            case "doc", "docx":
                 return "Document";
             default:
                 return "Other";

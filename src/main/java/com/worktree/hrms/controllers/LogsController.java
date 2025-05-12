@@ -28,8 +28,8 @@ public class LogsController {
 
     @Feature(feature = CommonConstants.Features.LOGS)
     @GetMapping("/download/logs")
-    public ResponseEntity<?> downloadLogs(@RequestParam Optional<Integer> lines) throws IOException {
-        ResponseEntity<?> response;
+    public ResponseEntity<InputStreamResource> downloadLogs(@RequestParam Optional<Integer> lines) throws IOException {
+        ResponseEntity<InputStreamResource> response;
 
         byte[] bytes = logsService.downloadLogs(lines);
 

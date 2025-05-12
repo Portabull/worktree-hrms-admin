@@ -115,53 +115,6 @@ public class HomeDaoImpl implements HomeDao {
 
     private Object getChart() {
         Map<String, Object> response = new HashMap<>();
-
-//        // 1D
-//        List<List<Object>> instances1D = new ArrayList<>();
-//        instances1D.add(Arrays.asList(1698051600, 4));
-//        instances1D.add(Arrays.asList(1698055200, 5));
-//        instances1D.add(Arrays.asList(1698058800, 6));
-//        Map<String, Object> data1D = new HashMap<>();
-//        data1D.put("instances", instances1D);
-//        response.put("1D", data1D);
-//
-//        // 1W
-//        List<List<Object>> instances1W = new ArrayList<>();
-//        instances1W.add(Arrays.asList(1697643600, 8));
-//        instances1W.add(Arrays.asList(1697730000, 6));
-//        instances1W.add(Arrays.asList(1697816400, 7));
-//        Map<String, Object> data1W = new HashMap<>();
-//        data1W.put("instances", instances1W);
-//        response.put("1W", data1W);
-//
-//        // 1M
-//        List<List<Object>> instances1M = new ArrayList<>();
-//        instances1M.add(Arrays.asList(1695375600, 3));
-//        instances1M.add(Arrays.asList(1695967200, 5));
-//        instances1M.add(Arrays.asList(1696558800, 7));
-//        Map<String, Object> data1M = new HashMap<>();
-//        data1M.put("instances", instances1M);
-//        response.put("1M", data1M);
-//
-//        // 6M
-//        List<List<Object>> instances6M = new ArrayList<>();
-//        instances6M.add(Arrays.asList(1677577200, 10));
-//        instances6M.add(Arrays.asList(1680265200, 12));
-//        instances6M.add(Arrays.asList(1682953200, 15));
-//        Map<String, Object> data6M = new HashMap<>();
-//        data6M.put("instances", instances6M);
-//        response.put("6M", data6M);
-//
-//        // 1Y
-//        List<List<Object>> instances1Y = new ArrayList<>();
-//        instances1Y.add(Arrays.asList(1666626000, 8));
-//        instances1Y.add(Arrays.asList(1671903600, 6));
-//        instances1Y.add(Arrays.asList(1677181200, 9));
-//        Map<String, Object> data1Y = new HashMap<>();
-//        data1Y.put("instances", instances1Y);
-//        response.put("1Y", data1Y);
-
-
         // Generate data for each time range
         response.put("1D", generateInstances(24, 3600));    // 24 hours in a day, 1-hour intervals
         response.put("1W", generateInstances(336, 1800));  // 336 half-hour intervals in a week

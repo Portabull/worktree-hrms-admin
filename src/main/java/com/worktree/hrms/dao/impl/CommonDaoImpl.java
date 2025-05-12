@@ -25,6 +25,10 @@ public class CommonDaoImpl implements CommonDao {
     @Autowired
     private DateUtils dateUtils;
 
+    private static final String LICENCE_FILE_EXPIRED = "Licence file expired";
+
+    private static final String COUPON_CODE = "couponCode";
+
     @Override
     public void userHasFeature(String feature) {
         try (Session session = hibernateUtils.getSession()) {
@@ -59,7 +63,7 @@ public class CommonDaoImpl implements CommonDao {
             for (CouponEntity couponEntity : couponEntities) {
                 Map<String, Object> coupon = new HashMap<>();
                 coupon.put("sNo", i);
-                coupon.put("couponCode", couponEntity.getCouponCode());
+                coupon.put(COUPON_CODE, couponEntity.getCouponCode());
                 coupon.put("discountPercentage", couponEntity.getDiscountPercentage());
                 coupon.put("createdDate", couponEntity.getCouponCreatedDate());
                 coupon.put("createdBy", couponEntity.getUserID());
@@ -78,14 +82,14 @@ public class CommonDaoImpl implements CommonDao {
     public Map<String, Object> saveCoupon(Map<String, Object> payload) {
 
         CouponEntity couponEntity = hibernateUtils.findEntityByCriteria(CouponEntity.class,
-                "couponCode", payload.get("couponCode").toString());
+                COUPON_CODE, payload.get(COUPON_CODE).toString());
 
         if (couponEntity == null) {
             couponEntity = new CouponEntity();
             couponEntity.setCouponCreatedDate(dateUtils.getCurrentDate());
         }
 
-        couponEntity.setCouponCode(payload.get("couponCode").toString());
+        couponEntity.setCouponCode(payload.get(COUPON_CODE).toString());
         couponEntity.setDiscountPercentage(payload.get("discountPercentage").toString());
 
         couponEntity.setCouponStatus(Boolean.valueOf(payload.get("status").toString()));
@@ -105,13 +109,13 @@ public class CommonDaoImpl implements CommonDao {
                 Map<String, Object> response = new ObjectMapper().readValue(licences.get(0), Map.class);
 
                 if (DateUtils.isDateExceeded(response.get("licenseValidTill").toString(), DateUtils.LICENSE_DATE_FORMAT)) {
-                    throw new PaymentRequiredException("Licence file expired");
+                    throw new PaymentRequiredException(LICENCE_FILE_EXPIRED);
                 }
             } else {
-                throw new PaymentRequiredException("Licence file expired");
+                throw new PaymentRequiredException(LICENCE_FILE_EXPIRED);
             }
         } catch (Exception e) {
-            throw new PaymentRequiredException("Licence file expired");
+            throw new PaymentRequiredException(LICENCE_FILE_EXPIRED);
         }
     }
 

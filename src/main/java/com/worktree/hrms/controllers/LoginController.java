@@ -22,7 +22,7 @@ public class LoginController {
     private LoginService loginService;
 
     @PostMapping("login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> payload) {
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> payload) {
 
         if (StringUtils.isEmpty(RequestHelper.getHeader("latlong")) || !RequestHelper.getHeader("latlong").contains(":")) {
             throw new BadRequestException("Invalid Request");
@@ -42,7 +42,7 @@ public class LoginController {
     }
 
     @PostMapping("logout")
-    public ResponseEntity<?> logout() {
+    public ResponseEntity<Map<String, Object>> logout() {
 
         Map<String, Object> response = loginService.logout();
 

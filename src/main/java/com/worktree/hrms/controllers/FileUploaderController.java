@@ -60,15 +60,15 @@ public class FileUploaderController {
 
     @GetMapping("/videos")
     public ResponseEntity<List<Map<String, String>>> listVideos() {
-        File dir = new File(environment.getProperty("upload.dir") );
+        File dir = new File(environment.getProperty("upload.dir"));
         List<Map<String, String>> videos = Arrays.stream(Objects.requireNonNull(dir.listFiles()))
                 .filter(File::isFile)
                 .map(file -> {
                     Map<String, String> video = new HashMap<>();
                     video.put("title", file.getName());
-                    video.put("url",  file.getName());
+                    video.put("url", file.getName());
                     return video;
-                }).collect(Collectors.toList());
+                }).toList();
         return ResponseEntity.ok(videos);
     }
 
@@ -117,9 +117,6 @@ public class FileUploaderController {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
-
-
-
 
 
 }
