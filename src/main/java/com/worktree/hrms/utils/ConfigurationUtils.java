@@ -14,9 +14,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worktree.hrms.constants.CommonConstants;
 import com.worktree.hrms.handlers.NotificationWebsocketHandler;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -33,6 +33,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 @Component
+@RequiredArgsConstructor
 public class ConfigurationUtils {
 
     private final Map<String, Object> response = new HashMap<>();
@@ -43,14 +44,13 @@ public class ConfigurationUtils {
 
     private static final String TIMESTAMP = "timestamp";
     private boolean isRunning;
-    @Autowired
-    NotificationWebsocketHandler notificationWebsocketHandler;
+
+    private final NotificationWebsocketHandler notificationWebsocketHandler;
 
     Logger log = LoggerFactory.getLogger(ConfigurationUtils.class);
 
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     private String notificationMessage;
     Map<String, Object> message = new HashMap<>();

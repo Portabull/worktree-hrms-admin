@@ -2,16 +2,16 @@ package com.worktree.hrms.service.impl;
 
 import com.worktree.hrms.dao.CommonDao;
 import com.worktree.hrms.service.CommonService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class CommonServiceImpl implements CommonService {
 
-    @Autowired
-    private CommonDao commonDao;
+    private final CommonDao commonDao;
 
     @Override
     public Map<String, Object> getCoupons() {

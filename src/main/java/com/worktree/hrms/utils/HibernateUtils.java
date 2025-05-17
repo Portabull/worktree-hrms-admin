@@ -1,19 +1,19 @@
 package com.worktree.hrms.utils;
 
+import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class HibernateUtils {
 
-    @Autowired
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
     public Session getSession() {
         if (this.sessionFactory != null) {

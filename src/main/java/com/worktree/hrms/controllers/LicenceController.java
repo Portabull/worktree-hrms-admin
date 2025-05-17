@@ -2,7 +2,7 @@ package com.worktree.hrms.controllers;
 
 import com.worktree.hrms.annotations.FileScan;
 import com.worktree.hrms.service.LicenceService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +12,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api")
+@RequiredArgsConstructor
 public class LicenceController {
 
-    @Autowired
-    private LicenceService licenceService;
+    private final LicenceService licenceService;
 
     //    10MB file max limit
     @FileScan(size = 10 * 1024 * 1024, message = "Invalid Licence file uploaded please upload a valid file")

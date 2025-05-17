@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worktree.hrms.handlers.NotificationWebsocketHandler;
 import com.worktree.hrms.service.LogsService;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.apache.pdfbox.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -16,13 +16,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Service
+@RequiredArgsConstructor
 public class LogsServiceImpl implements LogsService {
 
-    @Autowired
-    private NotificationWebsocketHandler notificationWebsocketHandler;
+    private final NotificationWebsocketHandler notificationWebsocketHandler;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     @PostConstruct
     public void initLogs() {

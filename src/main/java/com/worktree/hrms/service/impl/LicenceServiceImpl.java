@@ -5,7 +5,7 @@ import com.worktree.hrms.dao.LicenceDao;
 import com.worktree.hrms.exceptions.BadRequestException;
 import com.worktree.hrms.service.LicenceService;
 import com.worktree.hrms.utils.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,10 +15,10 @@ import java.io.InputStreamReader;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class LicenceServiceImpl implements LicenceService {
 
-    @Autowired
-    private LicenceDao licenceDao;
+    private final LicenceDao licenceDao;
 
     @Override
     public Map<String, Object> uploadLicence(MultipartFile file) {

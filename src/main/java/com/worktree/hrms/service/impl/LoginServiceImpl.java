@@ -6,7 +6,7 @@ import com.worktree.hrms.dao.UserDao;
 import com.worktree.hrms.exceptions.PaymentRequiredException;
 import com.worktree.hrms.service.LoginService;
 import com.worktree.hrms.utils.EncryptionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -15,13 +15,12 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class LoginServiceImpl implements LoginService {
 
-    @Autowired
-    private UserDao userDao;
+    private final UserDao userDao;
 
-    @Autowired
-    private CommonDao commonDao;
+    private final CommonDao commonDao;
 
     private static final String PROFILE_PIC = "profilePic";
 

@@ -3,12 +3,11 @@ package com.worktree.hrms.dao.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worktree.hrms.constants.CommonConstants;
-import com.worktree.hrms.dao.CommonDao;
 import com.worktree.hrms.dao.ConfigurationDao;
 import com.worktree.hrms.entity.ServerConfigEntity;
 import com.worktree.hrms.exceptions.BadRequestException;
 import com.worktree.hrms.utils.HibernateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Arrays;
@@ -16,16 +15,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Repository
+@RequiredArgsConstructor
 public class ConfigurationDaoImpl implements ConfigurationDao {
 
-    @Autowired
-    private CommonDao commonDao;
+    private final HibernateUtils hibernateUtils;
 
-    @Autowired
-    private HibernateUtils hibernateUtils;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     private static final String SERVER_CONFIG_NAME = "serverConfigName";
 

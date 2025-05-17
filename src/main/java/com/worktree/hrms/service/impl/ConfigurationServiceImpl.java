@@ -4,22 +4,20 @@ import com.worktree.hrms.dao.ConfigurationDao;
 import com.worktree.hrms.service.ConfigurationService;
 import com.worktree.hrms.service.TestConfigService;
 import com.worktree.hrms.utils.ConfigurationUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class ConfigurationServiceImpl implements ConfigurationService {
 
-    @Autowired
-    private ConfigurationDao configurationDao;
+    private final ConfigurationDao configurationDao;
 
-    @Autowired
-    private TestConfigService testConfigService;
+    private final TestConfigService testConfigService;
 
-    @Autowired
-    private ConfigurationUtils configurationUtils;
+    private final ConfigurationUtils configurationUtils;
 
     @Override
     public Map<String, Object> saveEmailConfiguration(Map<String, Object> payload) {

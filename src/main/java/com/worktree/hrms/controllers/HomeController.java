@@ -1,7 +1,7 @@
 package com.worktree.hrms.controllers;
 
 import com.worktree.hrms.service.HomeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,10 +13,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api")
+@RequiredArgsConstructor
 public class HomeController {
 
-    @Autowired
-    private HomeService homeService;
+    private final HomeService homeService;
 
     @GetMapping("home")
     public ResponseEntity<Map<String, Object>> home(@RequestParam(required = false) String type) {

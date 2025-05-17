@@ -1,7 +1,7 @@
 package com.worktree.hrms.controllers;
 
 import com.worktree.hrms.service.HelpService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,11 +14,10 @@ import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("api")
+@RequiredArgsConstructor
 public class HelpController {
 
-    @Autowired
-    HelpService helpService;
-
+    private final HelpService helpService;
 
     @GetMapping("help-docs")
     public ResponseEntity<Map<String, Object>> getHelpDocs(@RequestParam String type) {

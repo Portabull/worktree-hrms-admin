@@ -10,32 +10,28 @@ import com.worktree.hrms.exceptions.BadRequestException;
 import com.worktree.hrms.utils.DateUtils;
 import com.worktree.hrms.utils.HibernateUtils;
 import jakarta.persistence.RollbackException;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
 @Repository
+@RequiredArgsConstructor
 public class HelpDaoImpl implements HelpDao {
 
-    @Autowired
-    private HibernateUtils hibernateUtils;
+    private final HibernateUtils hibernateUtils;
 
-    @Autowired
-    private UserDao userDao;
+    private final UserDao userDao;
 
-    @Autowired
-    private DateUtils dateUtils;
+    private final DateUtils dateUtils;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-    @Autowired
-    private TestConfig testConfig;
+    private final TestConfig testConfig;
 
     @Override
     public List<Map<String, Object>> getHelpConfig() {

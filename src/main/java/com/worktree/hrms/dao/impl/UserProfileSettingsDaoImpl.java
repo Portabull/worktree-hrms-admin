@@ -8,9 +8,9 @@ import com.worktree.hrms.entity.UserEntity;
 import com.worktree.hrms.entity.UserTokenEntity;
 import com.worktree.hrms.utils.HibernateUtils;
 import com.worktree.hrms.utils.RequestHelper;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -18,16 +18,14 @@ import org.springframework.util.StringUtils;
 import java.util.*;
 
 @Repository
+@RequiredArgsConstructor
 public class UserProfileSettingsDaoImpl implements UserProfileSettingsDao {
 
-    @Autowired
-    private HibernateUtils hibernateUtils;
+    private final HibernateUtils hibernateUtils;
 
-    @Autowired
-    private UserDao userDao;
+    private final UserDao userDao;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     @Override
     public Map<String, Object> settings() {
@@ -62,7 +60,7 @@ public class UserProfileSettingsDaoImpl implements UserProfileSettingsDao {
                 Map<String, String> deviceDetails = getDeviceDetails(userToken.getDeviceDetails());
 
                 settings.put("loggedInDevice", CollectionUtils.isEmpty(deviceDetails) ? "" :
-                                 " [OS : [" + deviceDetails.get("os") +
+                        " [OS : [" + deviceDetails.get("os") +
                                 "] Browser : [" + deviceDetails.get("browser") +
                                 "] Manufacturer : [" + deviceDetails.get("manufacturer") +
                                 "] Product : [" + deviceDetails.get("product") + "]]");

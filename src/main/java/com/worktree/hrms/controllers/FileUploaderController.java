@@ -2,7 +2,7 @@ package com.worktree.hrms.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,15 +13,13 @@ import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping
+@RequiredArgsConstructor
 public class FileUploaderController {
 
-
-    @Autowired
-    private Environment environment;
+    private final Environment environment;
 
     @PostMapping("/upload")
     public ResponseEntity<Map> uploadFile(@RequestParam("file") MultipartFile file) {

@@ -3,16 +3,16 @@ package com.worktree.hrms.dao.impl;
 import com.worktree.hrms.constants.CommonConstants;
 import com.worktree.hrms.dao.HomeDao;
 import com.worktree.hrms.utils.HibernateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
 @Repository
+@RequiredArgsConstructor
 public class HomeDaoImpl implements HomeDao {
 
-    @Autowired
-    private HibernateUtils hibernateUtils;
+    private final HibernateUtils hibernateUtils;
 
     @Override
     public Map<String, Object> home(String type) {
@@ -118,9 +118,9 @@ public class HomeDaoImpl implements HomeDao {
         // Generate data for each time range
         response.put("1D", generateInstances(24, 3600));    // 24 hours in a day, 1-hour intervals
         response.put("1W", generateInstances(336, 1800));  // 336 half-hour intervals in a week
-        response.put("1M",  generateInstances(30, 86400));  // 30 days in a month, 1-day intervals
+        response.put("1M", generateInstances(30, 86400));  // 30 days in a month, 1-day intervals
         response.put("6M", generateInstances(180, 86400));     // 180 days in 6 months, 1-day intervals
-        response.put("1Y",  generateInstances(365, 86400));     // 365 days in a year, 1-day intervals
+        response.put("1Y", generateInstances(365, 86400));     // 365 days in a year, 1-day intervals
 
 
         return response;

@@ -6,9 +6,9 @@ import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Tuple;
 import jakarta.persistence.TupleElement;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.postgresql.util.PGInterval;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
@@ -17,19 +17,16 @@ import org.springframework.util.CollectionUtils;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Repository
+@RequiredArgsConstructor
 public class DBStatsDaoImpl implements DBStatsDao {
 
-    @Autowired
-    private HibernateUtils hibernateUtils;
+    private final HibernateUtils hibernateUtils;
 
-    @Autowired
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     private static final int MAX_POINTS = 10;
 

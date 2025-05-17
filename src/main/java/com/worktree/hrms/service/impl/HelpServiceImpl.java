@@ -2,17 +2,17 @@ package com.worktree.hrms.service.impl;
 
 import com.worktree.hrms.dao.HelpDao;
 import com.worktree.hrms.service.HelpService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class HelpServiceImpl implements HelpService {
 
-    @Autowired
-    HelpDao helpDao;
+    private final HelpDao helpDao;
 
     @Override
     public List<Map<String, Object>> getHelpConfig() {

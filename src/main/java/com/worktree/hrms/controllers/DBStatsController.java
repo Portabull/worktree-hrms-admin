@@ -1,9 +1,7 @@
 package com.worktree.hrms.controllers;
 
 import com.worktree.hrms.service.DBStatsService;
-import com.worktree.hrms.utils.HibernateUtils;
-import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,10 +14,10 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("api")
+@RequiredArgsConstructor
 public class DBStatsController {
 
-    @Autowired
-    private DBStatsService dbStatsService;
+    private final DBStatsService dbStatsService;
 
     @GetMapping("db/stats")
     public ResponseEntity<Map<String, Object>> getDBStats(@RequestParam String type, @RequestParam(required = false) Optional<String> schemaName,

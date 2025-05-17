@@ -3,7 +3,7 @@ package com.worktree.hrms.controllers;
 import com.worktree.hrms.annotations.Feature;
 import com.worktree.hrms.constants.CommonConstants;
 import com.worktree.hrms.service.LogsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,10 +21,10 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("api")
+@RequiredArgsConstructor
 public class LogsController {
 
-    @Autowired
-    private LogsService logsService;
+    private final LogsService logsService;
 
     @Feature(feature = CommonConstants.Features.LOGS)
     @GetMapping("/download/logs")

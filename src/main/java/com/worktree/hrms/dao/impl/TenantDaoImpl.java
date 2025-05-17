@@ -4,8 +4,8 @@ import com.worktree.hrms.dao.TenantDao;
 import com.worktree.hrms.entity.BillingEntity;
 import com.worktree.hrms.entity.TenantEntity;
 import com.worktree.hrms.utils.HibernateUtils;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -15,10 +15,10 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
+@RequiredArgsConstructor
 public class TenantDaoImpl implements TenantDao {
 
-    @Autowired
-    private HibernateUtils hibernateUtils;
+    private final HibernateUtils hibernateUtils;
 
     @Override
     public Map<String, Object> getTenants() {

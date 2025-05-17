@@ -13,11 +13,11 @@ import com.worktree.hrms.utils.HibernateUtils;
 import com.worktree.hrms.utils.RequestHelper;
 import jakarta.persistence.RollbackException;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.query.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
@@ -26,12 +26,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Repository
+@RequiredArgsConstructor
 public class UserDaoImpl implements UserDao {
 
-    @Autowired
-    private HibernateUtils hibernateUtils;
-    @Autowired
-    private DateUtils dateUtils;
+    private final HibernateUtils hibernateUtils;
+    private final DateUtils dateUtils;
 
     @Override
     public Long existsUserNamePassword(String userName, String password) {

@@ -3,7 +3,7 @@ package com.worktree.hrms.controllers;
 import com.worktree.hrms.exceptions.BadRequestException;
 import com.worktree.hrms.service.LoginService;
 import com.worktree.hrms.utils.RequestHelper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -16,10 +16,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api")
+@RequiredArgsConstructor
 public class LoginController {
 
-    @Autowired
-    private LoginService loginService;
+    private final LoginService loginService;
 
     @PostMapping("login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> payload) {

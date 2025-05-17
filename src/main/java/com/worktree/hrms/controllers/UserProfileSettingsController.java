@@ -3,7 +3,7 @@ package com.worktree.hrms.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worktree.hrms.service.UserProfileSettingsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +15,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api")
+@RequiredArgsConstructor
 public class UserProfileSettingsController {
 
-    @Autowired
-    private UserProfileSettingsService userProfileSettingsService;
+    private final UserProfileSettingsService userProfileSettingsService;
 
     // Sample JSON data
     String jsonData = "{"
@@ -49,8 +49,7 @@ public class UserProfileSettingsController {
             + "\"viewAccounts\": false"
             + "}";
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     @GetMapping("settings")
     public ResponseEntity<?> settings() throws JsonProcessingException {

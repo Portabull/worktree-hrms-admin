@@ -2,18 +2,17 @@ package com.worktree.hrms.service.impl;
 
 import com.worktree.hrms.dao.DBStatsDao;
 import com.worktree.hrms.service.DBStatsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class DBStatsServiceImpl implements DBStatsService {
 
-
-    @Autowired
-    private DBStatsDao dbStatsDao;
+    private final DBStatsDao dbStatsDao;
 
     @Override
     public Map<String, Object> getDBStats(String type, Optional<String> schemaName, Optional<String> tableName) {

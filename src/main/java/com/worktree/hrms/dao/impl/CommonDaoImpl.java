@@ -9,21 +9,20 @@ import com.worktree.hrms.exceptions.PaymentRequiredException;
 import com.worktree.hrms.utils.DateUtils;
 import com.worktree.hrms.utils.HibernateUtils;
 import com.worktree.hrms.utils.RequestHelper;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
 @Repository
+@RequiredArgsConstructor
 public class CommonDaoImpl implements CommonDao {
 
-    @Autowired
-    private HibernateUtils hibernateUtils;
+    private final HibernateUtils hibernateUtils;
 
-    @Autowired
-    private DateUtils dateUtils;
+    private final DateUtils dateUtils;
 
     private static final String LICENCE_FILE_EXPIRED = "Licence file expired";
 

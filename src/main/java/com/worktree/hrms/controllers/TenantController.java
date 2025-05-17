@@ -1,7 +1,7 @@
 package com.worktree.hrms.controllers;
 
 import com.worktree.hrms.service.TenantService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,10 +12,10 @@ import java.util.Map;
 
 @RequestMapping("api")
 @RestController
+@RequiredArgsConstructor
 public class TenantController {
 
-    @Autowired
-    private TenantService tenantService;
+    private final TenantService tenantService;
 
     @GetMapping("tenants")
     public ResponseEntity<Map<String, Object>> tenants() {

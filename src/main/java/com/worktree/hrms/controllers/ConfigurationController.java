@@ -3,7 +3,7 @@ package com.worktree.hrms.controllers;
 import com.worktree.hrms.annotations.Feature;
 import com.worktree.hrms.constants.CommonConstants;
 import com.worktree.hrms.service.ConfigurationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +12,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api")
+@RequiredArgsConstructor
 public class ConfigurationController {
 
-    @Autowired
-    private ConfigurationService configurationService;
+    private final ConfigurationService configurationService;
 
     @Feature(feature = CommonConstants.Features.EMAIL_SETTINGS)
     @PostMapping("email/config")

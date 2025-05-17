@@ -3,20 +3,19 @@ package com.worktree.hrms.service.impl;
 import com.worktree.hrms.dao.UserDao;
 import com.worktree.hrms.dao.UserProfileSettingsDao;
 import com.worktree.hrms.service.UserProfileSettingsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+
 @Service
+@RequiredArgsConstructor
 public class UserProfileSettingsServiceImpl implements UserProfileSettingsService {
 
-    @Autowired
-    private UserProfileSettingsDao userProfileSettingsDao;
+    private final UserProfileSettingsDao userProfileSettingsDao;
 
-    @Autowired
-    private UserDao userDao;
-
+    private final UserDao userDao;
 
     @Override
     public Map<String, Object> settings() {

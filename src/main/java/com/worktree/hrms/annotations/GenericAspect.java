@@ -4,11 +4,11 @@ import com.worktree.hrms.dao.CommonDao;
 import com.worktree.hrms.exceptions.BadRequestException;
 import com.worktree.hrms.scanners.FileScanner;
 import com.worktree.hrms.utils.RequestHelper;
+import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,13 +20,12 @@ import java.nio.file.StandardCopyOption;
 
 @Aspect
 @Component
+@RequiredArgsConstructor
 public class GenericAspect {
 
-    @Autowired
-    private CommonDao commonDao;
+    private final CommonDao commonDao;
 
-    @Autowired
-    private FileScanner fileScanner;
+    private final FileScanner fileScanner;
 
     @Around("@annotation(Feature)")
     public Object validateFeature(ProceedingJoinPoint joinPoint) throws Throwable {
