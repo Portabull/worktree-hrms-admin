@@ -3,8 +3,7 @@ package com.worktree.hrms.handlers;
 import com.worktree.hrms.constants.CommonConstants;
 import com.worktree.hrms.exceptions.BadRequestException;
 import com.worktree.hrms.exceptions.ForbiddenException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,14 +13,13 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @ControllerAdvice
 public class ExceptionHandler {
 
-    Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
-
     @org.springframework.web.bind.annotation.ExceptionHandler(Throwable.class)
     public ResponseEntity<Map<String, Object>> handleNotFoundError(Throwable ex) {
-        logger.error("Exception Occurred :: ", ex);
+        log.error("Exception Occurred :: ", ex);
         Map<String, Object> response = new HashMap<>();
         response.put(CommonConstants.STATUS, CommonConstants.FAILED);
         response.put(CommonConstants.STATUS_CODE, 500);

@@ -1,8 +1,7 @@
 package com.worktree.hrms.handlers;
 
 import com.worktree.hrms.utils.EncryptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
@@ -11,9 +10,9 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+@Slf4j
 public class NotificationWebsocketHandler extends TextWebSocketHandler {
 
-    private final Logger log = LoggerFactory.getLogger(NotificationWebsocketHandler.class);
 
     private static Set<WebSocketSession> sessions = new HashSet<>();
 

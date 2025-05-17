@@ -8,10 +8,9 @@ import com.worktree.hrms.entity.Licence;
 import com.worktree.hrms.utils.DateUtils;
 import com.worktree.hrms.utils.HibernateUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
@@ -21,13 +20,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class LicenceDaoImpl implements LicenceDao {
 
     private final HibernateUtils hibernateUtils;
-
-    private static final Logger log = LoggerFactory.getLogger(LicenceDaoImpl.class);
 
     private final UserDao userDao;
 

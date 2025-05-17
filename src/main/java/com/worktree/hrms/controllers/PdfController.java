@@ -3,6 +3,7 @@ package com.worktree.hrms.controllers;
 import com.worktree.hrms.annotations.Feature;
 import com.worktree.hrms.constants.CommonConstants;
 import com.worktree.hrms.exceptions.BadRequestException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -10,8 +11,6 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -24,6 +23,7 @@ import java.io.*;
 import java.util.Base64;
 import java.util.Map;
 
+@Slf4j
 @RestController
 public class PdfController {
 
@@ -114,8 +114,6 @@ public class PdfController {
 //        }
 //    }
 
-    Logger logger = LoggerFactory.getLogger(PdfController.class);
-
     @Feature(feature = CommonConstants.Features.PAYSLIP_SETTINGS)
     @PostMapping("/generate")
     public ResponseEntity<InputStreamResource> generate(@RequestBody Map<String, Object> payload) {
@@ -169,7 +167,7 @@ public class PdfController {
             }
 
         } catch (IOException e) {
-            logger.error("Error creating PDF", e);
+            log.error("Error creating PDF", e);
             throw new BadRequestException("Error creating PDF: ");
         } finally {
             if (tempImageFile != null && tempImageFile.exists()) {

@@ -1,7 +1,6 @@
 package com.worktree.hrms.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
@@ -14,10 +13,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+@Slf4j
 @Component
 public class DateUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(DateUtils.class);
 
     public static final String LICENSE_DATE_FORMAT = "dd-MM-yyyy";
 
@@ -50,7 +49,7 @@ public class DateUtils {
             // Compare the dates
             return !inputLocalDate.isAfter(currentISTDate);
         } catch (DateTimeParseException e) {
-            logger.error("Exception occurred", e);
+            log.error("Exception occurred", e);
             return true;
         }
     }

@@ -1,10 +1,9 @@
 package com.worktree.hrms.scanners;
 
 import com.worktree.hrms.exceptions.BadRequestException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,10 +12,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Component
 public class FileScanner {
-
-    private static final Logger logger = LoggerFactory.getLogger(FileScanner.class);
 
     // Patterns indicative of malicious content
     private static final List<String> MALICIOUS_PATTERNS = Arrays.asList(
@@ -49,7 +47,7 @@ public class FileScanner {
         } catch (BadRequestException e) {
             throw e;
         } catch (Exception e) {
-            logger.error("Exception Occurred :: ", e);
+            log.error("Exception Occurred :: ", e);
             throw new BadRequestException("Malicious File Uploaded");
         }
     }

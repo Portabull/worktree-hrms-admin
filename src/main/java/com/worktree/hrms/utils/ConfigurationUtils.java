@@ -15,8 +15,7 @@ import com.worktree.hrms.constants.CommonConstants;
 import com.worktree.hrms.handlers.NotificationWebsocketHandler;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -32,6 +31,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ConfigurationUtils {
@@ -46,8 +46,6 @@ public class ConfigurationUtils {
     private boolean isRunning;
 
     private final NotificationWebsocketHandler notificationWebsocketHandler;
-
-    Logger log = LoggerFactory.getLogger(ConfigurationUtils.class);
 
 
     private final ObjectMapper objectMapper;

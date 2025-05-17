@@ -2,9 +2,8 @@ package com.worktree.hrms.controllers;
 
 import com.worktree.hrms.annotations.Feature;
 import com.worktree.hrms.constants.CommonConstants;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -18,11 +17,11 @@ import java.io.*;
 import java.util.Map;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("api")
 public class KeyStoreController {
 
-    private final static Logger logger = LoggerFactory.getLogger(KeyStoreController.class);
 
     @Feature(feature = CommonConstants.Features.KEYSTORE_SETTINGS)
     @PostMapping("/generate/keystore")
@@ -95,7 +94,7 @@ public class KeyStoreController {
             boolean deleted = keystoreFile.delete();
 
             if (!deleted) {
-                logger.error("Warning: Failed to delete keystore file.");
+                log.error("Warning: Failed to delete keystore file.");
             }
 
             return response;
@@ -163,7 +162,7 @@ public class KeyStoreController {
             boolean deleted = keystoreFile.delete();
 
             if (!deleted) {
-                logger.error("Warning: Failed to delete keystore file.");
+                log.error("Warning: Failed to delete keystore file.");
             }
 
             return ResponseEntity.status(200).body(CommonConstants.SUCCESS_RESPONSE);
@@ -235,7 +234,7 @@ public class KeyStoreController {
             boolean deleted = keystoreFile.delete();
 
             if (!deleted) {
-                logger.error("Warning: Failed to delete keystore file.");
+                log.error("Warning: Failed to delete keystore file.");
             }
 
             return ResponseEntity.status(200).body(CommonConstants.SUCCESS_RESPONSE);

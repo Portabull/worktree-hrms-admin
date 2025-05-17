@@ -20,9 +20,8 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.NoSuchProviderException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.angus.mail.util.MailConnectException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -48,11 +47,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TestConfigServiceImpl implements TestConfigService {
-
-    private final Logger logger = LoggerFactory.getLogger(TestConfigServiceImpl.class);
 
     private final RestTemplate restTemplate;
 
@@ -111,13 +109,13 @@ public class TestConfigServiceImpl implements TestConfigService {
             customMailSender.send(message);
 
         } catch (MessagingException me) {
-            logger.error("Error occurred while testing SMTP: {}", me);
+            log.error("Error occurred while testing SMTP: {}", me);
             throw new BadRequestException(me.getMessage().split(":")[0]);
         } catch (MailAuthenticationException e) {
-            logger.error("Error occurred while testing SMTP: {}", e);
+            log.error("Error occurred while testing SMTP: {}", e);
             throw new BadRequestException(e.getMessage().split(":")[0]);
         } catch (MailSendException e) {
-            logger.error("Exception occurred", e);
+            log.error("Exception occurred", e);
             if (e.getCause() instanceof MailConnectException) {
                 throw new BadRequestException("Couldn't connect to smtp server please check the host and port");
             } else if (e.getCause() instanceof NoSuchProviderException) {
@@ -126,7 +124,7 @@ public class TestConfigServiceImpl implements TestConfigService {
 
             throw new BadRequestException("Invalid Details please enter right details");
         } catch (Exception e) {
-            logger.error("Exception occurred", e);
+            log.error("Exception occurred", e);
             throw new BadRequestException(CommonConstants.INTERNAL_SERVER_ERROR);
         }
     }
@@ -153,7 +151,7 @@ public class TestConfigServiceImpl implements TestConfigService {
         } catch (BadRequestException e) {
             throw e;
         } catch (Exception e) {
-            logger.error("Exception occurred", e);
+            log.error("Exception occurred", e);
             throw new BadRequestException(CommonConstants.INTERNAL_SERVER_ERROR);
         }
     }
@@ -232,11 +230,11 @@ public class TestConfigServiceImpl implements TestConfigService {
             // Extract the "choices" field and the first choice's "message"
             var choices = (List<Map<String, Object>>) responseMap.get("choices");
             var message = (Map<String, String>) choices.get(0).get("message");
-            logger.info("Response from OpenAI: {}", message.get("content"));
+            log.info("Response from OpenAI: {}", message.get("content"));
         } catch (HttpClientException e) {
             throw new BadRequestException(CommonConstants.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
-            logger.error("Exception Occurred :: ", e);
+            log.error("Exception Occurred :: ", e);
             throw new BadRequestException(CommonConstants.INTERNAL_SERVER_ERROR);
         }
     }
@@ -283,7 +281,7 @@ public class TestConfigServiceImpl implements TestConfigService {
         } catch (BadRequestException e) {
             throw e;
         } catch (BlobStorageException e) {
-            logger.error("Exception Occurred :: ", e);
+            log.error("Exception Occurred :: ", e);
             int statusCode = e.getStatusCode();
             String errorMessage = e.getMessage();
             switch (statusCode) {
@@ -297,7 +295,7 @@ public class TestConfigServiceImpl implements TestConfigService {
                     throw new BadRequestException(errorMessage);
             }
         } catch (Exception e) {
-            logger.error("Exception Occurred :: ", e);
+            log.error("Exception Occurred :: ", e);
             if (e.getCause() instanceof UnknownHostException) {
                 throw new BadRequestException("Invalid account name. Please check and try again later.");
             }
@@ -329,10 +327,10 @@ public class TestConfigServiceImpl implements TestConfigService {
                 }
             }
         } catch (FileNotFoundException e) {
-            logger.error("Credentials file not found: ", e);
+            log.error("Credentials file not found: ", e);
             throw new BadRequestException("Invalid credentials file path. Please check the provided path and try again.");
         } catch (StorageException e) {
-            logger.error("GCP Storage exception occurred: ", e);
+            log.error("GCP Storage exception occurred: ", e);
             int statusCode = e.getCode();
             String errorMessage = e.getMessage();
             switch (statusCode) {
@@ -348,13 +346,13 @@ public class TestConfigServiceImpl implements TestConfigService {
         } catch (BadRequestException e) {
             throw e;
         } catch (IOException e) {
-            logger.error("IOException occurred: ", e);
+            log.error("IOException occurred: ", e);
             throw new BadRequestException("Error reading the credentials file. Please check and try again.");
         } catch (Exception e) {
-            logger.error("Exception occurred: ", e);
+            log.error("Exception occurred: ", e);
             throw new BadRequestException(CommonConstants.INTERNAL_SERVER_ERROR);
         } finally {
-            logger.info("File Deleted : {}", file != null ? file.delete() : null);
+            log.info("File Deleted : {}", file != null ? file.delete() : null);
         }
     }
 
@@ -394,13 +392,13 @@ public class TestConfigServiceImpl implements TestConfigService {
             }
 
         } catch (AccessDeniedException e) {
-            logger.error("Exception occurred", e);
+            log.error("Exception occurred", e);
             throw new BadRequestException("Failed to create the directory for the specified path. Please ensure that the necessary permissions are granted and try again."
             );
         } catch (BadRequestException e) {
             throw e;
         } catch (Exception e) {
-            logger.error("Exception occurred", e);
+            log.error("Exception occurred", e);
             throw new BadRequestException("Invalid details entered. Please provide the correct secret access key and region.");
         }
     }
@@ -423,10 +421,10 @@ public class TestConfigServiceImpl implements TestConfigService {
             // Use headBucket to validate the bucket and credentials
             s3.headBucket(builder -> builder.bucket(bucketName));
         } catch (S3Exception e) {
-            logger.error("Exception occurred", e);
+            log.error("Exception occurred", e);
             throw new BadRequestException("Invalid bucket or credentials: " + e.getMessage());
         } catch (Exception e) {
-            logger.error("Exception occurred", e);
+            log.error("Exception occurred", e);
             throw new BadRequestException("Invalid details entered. Please provide the correct secret access key and region.");
         }
     }
