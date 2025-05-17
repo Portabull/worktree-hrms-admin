@@ -23,6 +23,8 @@ import java.util.UUID;
 public class KeyStoreController {
 
 
+    private static final String FAILED_TO_DELETE = "Warning: Failed to delete keystore file.";
+
     @Feature(feature = CommonConstants.Features.KEYSTORE_SETTINGS)
     @PostMapping("/generate/keystore")
     public ResponseEntity<?> generateKeystore(@RequestBody Map<String, Object> request) {
@@ -94,7 +96,7 @@ public class KeyStoreController {
             boolean deleted = keystoreFile.delete();
 
             if (!deleted) {
-                log.error("Warning: Failed to delete keystore file.");
+                log.error(FAILED_TO_DELETE);
             }
 
             return response;
@@ -162,7 +164,7 @@ public class KeyStoreController {
             boolean deleted = keystoreFile.delete();
 
             if (!deleted) {
-                log.error("Warning: Failed to delete keystore file.");
+                log.error(FAILED_TO_DELETE);
             }
 
             return ResponseEntity.status(200).body(CommonConstants.SUCCESS_RESPONSE);
@@ -234,7 +236,7 @@ public class KeyStoreController {
             boolean deleted = keystoreFile.delete();
 
             if (!deleted) {
-                log.error("Warning: Failed to delete keystore file.");
+                log.error(FAILED_TO_DELETE);
             }
 
             return ResponseEntity.status(200).body(CommonConstants.SUCCESS_RESPONSE);
