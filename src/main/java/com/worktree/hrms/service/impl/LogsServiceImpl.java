@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worktree.hrms.constants.CommonConstants;
 import com.worktree.hrms.handlers.NotificationWebsocketHandler;
 import com.worktree.hrms.service.LogsService;
+import com.worktree.hrms.utils.HibernateUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.apache.pdfbox.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -21,6 +23,9 @@ import java.util.concurrent.Executors;
 @Service
 @RequiredArgsConstructor
 public class LogsServiceImpl implements LogsService {
+
+    @Autowired
+    HibernateUtils hibernateUtils;
 
     private final NotificationWebsocketHandler notificationWebsocketHandler;
 
