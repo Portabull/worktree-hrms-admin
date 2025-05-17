@@ -1,10 +1,12 @@
 package com.worktree.hrms.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.worktree.hrms.constants.CommonConstants;
 import com.worktree.hrms.handlers.NotificationWebsocketHandler;
 import com.worktree.hrms.service.LogsService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.apache.pdfbox.io.IOUtils;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LogsServiceImpl implements LogsService {
@@ -29,7 +32,7 @@ public class LogsServiceImpl implements LogsService {
             String logFileName = System.getProperty("user.dir") + File.separator + "worktree.log";
             monitorLogFile(logFileName);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(CommonConstants.EXCEPTION_OCCURRED, e);
         }
     }
 
@@ -63,7 +66,7 @@ public class LogsServiceImpl implements LogsService {
                     Thread.sleep(1000); // Wait before checking again
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(CommonConstants.EXCEPTION_OCCURRED, e);
             }
 
         });

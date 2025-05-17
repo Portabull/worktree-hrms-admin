@@ -1,5 +1,7 @@
 package com.worktree.hrms.controllers;
 
+import com.worktree.hrms.constants.CommonConstants;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+@Slf4j
 @RestController
 @RequestMapping("api")
 public class PaymentsController {
@@ -75,12 +78,12 @@ public class PaymentsController {
                 byte[] bytes = byteArrayOutputStream.toByteArray();
                 return "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(bytes);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(CommonConstants.EXCEPTION_OCCURRED, e);
                 return null;
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(CommonConstants.EXCEPTION_OCCURRED, e);
             return null;
         }
     }

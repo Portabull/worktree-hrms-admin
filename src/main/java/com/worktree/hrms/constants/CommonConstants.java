@@ -22,6 +22,8 @@ public class CommonConstants {
             STATUS_CODE, 200
     ));
 
+    public static final String EXCEPTION_OCCURRED = "Exception Occurred ";
+
     public class ServerConfig {
 
         private ServerConfig() {

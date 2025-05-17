@@ -9,6 +9,7 @@ import com.worktree.hrms.entity.UserTokenEntity;
 import com.worktree.hrms.utils.HibernateUtils;
 import com.worktree.hrms.utils.RequestHelper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
@@ -17,6 +18,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.*;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class UserProfileSettingsDaoImpl implements UserProfileSettingsDao {
@@ -166,7 +168,7 @@ public class UserProfileSettingsDaoImpl implements UserProfileSettingsDao {
             }
             response.put("status", "error");
             response.put("message", e.getMessage());
-            e.printStackTrace();
+            log.error(CommonConstants.EXCEPTION_OCCURRED, e);
         }
         return response;
     }
