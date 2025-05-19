@@ -25,33 +25,51 @@ public class KeyStoreController {
 
     private static final String FAILED_TO_DELETE = "Warning: Failed to delete keystore file.";
 
+    private static final String KEYSTORE_FILE = "keystore.p12";
+    private static final String ALIAS_NAME = "aliasName";
+    private static final String KEYSTORE_PASSWORD = "keyStorePassword";
+
+    private static final String ALGORITHM = "algorithm";
+    private static final String KEYSTORE = "keySize";
+
+    private static final String VALIDITY = "validity";
+    private static final String COMMON_NAME = "commonName";
+    private static final String ORG_UNIT = "orgUnit";
+    private static final String ORG = "org";
+    private static final String LOCALITY = "locality";
+    private static final String STATE = "state";
+    private static final String COUNTRY_CODE = "countryCode";
+    private static final String COMMAND = "keytool -genkeypair -alias %s -keyalg %s -keysize %d -validity %d -keystore %s -storetype PKCS12 -storepass %s -dname \"CN=%s, OU=%s, O=%s, L=%s, S=%s, C=%s\"";
+
     @Feature(feature = CommonConstants.Features.KEYSTORE_SETTINGS)
     @PostMapping("/generate/keystore")
     public ResponseEntity<?> generateKeystore(@RequestBody Map<String, Object> request) {
 
-        String tempDir = System.getProperty("java.io.tmpdir");
+        String tempDir = System.getProperty(CommonConstants.JAVA_TEMP_DIR);
 
         if (!tempDir.endsWith(File.separator)) {
             tempDir = tempDir + File.separator;
         }
 
-        String absoluteFilePath = tempDir + UUID.randomUUID() + "keystore.p12";
+        String absoluteFilePath = tempDir + UUID.randomUUID() + KEYSTORE_FILE;
 
         // Extract parameters from the map
-        String alias = (String) request.get("aliasName");
-        String password = (String) request.get("keyStorePassword");
-        String keyAlgorithm = (String) request.get("algorithm");
-        int keySize = Integer.valueOf(request.get("keySize").toString());
-        int validity = Integer.valueOf(request.get("validity").toString());
-        String cn = (String) request.get("commonName");
-        String ou = (String) request.get("orgUnit");
-        String o = (String) request.get("org");
-        String l = (String) request.get("locality");
-        String st = (String) request.get("state");
-        String c = (String) request.get("countryCode");
+        String alias = (String) request.get(ALIAS_NAME);
+        String password = (String) request.get(KEYSTORE_PASSWORD);
+        String keyAlgorithm = (String) request.get(ALGORITHM);
+        int keySize = Integer.parseInt(request.get(KEYSTORE).toString());
+        int validity = Integer.parseInt(request.get(VALIDITY).toString());
+
+        String cn = (String) request.get(COMMON_NAME);
+        String ou = (String) request.get(ORG_UNIT);
+        String o = (String) request.get(ORG);
+        String l = (String) request.get(LOCALITY);
+        String st = (String) request.get(STATE);
+        String c = (String) request.get(COUNTRY_CODE);
+
 
         String command = String.format(
-                "keytool -genkeypair -alias %s -keyalg %s -keysize %d -validity %d -keystore %s -storetype PKCS12 -storepass %s -dname \"CN=%s, OU=%s, O=%s, L=%s, S=%s, C=%s\"",
+                COMMAND,
                 alias, keyAlgorithm, keySize, validity, absoluteFilePath, password, cn, ou, o, l, st, c
         );
 
@@ -101,6 +119,7 @@ public class KeyStoreController {
 
             return response;
         } catch (Exception e) {
+            log.error(CommonConstants.EXCEPTION_OCCURRED, e);
             return ResponseEntity.status(404).body(Map.of(CommonConstants.STATUS, CommonConstants.FAILED, CommonConstants.STATUS_CODE,
                     404, CommonConstants.MESSAGE, CommonConstants.INTERNAL_SERVER_ERROR));
         }
@@ -110,29 +129,30 @@ public class KeyStoreController {
     @PostMapping("/validate/keystore")
     public ResponseEntity<?> validateKeystore(@RequestBody Map<String, Object> request) {
 
-        String tempDir = System.getProperty("java.io.tmpdir");
+        String tempDir = System.getProperty(CommonConstants.JAVA_TEMP_DIR);
 
         if (!tempDir.endsWith(File.separator)) {
             tempDir = tempDir + File.separator;
         }
 
-        String absoluteFilePath = tempDir + UUID.randomUUID() + "keystore.p12";
+        String absoluteFilePath = tempDir + UUID.randomUUID() + KEYSTORE_FILE;
 
         // Extract parameters from the map
-        String alias = (String) request.get("aliasName");
-        String password = (String) request.get("keyStorePassword");
-        String keyAlgorithm = (String) request.get("algorithm");
-        int keySize = Integer.valueOf(request.get("keySize").toString());
-        int validity = Integer.valueOf(request.get("validity").toString());
-        String cn = (String) request.get("commonName");
-        String ou = (String) request.get("orgUnit");
-        String o = (String) request.get("org");
-        String l = (String) request.get("locality");
-        String st = (String) request.get("state");
-        String c = (String) request.get("countryCode");
+        String alias = (String) request.get(ALIAS_NAME);
+        String password = (String) request.get(KEYSTORE_PASSWORD);
+        String keyAlgorithm = (String) request.get(ALGORITHM);
+        int keySize = Integer.parseInt(request.get(KEYSTORE).toString());
+        String cn = (String) request.get(COMMON_NAME);
+        String ou = (String) request.get(ORG_UNIT);
+        String o = (String) request.get(ORG);
+        String l = (String) request.get(LOCALITY);
+        String st = (String) request.get(STATE);
+        String c = (String) request.get(COUNTRY_CODE);
+        String validity = (String) request.get(VALIDITY);
+
 
         String command = String.format(
-                "keytool -genkeypair -alias %s -keyalg %s -keysize %d -validity %d -keystore %s -storetype PKCS12 -storepass %s -dname \"CN=%s, OU=%s, O=%s, L=%s, S=%s, C=%s\"",
+                COMMAND,
                 alias, keyAlgorithm, keySize, validity, absoluteFilePath, password, cn, ou, o, l, st, c
         );
 
@@ -179,29 +199,30 @@ public class KeyStoreController {
     @PostMapping("/link/generated-keystore")
     public ResponseEntity<?> generateKeyStoreLink(@RequestBody Map<String, Object> request) {
 
-        String tempDir = System.getProperty("java.io.tmpdir");
+        String tempDir = System.getProperty(CommonConstants.JAVA_TEMP_DIR);
 
         if (!tempDir.endsWith(File.separator)) {
             tempDir = tempDir + File.separator;
         }
 
-        String absoluteFilePath = tempDir + UUID.randomUUID() + "keystore.p12";
+        String absoluteFilePath = tempDir + UUID.randomUUID() + KEYSTORE_FILE;
 
         // Extract parameters from the map
-        String alias = (String) request.get("aliasName");
-        String password = (String) request.get("keyStorePassword");
-        String keyAlgorithm = (String) request.get("algorithm");
-        int keySize = Integer.valueOf(request.get("keySize").toString());
-        int validity = Integer.valueOf(request.get("validity").toString());
-        String cn = (String) request.get("commonName");
-        String ou = (String) request.get("orgUnit");
-        String o = (String) request.get("org");
-        String l = (String) request.get("locality");
-        String st = (String) request.get("state");
-        String c = (String) request.get("countryCode");
+        String alias = (String) request.get(ALIAS_NAME);
+        String password = (String) request.get(KEYSTORE_PASSWORD);
+        String keyAlgorithm = (String) request.get(ALGORITHM);
+        int keySize = Integer.parseInt(request.get(KEYSTORE).toString());
+        String cn = (String) request.get(COMMON_NAME);
+        String ou = (String) request.get(ORG_UNIT);
+        String o = (String) request.get(ORG);
+        String l = (String) request.get(LOCALITY);
+        String st = (String) request.get(STATE);
+        String c = (String) request.get(COUNTRY_CODE);
+        String validity = (String) request.get(VALIDITY);
+
 
         String command = String.format(
-                "keytool -genkeypair -alias %s -keyalg %s -keysize %d -validity %d -keystore %s -storetype PKCS12 -storepass %s -dname \"CN=%s, OU=%s, O=%s, L=%s, S=%s, C=%s\"",
+                COMMAND,
                 alias, keyAlgorithm, keySize, validity, absoluteFilePath, password, cn, ou, o, l, st, c
         );
 
@@ -241,6 +262,7 @@ public class KeyStoreController {
 
             return ResponseEntity.status(200).body(CommonConstants.SUCCESS_RESPONSE);
         } catch (Exception e) {
+            log.error(CommonConstants.EXCEPTION_OCCURRED, e);
             return ResponseEntity.status(404).body(Map.of(CommonConstants.STATUS, CommonConstants.FAILED, CommonConstants.STATUS_CODE,
                     404, CommonConstants.MESSAGE, CommonConstants.INTERNAL_SERVER_ERROR));
         }

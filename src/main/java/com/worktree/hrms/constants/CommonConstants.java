@@ -13,6 +13,8 @@ public class CommonConstants {
     public static final String MESSAGE = "message";
     public static final String SUCCESS = "SUCCESS";
     public static final String FAILED = "FAILED";
+
+    public static final String JAVA_TEMP_DIR = "java.io.tmpdir";
     public static final String ACCESS_DENIED = "You don't have access to this services, please contact administrator";
 
     public static final String INTERNAL_SERVER_ERROR = "An internal error occurred. We apologize for the inconvenience. If the problem continues, please contact support.";

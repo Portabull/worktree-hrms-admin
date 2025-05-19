@@ -21,23 +21,24 @@ public class FileUploaderController {
 
     private final Environment environment;
 
+    private static final String UPLOAD_DIR = "upload.dir";
+
     @PostMapping("/upload")
-    public ResponseEntity<Map> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<Map<String, Object>> uploadFile(@RequestParam("file") MultipartFile file) {
         // Check if the file is empty
         if (file.isEmpty()) {
             return new ResponseEntity<>(Map.of(), HttpStatus.BAD_REQUEST);
         }
 
         // Ensure the directory exists
-        File dir = new File(environment.getProperty("upload.dir"));
+        File dir = new File(environment.getProperty(UPLOAD_DIR));
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        System.out.println("Hi uploading..........................");
 
         // Streaming the file to disk
         try (InputStream inputStream = file.getInputStream();
-             FileOutputStream outputStream = new FileOutputStream(new File(environment.getProperty("upload.dir") + file.getOriginalFilename()))) {
+             FileOutputStream outputStream = new FileOutputStream(new File(environment.getProperty(UPLOAD_DIR) + file.getOriginalFilename()))) {
 
             // Buffer to write data in chunks
             byte[] buffer = new byte[1024];
@@ -58,7 +59,7 @@ public class FileUploaderController {
 
     @GetMapping("/videos")
     public ResponseEntity<List<Map<String, String>>> listVideos() {
-        File dir = new File(environment.getProperty("upload.dir"));
+        File dir = new File(environment.getProperty(UPLOAD_DIR));
         List<Map<String, String>> videos = Arrays.stream(Objects.requireNonNull(dir.listFiles()))
                 .filter(File::isFile)
                 .map(file -> {
@@ -75,7 +76,7 @@ public class FileUploaderController {
     public void streamVideo(@PathVariable String videoName, HttpServletRequest request, HttpServletResponse response) {
         try {
             String decodedVideoName = URLDecoder.decode(videoName, StandardCharsets.UTF_8.name());
-            File videoFile = new File(environment.getProperty("upload.dir") + File.separator + decodedVideoName);
+            File videoFile = new File(environment.getProperty(UPLOAD_DIR) + File.separator + decodedVideoName);
 
             if (!videoFile.exists()) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);

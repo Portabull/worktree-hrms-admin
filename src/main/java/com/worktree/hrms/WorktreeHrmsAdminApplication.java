@@ -1,5 +1,6 @@
 package com.worktree.hrms;
 
+import com.worktree.hrms.exceptions.WorktreeException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -23,7 +24,7 @@ public class WorktreeHrmsAdminApplication {
                 context.close();
                 context = SpringApplication.run(WorktreeHrmsAdminApplication.class);
             } catch (Exception e) {
-                throw new RuntimeException();
+                throw new WorktreeException("Restart Failed", e);
             }
         });
         thread.setDaemon(false);

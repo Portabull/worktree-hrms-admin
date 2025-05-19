@@ -1,5 +1,6 @@
 package com.worktree.hrms.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.resource.VersionResourceResolver;
 import java.io.IOException;
 
 
+@Slf4j
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
@@ -19,7 +21,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        System.out.println("Version : " + uiVersion);
+        log.info("Version : {}", uiVersion);
         registry.addResourceHandler("/**")
                 .addResourceLocations("classpath:/static/")
                 .resourceChain(true)
