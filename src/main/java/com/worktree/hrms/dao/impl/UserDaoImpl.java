@@ -29,11 +29,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserDaoImpl implements UserDao {
 
+    int i=0;
+
     private final HibernateUtils hibernateUtils;
     private final DateUtils dateUtils;
 
     @Override
     public Long existsUserNamePassword(String userName, String password) {
+        int i=0;
         try (Session session = hibernateUtils.getSession()) {
             return (Long) session.createQuery("SELECT userID FROM UserEntity WHERE userName=:userName and password=:password")
                     .setParameter("password", password).setParameter("userName", userName).uniqueResult();
