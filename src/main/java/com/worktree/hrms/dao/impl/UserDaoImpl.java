@@ -39,7 +39,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public Long existsUserNamePassword(String userName, String password) {
         try (Session session = hibernateUtils.getSession()) {
-            return (Long) session.createQuery("SELECT userID FROM UserEntity WHERE userName=:userName and password=:password")
+            return session.createQuery("SELECT userID FROM UserEntity WHERE userName=:userName and password=:password", Long.class)
                     .setParameter(CommonConstants.PASSWORD, password).setParameter(CommonConstants.USER_NAME, userName).uniqueResult();
         }
     }
@@ -61,7 +61,7 @@ public class UserDaoImpl implements UserDao {
         Map<String, String> response = new HashMap<>();
         Object[] profileResponse;
         try (Session session = hibernateUtils.getSession()) {
-            profileResponse = (Object[]) session.createQuery("SELECT displayName,profilePic FROM UserEntity WHERE userName =:userName")
+            profileResponse = session.createQuery("SELECT displayName,profilePic FROM UserEntity WHERE userName =:userName", Object[].class)
                     .setParameter(CommonConstants.USER_NAME, userName).uniqueResult();
         }
         response.put("displayName", profileResponse[0] != null ? profileResponse[0].toString() : null);
@@ -130,7 +130,7 @@ public class UserDaoImpl implements UserDao {
         }
 
         try (Session session = hibernateUtils.getSession()) {
-            Query query = session.createQuery(queryBuilder.toString());
+            Query<UserEntity> query = session.createQuery(queryBuilder.toString(), UserEntity.class);
 
             if (searchText != null && !searchText.trim().isEmpty()) {
                 // Set the searchText parameter
@@ -140,7 +140,7 @@ public class UserDaoImpl implements UserDao {
             users = query.setFirstResult(firstResult) // Set the offset
                     .setMaxResults(fetchSize)    // Set the fetch size
                     .list();
-            features = session.createQuery("FROM FeatureEntity")
+            features = session.createQuery("FROM FeatureEntity", FeatureEntity.class)
                     .list();
         }
 
@@ -157,7 +157,7 @@ public class UserDaoImpl implements UserDao {
                 userResponse.put("userId", user.getUserID());
                 try (Session session = hibernateUtils.getSession()) {
                     userResponse.put("userFeatures",
-                            session.createQuery("SELECT fe.featureName FROM UserFeatures uf JOIN FeatureEntity fe on (uf.featureId=fe.featureId) WHERE uf.userID =:userID")
+                            session.createQuery("SELECT fe.featureName FROM UserFeatures uf JOIN FeatureEntity fe on (uf.featureId=fe.featureId) WHERE uf.userID =:userID", String.class)
                                     .setParameter("userID", user.getUserID()).list());
                 }
                 response.add(userResponse);
@@ -268,7 +268,7 @@ public class UserDaoImpl implements UserDao {
         String currentToken = RequestHelper.getAuthorizationToken();
         UserEntity userEntity;
         try (Session session = hibernateUtils.getSession()) {
-            userEntity = (UserEntity) session.createQuery("FROM UserEntity WHERE userID = (SELECT userID FROM UserTokenEntity WHERE jwt = :token)")
+            userEntity = session.createQuery("FROM UserEntity WHERE userID = (SELECT userID FROM UserTokenEntity WHERE jwt = :token)", UserEntity.class)
                     .setParameter(CommonConstants.TOKEN, currentToken).uniqueResult();
             return userEntity.isAdmin() != null && userEntity.isAdmin();
         }
@@ -296,7 +296,7 @@ public class UserDaoImpl implements UserDao {
             session.createQuery("DELETE FROM UserEntity WHERE userID = :userID AND userName != 'admin'")
                     .setParameter("userID", userId).executeUpdate();
 
-            userTokens = session.createQuery(" FROM UserTokenEntity WHERE userID = :userID")
+            userTokens = session.createQuery(" FROM UserTokenEntity WHERE userID = :userID", UserTokenEntity.class)
                     .setParameter("userID", userId).list();
 
             // Commit transaction
@@ -323,7 +323,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<String> getFeatures(String userName) {
         try (Session session = hibernateUtils.getSession()) {
-            return session.createQuery("SELECT fe.featureName FROM UserFeatures uf JOIN FeatureEntity fe on (uf.featureId=fe.featureId) WHERE uf.userID = (SELECT userID FROM UserEntity WHERE userName=:userName)")
+            return session.createQuery("SELECT fe.featureName FROM UserFeatures uf JOIN FeatureEntity fe on (uf.featureId=fe.featureId) WHERE uf.userID = (SELECT userID FROM UserEntity WHERE userName=:userName)", String.class)
                     .setParameter(CommonConstants.USER_NAME, userName).list();
         }
     }
@@ -333,7 +333,7 @@ public class UserDaoImpl implements UserDao {
         String currentToken = RequestHelper.getAuthorizationToken();
         UserEntity userEntity;
         try (Session session = hibernateUtils.getSession()) {
-            userEntity = (UserEntity) session.createQuery("FROM UserEntity WHERE userID = (SELECT userID FROM UserTokenEntity WHERE jwt = :token)")
+            userEntity = session.createQuery("FROM UserEntity WHERE userID = (SELECT userID FROM UserTokenEntity WHERE jwt = :token)", UserEntity.class)
                     .setParameter(CommonConstants.TOKEN, currentToken).uniqueResult();
             return userEntity.getUserID();
         }

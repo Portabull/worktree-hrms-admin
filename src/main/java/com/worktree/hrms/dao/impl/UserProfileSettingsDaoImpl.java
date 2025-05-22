@@ -36,10 +36,10 @@ public class UserProfileSettingsDaoImpl implements UserProfileSettingsDao {
         List<UserTokenEntity> userTokens = null;
         String currentToken = RequestHelper.getAuthorizationToken();
         try (Session session = hibernateUtils.getSession()) {
-            userEntity = (UserEntity) session.createQuery(" FROM UserEntity WHERE userID = (SELECT userID FROM UserTokenEntity WHERE jwt = :token)")
+            userEntity = session.createQuery(" FROM UserEntity WHERE userID = (SELECT userID FROM UserTokenEntity WHERE jwt = :token)", UserEntity.class)
                     .setParameter("token", currentToken).uniqueResult();
             if (userEntity != null)
-                userTokens = session.createQuery("FROM UserTokenEntity WHERE userID=:userID").setParameter("userID", userEntity.getUserID()).list();
+                userTokens = session.createQuery("FROM UserTokenEntity WHERE userID=:userID", UserTokenEntity.class).setParameter("userID", userEntity.getUserID()).list();
         }
 
         if (userEntity != null) {
@@ -97,7 +97,7 @@ public class UserProfileSettingsDaoImpl implements UserProfileSettingsDao {
         UserEntity userEntity;
         String currentToken = RequestHelper.getAuthorizationToken();
         try (Session session = hibernateUtils.getSession()) {
-            userEntity = (UserEntity) session.createQuery(" FROM UserEntity WHERE userID = (SELECT userID FROM UserTokenEntity WHERE jwt = :token)")
+            userEntity = session.createQuery(" FROM UserEntity WHERE userID = (SELECT userID FROM UserTokenEntity WHERE jwt = :token)", UserEntity.class)
                     .setParameter("token", currentToken).uniqueResult();
         }
 
@@ -124,10 +124,10 @@ public class UserProfileSettingsDaoImpl implements UserProfileSettingsDao {
         UserTokenEntity userTokenEntity;
         String currentToken = RequestHelper.getAuthorizationToken();
         try (Session session = hibernateUtils.getSession()) {
-            userEntity = (UserEntity) session.createQuery(" FROM UserEntity WHERE userID = (SELECT userID FROM UserTokenEntity WHERE jwt = :token)")
+            userEntity = session.createQuery(" FROM UserEntity WHERE userID = (SELECT userID FROM UserTokenEntity WHERE jwt = :token)", UserEntity.class)
                     .setParameter("token", currentToken).uniqueResult();
             if (userEntity != null) {
-                userTokenEntity = (UserTokenEntity) session.createQuery("FROM UserTokenEntity WHERE tokenId = :tokenId").
+                userTokenEntity = session.createQuery("FROM UserTokenEntity WHERE tokenId = :tokenId", UserTokenEntity.class).
                         setParameter("tokenId", tokenId).uniqueResult();
                 if (userTokenEntity != null && userTokenEntity.getUserID().equals(userEntity.getUserID())) {
                     return userDao.logout(userTokenEntity.getJwt());

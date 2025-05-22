@@ -39,7 +39,7 @@ public class HelpDaoImpl implements HelpDao {
 
         List<Map<String, Object>> response = new ArrayList<>();
         try (Session session = hibernateUtils.getSession()) {
-            List<Object[]> dbResponse = session.createQuery("SELECT ue.displayName,he.helpId,he.helpConfigName,he.createdDate,he.updatedDate FROM HelpEntity he LEFT JOIN UserEntity ue on (he.updatedBy=ue.userID)").list();
+            List<Object[]> dbResponse = session.createQuery("SELECT ue.displayName,he.helpId,he.helpConfigName,he.createdDate,he.updatedDate FROM HelpEntity he LEFT JOIN UserEntity ue on (he.updatedBy=ue.userID)", Object[].class).list();
 
             if (!CollectionUtils.isEmpty(dbResponse)) {
                 dbResponse.forEach(resp -> {
@@ -114,6 +114,7 @@ public class HelpDaoImpl implements HelpDao {
     }
 
     @Override
+    @SuppressWarnings("rawtypes") // or SuppressWarnings("unchecked")
     public Map<String, Object> reset() {
         userDao.isAdminUser();
         Transaction transaction = null;

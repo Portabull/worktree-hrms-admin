@@ -49,7 +49,7 @@ public class HibernateUtils {
         try (Session session = getSession()) {
             String queryBuilder = new StringBuilder("FROM ").append(entityClass.getCanonicalName())
                     .append(" WHERE ").append(primaryPropertyName).append(" = :primaryPropertyName").toString();
-            return session.createQuery(queryBuilder)
+            return (List<T>) session.createQuery(queryBuilder, entityClass)
                     .setParameter("primaryPropertyName", primaryId).list();
         }
     }
@@ -58,7 +58,7 @@ public class HibernateUtils {
         try (Session session = getSession()) {
             String queryBuilder = new StringBuilder("FROM ").append(entityClass.getCanonicalName())
                     .append(" WHERE ").append(primaryPropertyName).append(" = :primaryPropertyName").toString();
-            return (T) session.createQuery(queryBuilder)
+            return (T) session.createQuery(queryBuilder, entityClass)
                     .setParameter("primaryPropertyName", primaryId).uniqueResult();
         }
     }

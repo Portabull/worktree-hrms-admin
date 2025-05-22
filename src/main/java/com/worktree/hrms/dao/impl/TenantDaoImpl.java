@@ -27,7 +27,7 @@ public class TenantDaoImpl implements TenantDao {
         List<Object> tenantsWithBillings;
         try (Session session = hibernateUtils.getSession()) {
             tenantsWithBillings =
-                    session.createQuery("SELECT te,be FROM TenantEntity te join BillingEntity be on (te.tenantId=be.tenantId) WHERE be.isBillingActive=true").list();
+                    session.createQuery("SELECT te,be FROM TenantEntity te join BillingEntity be on (te.tenantId=be.tenantId) WHERE be.isBillingActive=true", Object.class).list();
         }
         AtomicInteger sNo = new AtomicInteger(1);
         tenantsWithBillings.forEach(tenantWithBilling -> {

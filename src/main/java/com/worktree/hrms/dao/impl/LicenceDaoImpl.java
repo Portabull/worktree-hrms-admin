@@ -54,7 +54,7 @@ public class LicenceDaoImpl implements LicenceDao {
         Map<String, Object> response = new HashMap<>();
         userDao.isAdminUser();
         try (Session session = hibernateUtils.getSession()) {
-            List<String> licences = session.createQuery("SELECT licence FROM Licence").list();
+            List<String> licences = session.createQuery("SELECT licence FROM Licence", String.class).list();
             if (!CollectionUtils.isEmpty(licences)) {
                 Map<String, Object> licenseResponse = new ObjectMapper().readValue(licences.get(0), Map.class);
                 response = Map.of(

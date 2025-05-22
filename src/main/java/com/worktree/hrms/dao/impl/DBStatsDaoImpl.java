@@ -113,12 +113,12 @@ public class DBStatsDaoImpl implements DBStatsDao {
         Map<String, Object> response = new HashMap<>();
         try (Session session = hibernateUtils.getSession()) {
             if (type.equalsIgnoreCase("schema")) {
-                String totalDBStorage = (String) session.createNativeQuery("SELECT pg_size_pretty(pg_database_size(current_database())) AS db_size").uniqueResult();
+                String totalDBStorage = session.createNativeQuery("SELECT pg_size_pretty(pg_database_size(current_database())) AS db_size", String.class).uniqueResult();
                 response.put("totalDBStorage", totalDBStorage);
 
                 List<Map<String, Object>> chartData = new ArrayList<>();
 
-                List<Object[]> schemaStats = session.createNativeQuery("SELECT schemaname,COUNT(*) AS table_count,SUM(pg_total_relation_size(relid)) AS total_size FROM pg_catalog.pg_statio_user_tables GROUP BY schemaname ORDER BY SUM(pg_total_relation_size(relid)) DESC").list();
+                List<Object[]> schemaStats = session.createNativeQuery("SELECT schemaname,COUNT(*) AS table_count,SUM(pg_total_relation_size(relid)) AS total_size FROM pg_catalog.pg_statio_user_tables GROUP BY schemaname ORDER BY SUM(pg_total_relation_size(relid)) DESC", Object[].class).list();
 
                 List<Object[]> data = new ArrayList<>();
 
@@ -135,7 +135,7 @@ public class DBStatsDaoImpl implements DBStatsDao {
                 response.put("chartData", chartData);
             } else if (type.equalsIgnoreCase("retrieveSchema") && schemaName.isPresent()) {
                 String query = "SELECT  table_name, CASE WHEN pg_total_relation_size(quote_ident(table_schema) || '.' || quote_ident(table_name)) >= 1073741824 THEN ROUND(pg_total_relation_size(quote_ident(table_schema) || '.' || quote_ident(table_name)) / 1073741824.0, 2) || ' GB' WHEN pg_total_relation_size(quote_ident(table_schema) || '.' || quote_ident(table_name)) >= 1048576 THEN ROUND(pg_total_relation_size(quote_ident(table_schema) || '.' || quote_ident(table_name)) / 1048576.0, 2) || ' MB' WHEN pg_total_relation_size(quote_ident(table_schema) || '.' || quote_ident(table_name)) >= 1024 THEN ROUND(pg_total_relation_size(quote_ident(table_schema) || '.' || quote_ident(table_name)) / 1024.0, 2) || ' KB' ELSE '0 KB' END AS total_size FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND table_schema = '" + schemaName.get() + "' ORDER BY pg_total_relation_size(quote_ident(table_schema) || '.' || quote_ident(table_name)) DESC";
-                List<Object[]> schemaStats = session.createNativeQuery(query).list();
+                List<Object[]> schemaStats = session.createNativeQuery(query, Object[].class).list();
 
 
                 List<Object[]> data = new ArrayList<>();

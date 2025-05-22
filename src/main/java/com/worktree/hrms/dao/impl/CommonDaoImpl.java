@@ -31,7 +31,7 @@ public class CommonDaoImpl implements CommonDao {
     @Override
     public void userHasFeature(String feature) {
         try (Session session = hibernateUtils.getSession()) {
-            String featureName = (String) session.createQuery("SELECT fe.featureName FROM UserFeatures uf JOIN FeatureEntity fe on (uf.featureId=fe.featureId) WHERE uf.userID=:userID AND fe.featureName=:featureName")
+            String featureName = session.createQuery("SELECT fe.featureName FROM UserFeatures uf JOIN FeatureEntity fe on (uf.featureId=fe.featureId) WHERE uf.userID=:userID AND fe.featureName=:featureName", String.class)
                     .setParameter("userID", getLoggedInUserId()).setParameter("featureName", feature).uniqueResult();
             if (featureName == null) {
                 throw new ForbiddenException(CommonConstants.ACCESS_DENIED);
@@ -42,7 +42,7 @@ public class CommonDaoImpl implements CommonDao {
     @Override
     public Long getLoggedInUserId() {
         try (Session session = hibernateUtils.getSession()) {
-            return (Long) session.createQuery("SELECT userID FROM UserTokenEntity WHERE jwt=:jwt")
+            return session.createQuery("SELECT userID FROM UserTokenEntity WHERE jwt=:jwt", Long.class)
                     .setParameter("jwt", RequestHelper.getAuthorizationToken()).uniqueResult();
         }
     }
@@ -53,7 +53,7 @@ public class CommonDaoImpl implements CommonDao {
         Map<String, Object> couponResponse = new HashMap<>();
         List<CouponEntity> couponEntities;
         try (Session session = hibernateUtils.getSession()) {
-            couponEntities = session.createQuery("FROM CouponEntity").list();
+            couponEntities = session.createQuery("FROM CouponEntity", CouponEntity.class).list();
         }
 
         if (!CollectionUtils.isEmpty(couponEntities)) {
@@ -103,7 +103,7 @@ public class CommonDaoImpl implements CommonDao {
     @Override
     public void validLicense() {
         try (Session session = hibernateUtils.getSession()) {
-            List<String> licences = session.createQuery("SELECT licence FROM Licence").list();
+            List<String> licences = session.createQuery("SELECT licence FROM Licence", String.class).list();
             if (!CollectionUtils.isEmpty(licences)) {
                 Map<String, Object> response = new ObjectMapper().readValue(licences.get(0), Map.class);
 

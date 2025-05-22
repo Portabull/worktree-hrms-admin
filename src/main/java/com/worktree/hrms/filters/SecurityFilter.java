@@ -48,7 +48,7 @@ public class SecurityFilter extends OncePerRequestFilter {
             if (skipEndPoints.stream().noneMatch(endPoint -> endPoint.equalsIgnoreCase(request.getRequestURI()))) {
                 if (token != null && !token.isEmpty()) {
                     try (Session session = hibernateUtils.getSession()) {
-                        Object[] obj = (Object[]) session.createQuery("SELECT licenseVerified,userID FROM UserTokenEntity WHERE jwt=:jwt")
+                        Object[] obj = (Object[]) session.createQuery("SELECT licenseVerified,userID FROM UserTokenEntity WHERE jwt=:jwt", Object[].class)
                                 .setParameter("jwt", token)
                                 .uniqueResult();
                         if (obj != null) {

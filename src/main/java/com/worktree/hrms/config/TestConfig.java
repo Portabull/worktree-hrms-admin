@@ -68,13 +68,13 @@ public class TestConfig {
 
     private FeatureEntity getFeature(String featureName) {
         try (Session session = hibernateUtils.getSession()) {
-            return (FeatureEntity) session.createQuery("FROM FeatureEntity WHERE featureName=:featureName").setParameter("featureName", featureName).uniqueResult();
+            return session.createQuery("FROM FeatureEntity WHERE featureName=:featureName", FeatureEntity.class).setParameter("featureName", featureName).uniqueResult();
         }
     }
 
     private UserEntity getUserEntity(String userName) {
         try (Session session = hibernateUtils.getSession()) {
-            return (UserEntity) session.createQuery("FROM UserEntity WHERE userName=:userName").setParameter("userName", userName).uniqueResult();
+            return session.createQuery("FROM UserEntity WHERE userName=:userName", UserEntity.class).setParameter("userName", userName).uniqueResult();
         }
     }
 
