@@ -6,6 +6,7 @@ import com.worktree.hrms.utils.HibernateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.security.SecureRandom;
 import java.util.*;
 
 @Repository
@@ -13,6 +14,15 @@ import java.util.*;
 public class HomeDaoImpl implements HomeDao {
 
     private final HibernateUtils hibernateUtils;
+
+    private static final String CHART = "chart";
+    private static final String BILLING = "billing";
+    private static final String ERRORS = "errors";
+    private static final String REQUESTS = "requests";
+    private static final String TENANT_NAME = "tenantName";
+    private static final String TENANT = "Tenant ";
+    private static final String EXPIRY_DATE = "expiryDate";
+
 
     @Override
     public Map<String, Object> home(String type) {
@@ -27,23 +37,23 @@ public class HomeDaoImpl implements HomeDao {
         response.put(CommonConstants.STATUS_CODE, 200);
 
         switch (type) {
-            case "chart":
-                response.put("chart", getChart());
+            case CHART:
+                response.put(CHART, getChart());
                 break;
-            case "billing":
-                response.put("billing", getBilling());
+            case BILLING:
+                response.put(BILLING, getBilling());
                 break;
-            case "errors":
-                response.put("errors", getErrors());
+            case ERRORS:
+                response.put(ERRORS, getErrors());
                 break;
-            case "requests":
-                response.put("requests", getRequests());
+            case REQUESTS:
+                response.put(REQUESTS, getRequests());
                 break;
             default:
-                response.put("chart", getChart());
-                response.put("billing", getBilling());
-                response.put("errors", getErrors());
-                response.put("requests", getRequests());
+                response.put(CHART, getChart());
+                response.put(BILLING, getBilling());
+                response.put(ERRORS, getErrors());
+                response.put(REQUESTS, getRequests());
                 break;
         }
         return response;
@@ -90,20 +100,20 @@ public class HomeDaoImpl implements HomeDao {
 
         // Tenant A
         Map<String, String> tenantA = new HashMap<>();
-        tenantA.put("tenantName", "Tenant " + getRandomText());
-        tenantA.put("expiryDate", "2024-10-30");
+        tenantA.put(TENANT_NAME, TENANT + getRandomText());
+        tenantA.put(EXPIRY_DATE, "2024-10-30");
         tenants.add(tenantA);
 
         // Tenant B
         Map<String, String> tenantB = new HashMap<>();
-        tenantB.put("tenantName", "Tenant " + getRandomText());
-        tenantB.put("expiryDate", "2024-10-28");
+        tenantB.put(TENANT_NAME, TENANT + getRandomText());
+        tenantB.put(EXPIRY_DATE, "2024-10-28");
         tenants.add(tenantB);
 
         // Tenant C
         Map<String, String> tenantC = new HashMap<>();
-        tenantC.put("tenantName", "Tenant " + getRandomText());
-        tenantC.put("expiryDate", "2024-10-26");
+        tenantC.put(TENANT_NAME, TENANT + getRandomText());
+        tenantC.put(EXPIRY_DATE, "2024-10-26");
         tenants.add(tenantC);
 
         return tenants;
@@ -143,7 +153,7 @@ public class HomeDaoImpl implements HomeDao {
 
     // Generates random values as placeholders, adjust as needed
     private int generateRandomValue() {
-        Random random = new Random();
+        SecureRandom random = new SecureRandom();
         return random.nextInt(20) + 1; // Generate values between 1 and 20
     }
 
