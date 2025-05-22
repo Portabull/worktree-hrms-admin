@@ -19,6 +19,7 @@ import java.util.*;
 @RequestMapping("api")
 public class PaymentsController {
 
+
     @GetMapping("payment-history")
     public ResponseEntity<Map<String, Object>> paymentHistory(@RequestParam String tenantId) {
 
@@ -36,10 +37,10 @@ public class PaymentsController {
 
 
         data1.put("paymentScreenshots", Arrays.asList(
-                paymentScreenShots(getBase64String("static/image/temp/1.webp", "image/webp"), "1.webp"),
+                paymentScreenShots(getBase64String("static/image/temp/1.webp", CommonConstants.IMAGE_WEBP), "1.webp"),
                 paymentScreenShots(getBase64String("static/image/temp/1689263849595.pdf", "application/pdf"), "1689263849595.pdf")
 
-                , paymentScreenShots(getBase64String("static/image/temp/2.webp", "image/webp"), "2.webp")));
+                , paymentScreenShots(getBase64String("static/image/temp/2.webp", CommonConstants.IMAGE_WEBP), "2.webp")));
 
 
         datas.add(data1);
@@ -55,7 +56,7 @@ public class PaymentsController {
 
         data2.put("paymentScreenshots", Arrays.asList(
                 paymentScreenShots(getBase64String("static/image/temp/InvestmentsBook (4).xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"), "InvestmentsBook (4).xlsx"),
-                paymentScreenShots(getBase64String("static/image/temp/4.webp", "image/webp"), "4.webp")));
+                paymentScreenShots(getBase64String("static/image/temp/4.webp", CommonConstants.IMAGE_WEBP), "4.webp")));
 
         datas.add(data2);
 

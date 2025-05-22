@@ -56,6 +56,8 @@ public class TestConfigServiceImpl implements TestConfigService {
 
     private final ObjectMapper objectMapper;
 
+    private static final String ADDITIONAL_PROPS = "additionalProperties";
+
     public void validateEmailConfiguration(Map<String, Object> payload) {
         try {
             String emailHost = payload.get("emailHost").toString();
@@ -79,8 +81,8 @@ public class TestConfigServiceImpl implements TestConfigService {
             }
 
             // Additional properties
-            if (payload.containsKey("additionalProperties")) {
-                List<?> additionalProperties = (List<?>) payload.get("additionalProperties");
+            if (payload.containsKey(ADDITIONAL_PROPS)) {
+                List<?> additionalProperties = (List<?>) payload.get(ADDITIONAL_PROPS);
                 for (Object addProperty : additionalProperties) {
                     Map<?, ?> propertyMap = (Map<?, ?>) addProperty;
                     mailProperties.put(propertyMap.get("name").toString(), propertyMap.get("value").toString());
@@ -115,7 +117,7 @@ public class TestConfigServiceImpl implements TestConfigService {
             log.error("Error occurred while testing SMTP: {}", e);
             throw new BadRequestException(e.getMessage().split(":")[0]);
         } catch (MailSendException e) {
-            log.error("Exception occurred", e);
+            log.error(CommonConstants.EXCEPTION_OCCURRED, e);
             if (e.getCause() instanceof MailConnectException) {
                 throw new BadRequestException("Couldn't connect to smtp server please check the host and port");
             } else if (e.getCause() instanceof NoSuchProviderException) {
@@ -124,7 +126,7 @@ public class TestConfigServiceImpl implements TestConfigService {
 
             throw new BadRequestException("Invalid Details please enter right details");
         } catch (Exception e) {
-            log.error("Exception occurred", e);
+            log.error(CommonConstants.EXCEPTION_OCCURRED, e);
             throw new BadRequestException(CommonConstants.INTERNAL_SERVER_ERROR);
         }
     }
@@ -151,7 +153,7 @@ public class TestConfigServiceImpl implements TestConfigService {
         } catch (BadRequestException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Exception occurred", e);
+            log.error(CommonConstants.EXCEPTION_OCCURRED, e);
             throw new BadRequestException(CommonConstants.INTERNAL_SERVER_ERROR);
         }
     }
@@ -373,7 +375,7 @@ public class TestConfigServiceImpl implements TestConfigService {
 
             File file = new File(localFileLocation);
 
-            List list = ((List<Object>) payload.get("additionalProperties"));
+            List list = ((List<Object>) payload.get(ADDITIONAL_PROPS));
 
             boolean createDir = list.stream().anyMatch(val -> ((Map) val).get("name").toString().equalsIgnoreCase("create-dir")
                     && ((Map) val).get("value").toString().equalsIgnoreCase("y"));
@@ -392,13 +394,13 @@ public class TestConfigServiceImpl implements TestConfigService {
             }
 
         } catch (AccessDeniedException e) {
-            log.error("Exception occurred", e);
+            log.error(CommonConstants.EXCEPTION_OCCURRED, e);
             throw new BadRequestException("Failed to create the directory for the specified path. Please ensure that the necessary permissions are granted and try again."
             );
         } catch (BadRequestException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Exception occurred", e);
+            log.error(CommonConstants.EXCEPTION_OCCURRED, e);
             throw new BadRequestException("Invalid details entered. Please provide the correct secret access key and region.");
         }
     }
@@ -421,10 +423,10 @@ public class TestConfigServiceImpl implements TestConfigService {
             // Use headBucket to validate the bucket and credentials
             s3.headBucket(builder -> builder.bucket(bucketName));
         } catch (S3Exception e) {
-            log.error("Exception occurred", e);
+            log.error(CommonConstants.EXCEPTION_OCCURRED, e);
             throw new BadRequestException("Invalid bucket or credentials: " + e.getMessage());
         } catch (Exception e) {
-            log.error("Exception occurred", e);
+            log.error(CommonConstants.EXCEPTION_OCCURRED, e);
             throw new BadRequestException("Invalid details entered. Please provide the correct secret access key and region.");
         }
     }

@@ -1,6 +1,8 @@
 package com.worktree.hrms.utils;
 
+import com.worktree.hrms.constants.CommonConstants;
 import com.worktree.hrms.exceptions.BadRequestException;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -8,6 +10,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
+@Slf4j
 public class EncryptionUtils {
 
     private EncryptionUtils() {
@@ -48,7 +51,8 @@ public class EncryptionUtils {
             return bytesToHex(ivBytes) + "::" + bytesToHex(encryptedBytes);
 
         } catch (Exception e) {
-            throw new RuntimeException("Encryption error", e);
+            log.error(CommonConstants.EXCEPTION_OCCURRED, e);
+            throw new BadRequestException("Encryption error");
         }
     }
 

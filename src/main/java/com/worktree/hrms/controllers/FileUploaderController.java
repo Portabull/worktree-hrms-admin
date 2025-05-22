@@ -85,7 +85,8 @@ public class FileUploaderController {
 
             long fileLength = videoFile.length();
             String range = request.getHeader("Range");
-            long start = 0, end = fileLength - 1;
+            long start = 0;
+            long end = fileLength - 1;
 
             if (range != null && range.startsWith("bytes=")) {
                 String[] ranges = range.substring(6).split("-");

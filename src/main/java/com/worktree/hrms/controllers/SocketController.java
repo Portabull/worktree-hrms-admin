@@ -16,13 +16,14 @@ public class SocketController {
 
     private final NotificationWebsocketHandler notificationWebsocketHandler;
 
+    private static final String METHOD = "method";
 
     @PostMapping("push-notification")
     public void asas(@RequestBody Map<String, String> payload) throws JsonProcessingException {
 
         notificationWebsocketHandler.sendNotification(new ObjectMapper().writeValueAsString(Map.of("alert", payload.get("alert"),
                 "message", payload.get("message"), "type",
-                payload.get("type"), "method", payload.get("method") != null ? payload.get("method") : "handleDefaultNotificationEvents")));
+                payload.get("type"), METHOD, payload.get(METHOD) != null ? payload.get(METHOD) : "handleDefaultNotificationEvents")));
     }
 
 }

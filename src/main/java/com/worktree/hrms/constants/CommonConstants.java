@@ -9,11 +9,14 @@ public class CommonConstants {
     }
 
     public static final String STATUS = "status";
+    public static final String TOKEN = "token";
     public static final String STATUS_CODE = "statusCode";
     public static final String MESSAGE = "message";
     public static final String SUCCESS = "SUCCESS";
     public static final String FAILED = "FAILED";
-
+    public static final String IMAGE_WEBP = "image/webp";
+    public static final String PASSWORD = "password";
+    public static final String USER_NAME = "userName";
     public static final String JAVA_TEMP_DIR = "java.io.tmpdir";
     public static final String ACCESS_DENIED = "You don't have access to this services, please contact administrator";
 

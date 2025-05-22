@@ -1,5 +1,6 @@
 package com.worktree.hrms.scanners;
 
+import com.worktree.hrms.constants.CommonConstants;
 import com.worktree.hrms.exceptions.BadRequestException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -7,6 +8,7 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -77,9 +79,9 @@ public class FileScanner {
      * Scans generic file content (text, binary) for malicious patterns.
      *
      * @param file MultipartFile to scan.
-     * @throws Exception if malicious content is detected.
+     * @throws BadRequestException if malicious content is detected.
      */
-    private void scanGenericContent(MultipartFile file) throws Exception {
+    private void scanGenericContent(MultipartFile file) throws BadRequestException {
         try (InputStream inputStream = file.getInputStream()) {
             byte[] buffer = new byte[4096]; // 4 KB buffer
             int bytesRead;
@@ -92,6 +94,9 @@ public class FileScanner {
                     }
                 }
             }
+        } catch (IOException e) {
+            log.error(CommonConstants.EXCEPTION_OCCURRED, e);
+            throw new BadRequestException("Invalid file or file may contains malicious content.");
         }
     }
 
@@ -101,7 +106,7 @@ public class FileScanner {
      * @param file MultipartFile to scan.
      * @throws Exception if malicious content is detected.
      */
-    private void scanPdfContent(MultipartFile file) throws Exception {
+    private void scanPdfContent(MultipartFile file) {
         try (InputStream inputStream = file.getInputStream();
              PDDocument pdfDocument = PDDocument.load(inputStream)) {
 
@@ -113,6 +118,9 @@ public class FileScanner {
                     throw new BadRequestException("PDF contains potentially malicious content.");
                 }
             }
+        } catch (IOException e) {
+            log.error(CommonConstants.EXCEPTION_OCCURRED, e);
+            throw new BadRequestException("Invalid pdf file or pdf may contains malicious content.");
         }
     }
 

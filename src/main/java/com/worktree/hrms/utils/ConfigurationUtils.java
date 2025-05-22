@@ -12,6 +12,8 @@ import com.azure.storage.blob.models.BlobProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.worktree.hrms.constants.CommonConstants;
+import com.worktree.hrms.exceptions.BadRequestException;
+import com.worktree.hrms.exceptions.WorktreeException;
 import com.worktree.hrms.handlers.NotificationWebsocketHandler;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -57,13 +59,11 @@ public class ConfigurationUtils {
     public void initMessage() throws JsonProcessingException {
 
         message.put("alert", "Storage Stats Ready!!!");
-        message.put("message", "Hi, storage stats ready please find in configuration -> storage -> stats or <a href=\"storage-configuration?type=open-stats\">\n" +
-                "    Click here\n" +
-                "</a>\n");
+        message.put(CommonConstants.MESSAGE, "Hi, storage stats ready please find in configuration -> storage -> stats or <a href=\"storage-configuration?type=open-stats\">\n    Click here\n</a>\n");
         message.put("method", "handleDefaultNotificationEvents");
         notificationMessage = objectMapper.writeValueAsString(message);
         message.put("alert", "Storage Stats Failed!!!");
-        message.put("message", "");
+        message.put(CommonConstants.MESSAGE, "");
         message.put("method", "handleDefaultNotificationEvents");
     }
 
@@ -96,6 +96,8 @@ public class ConfigurationUtils {
                         case "serverlocalstorage":
                             bucketStats = getLocalStorageBucketStats(storageConfiguration);
                             break;
+                        default:
+                            throw new BadRequestException("Invalid Provider");
                     }
 
                     response.put("fileTypeCounts", bucketStats.fileTypeCounts);
@@ -105,7 +107,8 @@ public class ConfigurationUtils {
                     response.put(TIMESTAMP, System.currentTimeMillis());
                     notificationWebsocketHandler.sendNotification(notificationMessage);
                 } catch (Exception e) {
-                    message.put("message", e.getMessage());
+                    log.error(CommonConstants.EXCEPTION_OCCURRED, e);
+                    message.put(CommonConstants.MESSAGE, e.getMessage());
                     try {
                         notificationWebsocketHandler.sendNotification(objectMapper.writeValueAsString(message));
                     } catch (JsonProcessingException ex) {
@@ -352,7 +355,7 @@ public class ConfigurationUtils {
 
         } catch (Exception e) {
             log.info("Error calculating bucket stats: ", e);
-            throw new RuntimeException(e);
+            throw new WorktreeException(CommonConstants.INTERNAL_SERVER_ERROR, e);
         }
     }
 

@@ -35,15 +35,18 @@ public class DBStatsDaoImpl implements DBStatsDao {
     private final Map<String, LinkedList<Number>> transactions = new HashMap<>();
     private final Map<String, LinkedList<Number>> blockIO = new HashMap<>();
 
+    private static final String TOTAL = "total";
+    private static final String TABLE_DATA = "tableData";
+
     @PostConstruct
     public void init() {
         server.put("active", new LinkedList<>());
         server.put("idle", new LinkedList<>());
-        server.put("total", new LinkedList<>());
+        server.put(TOTAL, new LinkedList<>());
 
         transactions.put("commit", new LinkedList<>());
         transactions.put("rollback", new LinkedList<>());
-        transactions.put("total", new LinkedList<>());
+        transactions.put(TOTAL, new LinkedList<>());
 
         blockIO.put("read", new LinkedList<>());
         blockIO.put("hits", new LinkedList<>());
@@ -67,11 +70,11 @@ public class DBStatsDaoImpl implements DBStatsDao {
 
         append(server.get("active"), active);
         append(server.get("idle"), idle);
-        append(server.get("total"), total);
+        append(server.get(TOTAL), total);
 
         append(transactions.get("commit"), commit);
         append(transactions.get("rollback"), rollback);
-        append(transactions.get("total"), txTotal);
+        append(transactions.get(TOTAL), txTotal);
 
         append(blockIO.get("read"), read);
         append(blockIO.get("hits"), hits);
@@ -128,7 +131,7 @@ public class DBStatsDaoImpl implements DBStatsDao {
                     data.add(obj);
                 }
 
-                response.put("tableData", data);
+                response.put(TABLE_DATA, data);
                 response.put("chartData", chartData);
             } else if (type.equalsIgnoreCase("retrieveSchema") && schemaName.isPresent()) {
                 String query = "SELECT  table_name, CASE WHEN pg_total_relation_size(quote_ident(table_schema) || '.' || quote_ident(table_name)) >= 1073741824 THEN ROUND(pg_total_relation_size(quote_ident(table_schema) || '.' || quote_ident(table_name)) / 1073741824.0, 2) || ' GB' WHEN pg_total_relation_size(quote_ident(table_schema) || '.' || quote_ident(table_name)) >= 1048576 THEN ROUND(pg_total_relation_size(quote_ident(table_schema) || '.' || quote_ident(table_name)) / 1048576.0, 2) || ' MB' WHEN pg_total_relation_size(quote_ident(table_schema) || '.' || quote_ident(table_name)) >= 1024 THEN ROUND(pg_total_relation_size(quote_ident(table_schema) || '.' || quote_ident(table_name)) / 1024.0, 2) || ' KB' ELSE '0 KB' END AS total_size FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND table_schema = '" + schemaName.get() + "' ORDER BY pg_total_relation_size(quote_ident(table_schema) || '.' || quote_ident(table_name)) DESC";
@@ -145,7 +148,7 @@ public class DBStatsDaoImpl implements DBStatsDao {
                     data.add(obj);
                 }
 
-                response.put("tableData", data);
+                response.put(TABLE_DATA, data);
             } else if (type.equalsIgnoreCase("retrieveTable") && schemaName.isPresent() && tableName.isPresent()) {
                 String query = "SELECT * from " + schemaName.get() + "." + tableName.get() + " limit 100";
 
@@ -170,7 +173,7 @@ public class DBStatsDaoImpl implements DBStatsDao {
 
                 }
 
-                response.put("tableData", data);
+                response.put(TABLE_DATA, data);
             } else if (type.equalsIgnoreCase("currentConnections")) {
                 String query = "SELECT datname AS database_name, usename AS user_name, client_addr, application_name, state, backend_start, query_start, wait_event_type, wait_event, query FROM pg_stat_activity WHERE state = 'active';";
 
@@ -194,7 +197,7 @@ public class DBStatsDaoImpl implements DBStatsDao {
                     }
                 }
 
-                response.put("tableData", data);
+                response.put(TABLE_DATA, data);
             } else if (type.equalsIgnoreCase("longRunningQueries")) {
                 String query = "SELECT pid, datname, usename, state, query, now() - query_start AS duration, query_start FROM pg_stat_activity WHERE state = 'active' AND now() - query_start > interval '30 seconds' ORDER BY duration DESC;";
 
@@ -223,7 +226,7 @@ public class DBStatsDaoImpl implements DBStatsDao {
                         data.add(row);
                     }
                 }
-                response.put("tableData", data);
+                response.put(TABLE_DATA, data);
             }
 
 

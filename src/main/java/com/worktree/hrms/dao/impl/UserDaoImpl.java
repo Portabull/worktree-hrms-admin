@@ -14,6 +14,7 @@ import com.worktree.hrms.utils.RequestHelper;
 import jakarta.persistence.RollbackException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
@@ -25,21 +26,21 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class UserDaoImpl implements UserDao {
 
-    int i=0;
-
     private final HibernateUtils hibernateUtils;
     private final DateUtils dateUtils;
 
+    public static final String IA_ADMIN = "isAdmin";
+
     @Override
     public Long existsUserNamePassword(String userName, String password) {
-        int i=0;
         try (Session session = hibernateUtils.getSession()) {
             return (Long) session.createQuery("SELECT userID FROM UserEntity WHERE userName=:userName and password=:password")
-                    .setParameter("password", password).setParameter("userName", userName).uniqueResult();
+                    .setParameter(CommonConstants.PASSWORD, password).setParameter(CommonConstants.USER_NAME, userName).uniqueResult();
         }
     }
 
@@ -61,7 +62,7 @@ public class UserDaoImpl implements UserDao {
         Object[] profileResponse;
         try (Session session = hibernateUtils.getSession()) {
             profileResponse = (Object[]) session.createQuery("SELECT displayName,profilePic FROM UserEntity WHERE userName =:userName")
-                    .setParameter("userName", userName).uniqueResult();
+                    .setParameter(CommonConstants.USER_NAME, userName).uniqueResult();
         }
         response.put("displayName", profileResponse[0] != null ? profileResponse[0].toString() : null);
         response.put("profilePic", profileResponse[1] != null ? profileResponse[1].toString() : null);
@@ -82,12 +83,11 @@ public class UserDaoImpl implements UserDao {
         response.put("status", "SUCCESS");
         response.put("statusCode", 200);
 
-        System.out.println(authorizationToken);
         List<String> authorizationTokens;
         if (authorizationToken.contains(",")) {
             authorizationTokens = Arrays.stream(authorizationToken.split(","))
                     .map(String::trim) // Optional: To trim spaces
-                    .collect(Collectors.toList());
+                    .toList();
         } else {
             authorizationTokens = Arrays.asList(authorizationToken);
         }
@@ -95,7 +95,7 @@ public class UserDaoImpl implements UserDao {
         try (Session session = hibernateUtils.getSession()) {
             transaction = session.beginTransaction();
             session.createQuery("DELETE FROM UserTokenEntity WHERE jwt IN (:token)")
-                    .setParameter("token", authorizationTokens).executeUpdate();
+                    .setParameter(CommonConstants.TOKEN, authorizationTokens).executeUpdate();
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
@@ -149,11 +149,11 @@ public class UserDaoImpl implements UserDao {
             users.forEach(user -> {
                 Map<String, Object> userResponse = new HashMap<>();
                 userResponse.put("sNo", sNo.getAndIncrement());
-                userResponse.put("userName", user.getUserName());
+                userResponse.put(CommonConstants.USER_NAME, user.getUserName());
                 userResponse.put("displayName", user.getDisplayName());
                 userResponse.put("email", user.getEmail());
                 userResponse.put("mobile", user.getMobileNumber());
-                userResponse.put("isAdmin", user.isAdmin() != null && user.isAdmin());
+                userResponse.put(IA_ADMIN, user.isAdmin() != null && user.isAdmin());
                 userResponse.put("userId", user.getUserID());
                 try (Session session = hibernateUtils.getSession()) {
                     userResponse.put("userFeatures",
@@ -190,13 +190,13 @@ public class UserDaoImpl implements UserDao {
 
             validateAdminDetails(userEntity, payload);
 
-            userEntity.setUserName(String.valueOf(payload.get("userName")));
+            userEntity.setUserName(String.valueOf(payload.get(CommonConstants.USER_NAME)));
             userEntity.setDisplayName(String.valueOf(payload.get("displayName")));
             userEntity.setEmail(String.valueOf(payload.get("email")));
             userEntity.setMobileNumber(String.valueOf(payload.get("mobile")));
-            userEntity.setAdmin(String.valueOf(payload.get("isAdmin")).equalsIgnoreCase("true"));
-            if (payload.get("password") != null && payload.get("password").toString().trim().length() != 0) {
-                userEntity.setPassword(payload.get("password").toString());
+            userEntity.setAdmin(String.valueOf(payload.get(IA_ADMIN)).equalsIgnoreCase("true"));
+            if (payload.get(CommonConstants.PASSWORD) != null && payload.get(CommonConstants.PASSWORD).toString().trim().length() != 0) {
+                userEntity.setPassword(payload.get(CommonConstants.PASSWORD).toString());
             }
 
             hibernateUtils.saveOrUpdateEntity(userEntity);
@@ -249,7 +249,7 @@ public class UserDaoImpl implements UserDao {
     private void validateAdminDetails(UserEntity userEntity, Map<String, Object> payload) {
 
         if ("admin".equalsIgnoreCase(userEntity.getUserName())) {
-            if (!String.valueOf(payload.get("userName")).equalsIgnoreCase(userEntity.getUserName())) {
+            if (!String.valueOf(payload.get(CommonConstants.USER_NAME)).equalsIgnoreCase(userEntity.getUserName())) {
                 throw new BadRequestException("You cannot change the display name or username for admin");
             }
 
@@ -257,7 +257,7 @@ public class UserDaoImpl implements UserDao {
                 throw new BadRequestException("You cannot change the display name or username for admin");
             }
 
-            if (String.valueOf(payload.get("isAdmin")).equalsIgnoreCase("false")) {
+            if (String.valueOf(payload.get(IA_ADMIN)).equalsIgnoreCase("false")) {
                 throw new BadRequestException("You cannot change the admin roles");
             }
         }
@@ -269,7 +269,7 @@ public class UserDaoImpl implements UserDao {
         UserEntity userEntity;
         try (Session session = hibernateUtils.getSession()) {
             userEntity = (UserEntity) session.createQuery("FROM UserEntity WHERE userID = (SELECT userID FROM UserTokenEntity WHERE jwt = :token)")
-                    .setParameter("token", currentToken).uniqueResult();
+                    .setParameter(CommonConstants.TOKEN, currentToken).uniqueResult();
             return userEntity.isAdmin() != null && userEntity.isAdmin();
         }
     }
@@ -312,9 +312,9 @@ public class UserDaoImpl implements UserDao {
         }
 
         if (!CollectionUtils.isEmpty(userTokens)) {
-            userTokens.forEach(userToken -> {
-                logout(userToken.getJwt());
-            });
+            userTokens.forEach(userToken ->
+                    logout(userToken.getJwt())
+            );
         }
 
         return CommonConstants.SUCCESS_RESPONSE;
@@ -324,7 +324,7 @@ public class UserDaoImpl implements UserDao {
     public List<String> getFeatures(String userName) {
         try (Session session = hibernateUtils.getSession()) {
             return session.createQuery("SELECT fe.featureName FROM UserFeatures uf JOIN FeatureEntity fe on (uf.featureId=fe.featureId) WHERE uf.userID = (SELECT userID FROM UserEntity WHERE userName=:userName)")
-                    .setParameter("userName", userName).list();
+                    .setParameter(CommonConstants.USER_NAME, userName).list();
         }
     }
 
@@ -334,7 +334,7 @@ public class UserDaoImpl implements UserDao {
         UserEntity userEntity;
         try (Session session = hibernateUtils.getSession()) {
             userEntity = (UserEntity) session.createQuery("FROM UserEntity WHERE userID = (SELECT userID FROM UserTokenEntity WHERE jwt = :token)")
-                    .setParameter("token", currentToken).uniqueResult();
+                    .setParameter(CommonConstants.TOKEN, currentToken).uniqueResult();
             return userEntity.getUserID();
         }
     }

@@ -26,17 +26,20 @@ public class LogsServiceImpl implements LogsService {
 
     private final ObjectMapper objectMapper;
 
+    private static final String USER_DIR = "user.dir";
+    private static final String WORKTREE_LOG = "worktree.log";
+
     @PostConstruct
     public void initLogs() {
         try {
-            String logFileName = System.getProperty("user.dir") + File.separator + "worktree.log";
+            String logFileName = System.getProperty(USER_DIR) + File.separator + WORKTREE_LOG;
             monitorLogFile(logFileName);
         } catch (Exception e) {
             log.error(CommonConstants.EXCEPTION_OCCURRED, e);
         }
     }
 
-    public void monitorLogFile(String logFilePath) throws IOException {
+    public void monitorLogFile(String logFilePath) {
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
@@ -77,7 +80,7 @@ public class LogsServiceImpl implements LogsService {
     @Override
     public byte[] downloadLogs(Optional<Integer> lines) throws IOException {
 
-        String logFileName = System.getProperty("user.dir") + File.separator + "worktree.log";
+        String logFileName = System.getProperty(USER_DIR) + File.separator + WORKTREE_LOG;
         List<String> result = new ArrayList<>();
 
         if (lines.isPresent()) {
@@ -124,7 +127,7 @@ public class LogsServiceImpl implements LogsService {
     @Override
     public List<String> getLatestLogs(Optional<Integer> lines) throws IOException {
 
-        String logFileName = System.getProperty("user.dir") + File.separator + "worktree.log";
+        String logFileName = System.getProperty(USER_DIR) + File.separator + WORKTREE_LOG;
         List<String> result = new ArrayList<>();
 
         if (lines.isEmpty()) {
